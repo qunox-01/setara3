@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="space-y-6">
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/30 p-6">
+      <h1 class="text-2xl font-semibold">Home</h1>
+      <p class="mt-2 text-slate-300">
+        This is a basic FastAPI app with server-rendered pages using Jinja2 and Tailwind.
+      </p>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a
+          href="/som-mapping"
+          class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium hover:bg-indigo-500"
+        >
+          Go to SOM Mapping
+        </a>
+
+        <a
+          href="https://fastapi.tiangolo.com/"
+          class="inline-flex items-center justify-center rounded-xl border border-slate-700 px-4 py-2 text-sm font-medium hover:bg-slate-900"
+          target="_blank"
+          rel="noreferrer"
+        >
+          FastAPI Docs
+        </a>
+      </div>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/20 p-6">
+        <h2 class="font-semibold">What’s here</h2>
+        <ul class="mt-3 list-disc pl-5 text-slate-300 space-y-1">
+          <li>Clean routing layout</li>
+          <li>Shared base template</li>
+          <li>Tailwind via CDN</li>
+        </ul>
+      </div>
+
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/20 p-6">
+        <h2 class="font-semibold">Next steps</h2>
+        <p class="mt-3 text-slate-300">
+          Add a form on SOM Mapping to upload data / trigger a Celery job later.
+        </p>
+      </div>
+    </div>
+  </section>
+{% endblock %}
