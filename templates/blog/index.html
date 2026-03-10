@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Blog — ML Data Quality Insights — xariff{% endblock %}
+{% block description %}Articles and guides on ML dataset quality, data preparation, and best practices for training better models.{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-12">
+
+    <div class="mb-10">
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-3">Blog</h1>
+        <p class="text-slate-500 text-lg">Practical guides on ML data quality, preparation, and analysis.</p>
+    </div>
+
+    {% if articles %}
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for article in articles %}
+        <a href="/blog/{{ article.slug }}"
+           class="group bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-blue-200 transition-all duration-200 flex flex-col">
+
+            <!-- Tags -->
+            {% if article.tags %}
+            <div class="flex flex-wrap gap-1.5 mb-3">
+                {% for tag in article.tags[:3] %}
+                <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-full">{{ tag }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Title -->
+            <h2 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors leading-snug">
+                {{ article.title }}
+            </h2>
+
+            <!-- Description -->
+            {% if article.description %}
+            <p class="text-slate-500 text-sm leading-relaxed flex-1 mb-4">
+                {{ article.description }}
+            </p>
+            {% endif %}
+
+            <!-- Meta -->
+            <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
+                <span class="text-xs text-slate-400">
+                    {% if article.date %}{{ article.date }}{% endif %}
+                </span>
+                <span class="text-blue-500 text-sm font-semibold group-hover:gap-2 flex items-center gap-1 transition-all">
+                    Read
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-20 text-slate-400">
+        <svg class="w-12 h-12 mx-auto mb-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <p class="text-lg font-medium text-slate-500">No articles yet.</p>
+        <p class="text-sm mt-1">Check back soon — guides are on the way.</p>
+    </div>
+    {% endif %}
+
+    <!-- CTA -->
+    <div class="mt-16 bg-blue-600 rounded-2xl p-8 text-white text-center">
+        <h2 class="text-xl font-bold mb-2">Try the tools while you're here</h2>
+        <p class="text-blue-100 mb-5 text-sm">Upload your CSV and get instant data quality insights.</p>
+        <a href="/tools/quality"
+           class="inline-block px-6 py-3 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-colors">
+            Check data quality
+        </a>
+    </div>
+
+</div>
+{% endblock %}

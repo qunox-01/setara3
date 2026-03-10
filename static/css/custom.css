@@ -1,0 +1,143 @@
+/* xariff — custom CSS (supplements Tailwind CDN) */
+
+/* HTMX loading indicator — only visible during requests */
+.htmx-indicator {
+    display: none;
+}
+.htmx-request .htmx-indicator {
+    display: block;
+}
+.htmx-request.htmx-indicator {
+    display: block;
+}
+
+/* Drag-and-drop active state */
+.drop-zone-active {
+    border-color: #3b82f6 !important;
+    background-color: #eff6ff !important;
+}
+
+/* Prose typography for article content */
+.prose h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: #0f172a;
+}
+
+.prose h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #1e293b;
+}
+
+.prose p {
+    margin-bottom: 1rem;
+    line-height: 1.75;
+    color: #475569;
+}
+
+.prose ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.prose ol {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.prose li {
+    margin-bottom: 0.5rem;
+    color: #475569;
+}
+
+.prose a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.prose a:hover {
+    text-decoration: underline;
+}
+
+.prose code {
+    background: #eff6ff;
+    color: #1d4ed8;
+    padding: 0.1rem 0.35rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.prose pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+.prose pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+}
+
+.prose blockquote {
+    border-left: 4px solid #60a5fa;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: #64748b;
+    font-style: italic;
+}
+
+/* Score ring animation */
+@keyframes score-fill {
+    from { stroke-dashoffset: 283; }
+    to { stroke-dashoffset: var(--target-offset); }
+}
+
+/* Smooth table row hover */
+tbody tr {
+    transition: background-color 0.1s ease;
+}
+
+/* Chart container */
+.chart-container {
+    position: relative;
+    height: 200px;
+    width: 100%;
+}
+
+/* File upload drop zone transition */
+#drop-zone {
+    transition: all 0.2s ease;
+}
+
+/* Flagged row NaN highlight */
+.cell-null {
+    color: #ef4444;
+    font-style: italic;
+}
+
+/* Scrollbar for tables */
+.overflow-x-auto::-webkit-scrollbar {
+    height: 6px;
+}
+.overflow-x-auto::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}

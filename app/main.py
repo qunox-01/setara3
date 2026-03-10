@@ -1,13 +1,43 @@
-from fastapi import FastAPI
+import uuid
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
-from app.core.config import STATIC_DIR
-from app.api.router import router as api_router
+from app.database import create_tables
+from app.routers import pages, tools, analysis, articles, reports, api
 
-app = FastAPI(title="FastAPI Pages (Tailwind)")
 
-# Static files (optional for later: images, custom css, js)
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await create_tables()
+    yield
 
-# Routes
-app.include_router(api_router)
+
+app = FastAPI(title="xariff", lifespan=lifespan)
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+templates = Jinja2Templates(directory="templates")
+
+app.include_router(pages.router)
+app.include_router(tools.router)
+app.include_router(analysis.router)
+app.include_router(articles.router)
+app.include_router(reports.router)
+app.include_router(api.router)
+
+
+@app.middleware("http")
+async def session_middleware(request: Request, call_next):
+    response = await call_next(request)
+    if not request.cookies.get("session_id"):
+        response.set_cookie(
+            "session_id",
+            str(uuid.uuid4()),
+            max_age=60 * 60 * 24 * 365,
+            httponly=True,
+            samesite="lax",
+        )
+    return response

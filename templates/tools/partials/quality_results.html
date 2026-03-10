@@ -1,0 +1,163 @@
+<!-- Quality Results Partial — returned by HTMX, no base layout -->
+<div class="space-y-6 mt-6">
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <!-- Quality Score -->
+        <div class="bg-white border rounded-xl p-4 text-center shadow-sm
+            {% if summary.overall_score >= 80 %}border-green-200 bg-green-50
+            {% elif summary.overall_score >= 50 %}border-yellow-200 bg-yellow-50
+            {% else %}border-red-200 bg-red-50{% endif %}">
+            <div class="text-3xl font-extrabold mb-1
+                {% if summary.overall_score >= 80 %}text-green-600
+                {% elif summary.overall_score >= 50 %}text-yellow-600
+                {% else %}text-red-600{% endif %}">
+                {{ summary.overall_score }}
+            </div>
+            <div class="text-xs text-slate-500 font-medium uppercase tracking-wide">Quality Score</div>
+            <div class="text-sm font-semibold mt-1
+                {% if summary.overall_score >= 80 %}text-green-700
+                {% elif summary.overall_score >= 50 %}text-yellow-700
+                {% else %}text-red-700{% endif %}">
+                {{ summary.verdict }}
+            </div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">
+            <div class="text-3xl font-extrabold text-slate-800 mb-1">{{ summary.total_rows | int }}</div>
+            <div class="text-xs text-slate-500 font-medium uppercase tracking-wide">Rows</div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">
+            <div class="text-3xl font-extrabold text-slate-800 mb-1">{{ summary.total_columns }}</div>
+            <div class="text-xs text-slate-500 font-medium uppercase tracking-wide">Columns</div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">
+            <div class="text-3xl font-extrabold text-slate-800 mb-1">{{ flagged_count }}</div>
+            <div class="text-xs text-slate-500 font-medium uppercase tracking-wide">Flagged Rows</div>
+        </div>
+    </div>
+
+    <!-- Memory info -->
+    <div class="text-xs text-slate-400 text-right">
+        Memory footprint: {{ summary.memory_mb }} MB &nbsp;|&nbsp;
+        Duplicate rows: {{ summary.total_duplicates }}
+    </div>
+
+    <!-- Column Stats Table -->
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h2 class="font-bold text-slate-800">Column Analysis</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-gray-50 text-slate-500 text-xs uppercase tracking-wide">
+                        <th class="px-4 py-3 text-left">Column</th>
+                        <th class="px-4 py-3 text-left">Type</th>
+                        <th class="px-4 py-3 text-right">Missing</th>
+                        <th class="px-4 py-3 text-right">Missing %</th>
+                        <th class="px-4 py-3 text-right">Outliers</th>
+                        <th class="px-4 py-3 text-center">Mixed?</th>
+                        <th class="px-4 py-3 text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for col in columns %}
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-4 py-3 font-medium text-slate-800 max-w-[180px] truncate" title="{{ col.name }}">
+                            {{ col.name }}
+                        </td>
+                        <td class="px-4 py-3 text-slate-500 font-mono text-xs">{{ col.dtype }}</td>
+                        <td class="px-4 py-3 text-right text-slate-600">{{ col.missing_count }}</td>
+                        <td class="px-4 py-3 text-right">
+                            <span class="{% if col.missing_pct > 20 %}text-red-600 font-semibold{% elif col.missing_pct > 5 %}text-yellow-600{% else %}text-slate-600{% endif %}">
+                                {{ col.missing_pct }}%
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-right text-slate-600">{{ col.outlier_count }}</td>
+                        <td class="px-4 py-3 text-center">
+                            {% if col.mixed_types %}
+                                <span class="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full">Yes</span>
+                            {% else %}
+                                <span class="text-slate-300">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            {% if col.status == "ok" %}
+                                <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">OK</span>
+                            {% elif col.status == "warning" %}
+                                <span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">Warning</span>
+                            {% else %}
+                                <span class="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-full">Critical</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Flagged Rows Preview -->
+    {% if flagged_rows %}
+    <div class="bg-white border border-yellow-200 rounded-2xl shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-yellow-100 bg-yellow-50 flex items-center justify-between">
+            <h2 class="font-bold text-slate-800">
+                Flagged Rows Preview
+                <span class="text-sm font-normal text-slate-500 ml-1">(showing up to 100)</span>
+            </h2>
+        </div>
+        <div class="overflow-x-auto max-h-64 overflow-y-auto">
+            <table class="w-full text-xs">
+                <thead class="sticky top-0 bg-gray-50">
+                    <tr>
+                        {% for col in flagged_rows[0].keys() %}
+                        <th class="px-3 py-2 text-left text-slate-500 font-semibold uppercase tracking-wide whitespace-nowrap">{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for row in flagged_rows %}
+                    <tr class="hover:bg-yellow-50">
+                        {% for val in row.values() %}
+                        <td class="px-3 py-2 text-slate-700 whitespace-nowrap
+                            {% if val is none or val != val %}text-red-500 italic{% endif %}">
+                            {% if val is none %}null{% elif val != val %}NaN{% else %}{{ val }}{% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="flex flex-wrap gap-3 items-center">
+        {% if flagged_rows %}
+        <form method="post" action="/tools/quality/download" enctype="multipart/form-data" class="inline">
+            <button type="button"
+                    onclick="alert('Re-upload your file using the download form or use the main form above.')"
+                    class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Download flagged rows
+            </button>
+        </form>
+        {% endif %}
+        <a href="/tools/scorecard"
+           class="px-5 py-2.5 bg-purple-100 hover:bg-purple-200 text-purple-700 text-sm font-semibold rounded-lg transition-colors">
+            Score ML readiness &rarr;
+        </a>
+    </div>
+
+    <!-- Feedback -->
+    <div id="feedback-section">
+        {% include "partials/_feedback.html" %}
+    </div>
+
+</div>

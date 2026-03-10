@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}About — xariff{% endblock %}
+{% block description %}Learn about xariff — free ML dataset analysis tools for data scientists.{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-16">
+
+    <div class="mb-12">
+        <h1 class="text-4xl font-extrabold text-slate-900 mb-4">About xariff</h1>
+        <p class="text-xl text-slate-600 leading-relaxed">
+            Free, no-signup ML dataset tools for practitioners who care about data quality.
+        </p>
+    </div>
+
+    <div class="prose prose-slate max-w-none space-y-8">
+
+        <section>
+            <h2 class="text-2xl font-bold text-slate-800 mb-3">Our mission</h2>
+            <p class="text-slate-600 leading-relaxed">
+                Garbage in, garbage out. Every ML practitioner knows this — yet tools for systematically
+                auditing training data are expensive, complex, or locked behind enterprise SaaS.
+                xariff exists to change that. We provide free, fast, browser-based analysis tools
+                that give you the insights you need without the overhead.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-bold text-slate-800 mb-3">Privacy first</h2>
+            <p class="text-slate-600 leading-relaxed">
+                Your data is never stored. CSV files are processed in-memory on upload and discarded
+                immediately after analysis. We use a session cookie only for anonymous analytics.
+                No account, no data retention, no surprises.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-bold text-slate-800 mb-3">Tech stack</h2>
+            <p class="text-slate-600 mb-4">Built with boring, reliable technology:</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <span class="text-blue-500 font-mono text-sm font-bold">FastAPI</span>
+                    <span class="text-slate-500 text-sm">Python web framework</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <span class="text-blue-500 font-mono text-sm font-bold">pandas</span>
+                    <span class="text-slate-500 text-sm">Data processing</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <span class="text-blue-500 font-mono text-sm font-bold">HTMX</span>
+                    <span class="text-slate-500 text-sm">Partial page updates</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <span class="text-blue-500 font-mono text-sm font-bold">Tailwind CSS</span>
+                    <span class="text-slate-500 text-sm">Styling</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <span class="text-blue-500 font-mono text-sm font-bold">SQLite</span>
+                    <span class="text-slate-500 text-sm">Minimal persistence</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <span class="text-blue-500 font-mono text-sm font-bold">Chart.js</span>
+                    <span class="text-slate-500 text-sm">Visualisation</span>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-bold text-slate-800 mb-3">Phase 1 tools</h2>
+            <ul class="space-y-3">
+                <li class="flex items-start gap-3">
+                    <span class="mt-1 w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></span>
+                    <div>
+                        <span class="font-semibold text-slate-800">Quality Checker</span> —
+                        <span class="text-slate-600">Missing values, outliers, duplicates, mixed types, overall quality score.</span>
+                    </div>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="mt-1 w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></span>
+                    <div>
+                        <span class="font-semibold text-slate-800">ML Readiness Scorecard</span> —
+                        <span class="text-slate-600">Class balance, completeness, volume, uniqueness — scored against your ML stage.</span>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-bold text-slate-800 mb-3">Coming in Phase 2</h2>
+            <ul class="space-y-2 text-slate-600">
+                <li class="flex items-center gap-2"><span class="text-gray-400">•</span> Coverage analysis</li>
+                <li class="flex items-center gap-2"><span class="text-gray-400">•</span> Distribution drift detection</li>
+                <li class="flex items-center gap-2"><span class="text-gray-400">•</span> Advanced outlier detection</li>
+                <li class="flex items-center gap-2"><span class="text-gray-400">•</span> Label quality audit</li>
+                <li class="flex items-center gap-2"><span class="text-gray-400">•</span> Feature redundancy checker</li>
+                <li class="flex items-center gap-2"><span class="text-gray-400">•</span> Bias detection</li>
+            </ul>
+        </section>
+
+    </div>
+
+    <div class="mt-12 pt-8 border-t border-slate-200">
+        <a href="/tools" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors">
+            Explore the tools
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+    </div>
+</div>
+{% endblock %}

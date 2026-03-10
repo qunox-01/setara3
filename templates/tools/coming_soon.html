@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tool_name }} — Coming Soon — xariff{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-20 text-center">
+    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+    </div>
+    <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm font-semibold rounded-full mb-4 inline-block">Coming soon</span>
+    <h1 class="text-3xl font-extrabold text-slate-900 mb-4">{{ tool_name }}</h1>
+    <p class="text-slate-600 text-lg mb-8">This tool is in development and will be available in Phase 2.</p>
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="/tools" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-semibold transition-colors">
+            Browse live tools
+        </a>
+    </div>
+
+    <div class="mt-12 p-6 bg-blue-50 rounded-2xl border border-blue-100">
+        <p class="text-slate-700 font-medium mb-3">Get notified when it launches</p>
+        <div id="notify-result">
+            <form hx-post="/api/email-capture"
+                  hx-target="#notify-result"
+                  hx-swap="outerHTML"
+                  class="flex gap-2">
+                <input type="hidden" name="source" value="coming_soon" />
+                <input type="hidden" name="tool" value="{{ tool_name }}" />
+                <input type="email" name="email" required placeholder="your@email.com"
+                       class="flex-1 px-4 py-2 border border-blue-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                <button type="submit"
+                        class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition-colors">
+                    Notify me
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

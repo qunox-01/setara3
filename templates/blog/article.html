@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.metadata.title }} — xariff{% endblock %}
+{% block description %}{{ article.metadata.description | default("Read this article on ML data quality from xariff.") }}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-12">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+        <!-- Main Article Content -->
+        <article class="flex-1 min-w-0">
+
+            <!-- Breadcrumb -->
+            <div class="flex items-center gap-2 text-sm text-slate-500 mb-6">
+                <a href="/blog" class="hover:text-blue-500 transition-colors">Blog</a>
+                <span>/</span>
+                <span class="text-slate-800 truncate">{{ article.metadata.title }}</span>
+            </div>
+
+            <!-- Header -->
+            <header class="mb-8">
+                {% if article.metadata.tags %}
+                <div class="flex flex-wrap gap-2 mb-4">
+                    {% for tag in article.metadata.tags %}
+                    <span class="px-2.5 py-0.5 bg-blue-50 text-blue-600 text-xs font-medium rounded-full">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 leading-tight">
+                    {{ article.metadata.title }}
+                </h1>
+
+                {% if article.metadata.description %}
+                <p class="text-xl text-slate-600 leading-relaxed mb-4">{{ article.metadata.description }}</p>
+                {% endif %}
+
+                {% if article.metadata.date %}
+                <div class="flex items-center gap-2 text-sm text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <time>{{ article.metadata.date }}</time>
+                </div>
+                {% endif %}
+            </header>
+
+            <!-- Article Body -->
+            <div class="prose prose-slate prose-lg max-w-none
+                        prose-headings:font-bold prose-headings:text-slate-900
+                        prose-p:text-slate-700 prose-p:leading-relaxed
+                        prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+                        prose-code:text-blue-700 prose-code:bg-blue-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+                        prose-pre:bg-slate-900 prose-pre:text-slate-100
+                        prose-blockquote:border-blue-400 prose-blockquote:text-slate-600
+                        prose-ul:text-slate-700 prose-ol:text-slate-700">
+                {{ article.content_html | safe }}
+            </div>
+
+            <!-- Inline CTA after article -->
+            <div class="mt-12 p-6 bg-blue-50 border border-blue-200 rounded-2xl">
+                <h3 class="font-bold text-slate-900 mb-2">Check your own dataset</h3>
+                <p class="text-slate-600 text-sm mb-4">
+                    Upload your CSV and instantly get a quality score, column breakdown, and actionable recommendations.
+                    Free — no signup needed.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="/tools/quality"
+                       class="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition-colors text-center">
+                        Check data quality
+                    </a>
+                    <a href="/tools/scorecard"
+                       class="px-5 py-2.5 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-lg border border-slate-300 transition-colors text-center">
+                        Score ML readiness
+                    </a>
+                </div>
+            </div>
+
+            <!-- Back link -->
+            <div class="mt-8">
+                <a href="/blog" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-500 text-sm transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to blog
+                </a>
+            </div>
+
+        </article>
+
+        <!-- Sidebar -->
+        <aside class="lg:w-72 flex-shrink-0">
+            <div class="sticky top-24 space-y-6">
+
+                <!-- Tool CTA -->
+                <div class="bg-slate-900 text-white rounded-2xl p-6">
+                    <h3 class="font-bold mb-2 text-lg">Try xariff free</h3>
+                    <p class="text-slate-400 text-sm mb-4">Upload your CSV — get a quality report in seconds. No signup.</p>
+                    <a href="/tools/quality"
+                       class="block text-center px-4 py-2.5 bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold rounded-lg transition-colors">
+                        Check data quality
+                    </a>
+                </div>
+
+                <!-- Related articles -->
+                {% if related %}
+                <div class="bg-white border border-gray-200 rounded-2xl p-5">
+                    <h3 class="font-bold text-slate-800 mb-4 text-sm uppercase tracking-wide">Related articles</h3>
+                    <div class="space-y-4">
+                        {% for rel in related %}
+                        <a href="/blog/{{ rel.slug }}"
+                           class="block group">
+                            <h4 class="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors leading-snug mb-1">
+                                {{ rel.title }}
+                            </h4>
+                            {% if rel.date %}
+                            <span class="text-xs text-slate-400">{{ rel.date }}</span>
+                            {% endif %}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Tags -->
+                {% if article.metadata.tags %}
+                <div class="bg-white border border-gray-200 rounded-2xl p-5">
+                    <h3 class="font-bold text-slate-800 mb-3 text-sm uppercase tracking-wide">Tags</h3>
+                    <div class="flex flex-wrap gap-2">
+                        {% for tag in article.metadata.tags %}
+                        <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-full">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </aside>
+
+    </div>
+</div>
+{% endblock %}

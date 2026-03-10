@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}ML Dataset Tools — xariff{% endblock %}
+{% block description %}Free ML dataset analysis tools: Quality Checker, ML Readiness Scorecard, and more.{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-12">
+
+    <div class="mb-10">
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-3">ML Dataset Tools</h1>
+        <p class="text-slate-500 text-lg">Upload your CSV and get instant insights. No signup. No data stored.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Quality Checker — Live -->
+        <a href="/tools/quality"
+           class="group bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-blue-300 transition-all duration-200 flex flex-col">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-500 transition-colors">
+                    <svg class="w-5 h-5 text-blue-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <span class="px-2.5 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-full">Live</span>
+            </div>
+            <h2 class="text-lg font-bold text-slate-900 mb-2">Quality Checker</h2>
+            <p class="text-slate-500 text-sm leading-relaxed flex-1">
+                Detect missing values, outliers, duplicates, and type issues. Get a 0–100 quality score.
+            </p>
+            <div class="mt-4 flex items-center gap-1 text-blue-500 text-sm font-semibold group-hover:gap-2 transition-all">
+                Analyse now
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+        </a>
+
+        <!-- ML Scorecard — Live -->
+        <a href="/tools/scorecard"
+           class="group bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-purple-300 transition-all duration-200 flex flex-col">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-500 transition-colors">
+                    <svg class="w-5 h-5 text-purple-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
+                <span class="px-2.5 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-full">Live</span>
+            </div>
+            <h2 class="text-lg font-bold text-slate-900 mb-2">ML Readiness Scorecard</h2>
+            <p class="text-slate-500 text-sm leading-relaxed flex-1">
+                Score your dataset across quality, balance, completeness, volume, and uniqueness.
+            </p>
+            <div class="mt-4 flex items-center gap-1 text-purple-500 text-sm font-semibold group-hover:gap-2 transition-all">
+                Score now
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+        </a>
+
+        <!-- Coverage — Coming Soon -->
+        <div class="bg-white border border-gray-200 rounded-2xl p-6 opacity-70 flex flex-col cursor-default">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+                    </svg>
+                </div>
+                <span class="px-2.5 py-0.5 bg-gray-100 text-gray-500 text-xs font-bold rounded-full">Coming soon</span>
+            </div>
+            <h2 class="text-lg font-bold text-slate-700 mb-2">Coverage Checker</h2>
+            <p class="text-slate-400 text-sm leading-relaxed flex-1">
+                Identify gaps in data coverage across feature distributions and subgroups.
+            </p>
+        </div>
+
+        <!-- Outlier Detector — Coming Soon -->
+        <div class="bg-white border border-gray-200 rounded-2xl p-6 opacity-70 flex flex-col cursor-default">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                    </svg>
+                </div>
+                <span class="px-2.5 py-0.5 bg-gray-100 text-gray-500 text-xs font-bold rounded-full">Coming soon</span>
+            </div>
+            <h2 class="text-lg font-bold text-slate-700 mb-2">Outlier Detector</h2>
+            <p class="text-slate-400 text-sm leading-relaxed flex-1">
+                Advanced multivariate outlier detection using Isolation Forest and DBSCAN.
+            </p>
+        </div>
+
+        <!-- Drift Detection — Coming Soon -->
+        <div class="bg-white border border-gray-200 rounded-2xl p-6 opacity-70 flex flex-col cursor-default">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                </div>
+                <span class="px-2.5 py-0.5 bg-gray-100 text-gray-500 text-xs font-bold rounded-full">Coming soon</span>
+            </div>
+            <h2 class="text-lg font-bold text-slate-700 mb-2">Drift Detector</h2>
+            <p class="text-slate-400 text-sm leading-relaxed flex-1">
+                Compare training vs production distributions with KS tests and PSI scores.
+            </p>
+        </div>
+
+        <!-- Bias Detector — Coming Soon -->
+        <div class="bg-white border border-gray-200 rounded-2xl p-6 opacity-70 flex flex-col cursor-default">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                    </svg>
+                </div>
+                <span class="px-2.5 py-0.5 bg-gray-100 text-gray-500 text-xs font-bold rounded-full">Coming soon</span>
+            </div>
+            <h2 class="text-lg font-bold text-slate-700 mb-2">Bias Detector</h2>
+            <p class="text-slate-400 text-sm leading-relaxed flex-1">
+                Audit your dataset for representation bias across demographic and categorical features.
+            </p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

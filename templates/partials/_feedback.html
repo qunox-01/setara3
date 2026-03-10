@@ -1,0 +1,34 @@
+<!-- Feedback partial -->
+<div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
+    <div id="feedback-inner">
+        <p class="text-sm text-slate-600 font-medium mb-3">Was this analysis useful?</p>
+        <div class="flex flex-wrap gap-2">
+            <button onclick="submitFeedback('yes')"
+                    class="px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 text-sm font-medium rounded-lg transition-colors">
+                Yes, helpful
+            </button>
+            <button onclick="submitFeedback('no')"
+                    class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-medium rounded-lg transition-colors">
+                Not really
+            </button>
+            <button onclick="submitFeedback('missing')"
+                    class="px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-medium rounded-lg transition-colors">
+                Something missing
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function submitFeedback(useful) {
+    const tool = window.location.pathname.split('/').pop() || 'unknown';
+    fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ tool, useful, comment: '' })
+    }).then(() => {
+        document.getElementById('feedback-inner').innerHTML =
+            '<p class="text-sm text-blue-600 font-medium">Thanks for your feedback!</p>';
+    }).catch(console.error);
+}
+</script>
