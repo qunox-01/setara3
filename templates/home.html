@@ -24,6 +24,10 @@
                class="px-8 py-3.5 bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded-xl shadow-lg transition-all hover:shadow-blue-500/25 hover:scale-105">
                 Check Data Quality
             </a>
+            <a href="/tools/profiler"
+               class="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all">
+                Profile Dataset
+            </a>
             <a href="/tools/scorecard"
                class="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all">
                 ML Readiness Scorecard
@@ -37,7 +41,7 @@
     <div class="max-w-4xl mx-auto px-4">
         <div class="grid grid-cols-3 gap-4 text-center">
             <div>
-                <div class="text-2xl font-bold text-blue-400">2</div>
+                <div class="text-2xl font-bold text-blue-400">3</div>
                 <div class="text-xs text-slate-400 mt-0.5">Free tools</div>
             </div>
             <div>
@@ -60,7 +64,7 @@
             <p class="text-slate-500 text-lg">No code. No signup. Upload your CSV and get results instantly.</p>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-6">
+        <div class="grid md:grid-cols-3 gap-6">
 
             <!-- Quality Checker Card -->
             <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl hover:border-blue-200 transition-all duration-300">
@@ -101,6 +105,51 @@
                 <a href="/tools/quality"
                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition-colors">
                     Analyse my data
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Dataset Profiler Card -->
+            <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl hover:border-indigo-200 transition-all duration-300">
+                <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-indigo-500 transition-colors">
+                    <svg class="w-6 h-6 text-indigo-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                </div>
+                <div class="flex items-center gap-2 mb-3">
+                    <h3 class="text-xl font-bold text-slate-900">Dataset Profiler</h3>
+                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Live</span>
+                </div>
+                <p class="text-slate-600 mb-6 leading-relaxed">
+                    Get a full statistical profile of every column — distributions, histograms,
+                    box plots, correlations, and skewness analysis in one view.
+                </p>
+                <ul class="space-y-2 mb-6">
+                    <li class="flex items-center gap-2 text-sm text-slate-600">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Mean, median, mode, variance, IQR per column
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-slate-600">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Histograms, box plots with outlier dots
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-slate-600">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Pearson correlation heatmap
+                    </li>
+                </ul>
+                <a href="/tools/profiler"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold rounded-lg transition-colors">
+                    Profile my dataset
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>

@@ -37,12 +37,42 @@
             <div class="text-3xl font-extrabold text-slate-800 mb-1">{{ flagged_count }}</div>
             <div class="text-xs text-slate-500 font-medium uppercase tracking-wide">Flagged Rows</div>
         </div>
-    </div>
 
-    <!-- Memory info -->
-    <div class="text-xs text-slate-400 text-right">
-        Memory footprint: {{ summary.memory_mb }} MB &nbsp;|&nbsp;
-        Duplicate rows: {{ summary.total_duplicates }}
+        <div class="bg-white border rounded-xl p-4 text-center shadow-sm
+            {% if summary.missing_pct > 20 %}border-red-200 bg-red-50
+            {% elif summary.missing_pct > 5 %}border-yellow-200 bg-yellow-50
+            {% else %}border-gray-200{% endif %}">
+            <div class="text-3xl font-extrabold mb-1
+                {% if summary.missing_pct > 20 %}text-red-600
+                {% elif summary.missing_pct > 5 %}text-yellow-600
+                {% else %}text-slate-800{% endif %}">
+                {{ summary.missing_pct }}%
+            </div>
+            <div class="text-xs text-slate-500 font-medium uppercase tracking-wide">Missing Cells</div>
+        </div>
+
+        <div class="bg-white border rounded-xl p-4 text-center shadow-sm
+            {% if summary.duplicate_pct > 20 %}border-red-200 bg-red-50
+            {% elif summary.duplicate_pct > 5 %}border-yellow-200 bg-yellow-50
+            {% else %}border-gray-200{% endif %}">
+            <div class="text-3xl font-extrabold mb-1
+                {% if summary.duplicate_pct > 20 %}text-red-600
+                {% elif summary.duplicate_pct > 5 %}text-yellow-600
+                {% else %}text-slate-800{% endif %}">
+                {{ summary.duplicate_pct }}%
+            </div>
+            <div class="text-xs text-slate-500 font-medium uppercase tracking-wide">Duplicate Rows</div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">
+            <div class="text-3xl font-extrabold text-slate-800 mb-1">{{ summary.missing_total }}</div>
+            <div class="text-xs text-slate-500 font-medium uppercase tracking-wide">Missing Count</div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">
+            <div class="text-3xl font-extrabold text-slate-800 mb-1">{{ summary.memory_mb }}</div>
+            <div class="text-xs text-slate-500 font-medium uppercase tracking-wide">Memory (MB)</div>
+        </div>
     </div>
 
     <!-- Column Stats Table -->

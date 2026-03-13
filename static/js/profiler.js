@@ -140,12 +140,9 @@ function renderOverview(ds) {
         <div>
             <h2 class="text-xl font-bold text-slate-800 mb-4">Dataset Overview</h2>
             ${sampleBanner}
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div class="grid grid-cols-3 gap-3">
                 ${metricCard(fmtNum(ds.rows), 'Rows')}
                 ${metricCard(fmtNum(ds.columns), 'Columns')}
-                ${metricCard(ds.missing_pct + '%', 'Missing cells', missingColor(ds.missing_pct))}
-                ${metricCard(ds.duplicate_pct + '%', 'Duplicate rows', ds.duplicate_pct > 5 ? 'text-yellow-600' : 'text-slate-900')}
-                ${metricCard(fmtNum(ds.missing_total), 'Missing count')}
                 ${metricCard(formatBytes(ds.memory_bytes), 'Memory')}
             </div>
         </div>`;

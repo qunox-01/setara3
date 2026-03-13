@@ -44,6 +44,10 @@ def analyse(df: pd.DataFrame) -> dict:
 
     dup_mask = df.duplicated(keep=False)
     total_duplicates = int(dup_mask.sum())
+    total_cells = total_rows * total_columns
+    missing_total = int(df.isna().sum().sum())
+    missing_pct_overall = round(missing_total / total_cells * 100, 2) if total_cells else 0.0
+    duplicate_pct = round(total_duplicates / total_rows * 100, 2) if total_rows else 0.0
 
     columns_info = []
     penalty = 0.0
@@ -108,6 +112,9 @@ def analyse(df: pd.DataFrame) -> dict:
             "overall_score": overall_score,
             "verdict": verdict,
             "total_duplicates": total_duplicates,
+            "duplicate_pct": duplicate_pct,
+            "missing_total": missing_total,
+            "missing_pct": missing_pct_overall,
         },
         "columns": columns_info,
         "flagged_rows": flagged_rows,
