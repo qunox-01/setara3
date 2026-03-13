@@ -43,6 +43,12 @@ async def profiler_analyze(file: UploadFile = File(...)):
     if df is None:
         raise HTTPException(status_code=422, detail=f"Could not parse CSV: {last_error}")
 
+    if len(df.columns) > 50:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Dataset has {len(df.columns)} features. Maximum allowed is 50."
+        )
+
     try:
         result = profiler_service.compute_profile(df)
     except MemoryError:

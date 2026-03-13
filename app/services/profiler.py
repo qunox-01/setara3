@@ -40,13 +40,21 @@ def _boxplot(series: pd.Series) -> dict | None:
     iqr = q3 - q1
     w_lo = float(max(vals.min(), q1 - 1.5 * iqr))
     w_hi = float(min(vals.max(), q3 + 1.5 * iqr))
+    outlier_mask = (vals < w_lo) | (vals > w_hi)
+    outlier_vals = vals[outlier_mask]
+    sample_n = min(150, len(outlier_vals))
+    outlier_sample = (
+        outlier_vals.sample(n=sample_n, random_state=42).round(6).tolist()
+        if sample_n > 0 else []
+    )
     return {
         "q1": round(q1, 6),
         "median": round(med, 6),
         "q3": round(q3, 6),
         "whisker_low": round(w_lo, 6),
         "whisker_high": round(w_hi, 6),
-        "outlier_count": int(((vals < w_lo) | (vals > w_hi)).sum()),
+        "outlier_count": int(outlier_mask.sum()),
+        "outlier_values": outlier_sample,
     }
 
 
@@ -56,6 +64,8 @@ def _num_stats(series: pd.Series) -> dict:
         return {}
     q1 = float(vals.quantile(0.25))
     q3 = float(vals.quantile(0.75))
+    min_val = float(vals.min())
+    max_val = float(vals.max())
     skew, kurt = None, None
     if len(vals) >= 3:
         try:
@@ -68,12 +78,18 @@ def _num_stats(series: pd.Series) -> dict:
         except Exception:
             pass
     std = vals.std()
+    variance = vals.var()
+    modes = vals.mode()
+    mode_val = float(modes.iloc[0]) if len(modes) else None
     return {
         "mean": round(float(vals.mean()), 6),
         "median": round(float(vals.median()), 6),
+        "mode": round(mode_val, 6) if mode_val is not None else None,
         "std": round(float(std), 6) if not pd.isna(std) else None,
-        "min": round(float(vals.min()), 6),
-        "max": round(float(vals.max()), 6),
+        "variance": round(float(variance), 6) if not pd.isna(variance) else None,
+        "min": round(min_val, 6),
+        "max": round(max_val, 6),
+        "range": round(max_val - min_val, 6),
         "q1": round(q1, 6),
         "q3": round(q3, 6),
         "iqr": round(q3 - q1, 6),

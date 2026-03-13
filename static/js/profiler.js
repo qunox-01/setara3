@@ -122,6 +122,7 @@ function showError(msg) {
 function renderResults(data) {
     renderOverview(data.dataset);
     renderFeatureTable(data.features);
+    renderDistributions(data.features);
     renderCorrelations(data.correlations);
 }
 
@@ -249,50 +250,63 @@ function toggleDetail(f, row) {
 // ─── Section C: Per-Feature Detail ───────────────────────────────────────────
 
 function renderDetailHTML(f) {
-    let html = `<div class="grid lg:grid-cols-2 gap-6">`;
+    // ── Metadata pills ────────────────────────────────────────────────────────
+    const metaPills = `
+        <div class="flex flex-wrap gap-2 mb-4 text-xs">
+            <span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full">dtype: <strong>${esc(f.dtype)}</strong></span>
+            <span class="px-2.5 py-1 ${f.missing_pct > 20 ? 'bg-red-50 text-red-700' : f.missing_pct > 5 ? 'bg-yellow-50 text-yellow-700' : 'bg-green-50 text-green-700'} rounded-full">
+                missing: <strong>${f.missing_count} (${f.missing_pct}%)</strong>
+            </span>
+            <span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full">unique: <strong>${fmtNum(f.unique_count)} (${f.unique_pct}%)</strong></span>
+        </div>`;
 
-    // Stats table
-    html += `<div>
-        <h4 class="text-sm font-semibold text-slate-600 mb-2 uppercase tracking-wide">Statistics</h4>
-        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden text-sm">
-            <table class="w-full">
-                <tbody>
-                    ${statRow('Type', f.type)}
-                    ${statRow('dtype', f.dtype)}
-                    ${statRow('Missing', f.missing_count + ' (' + f.missing_pct + '%)')}
-                    ${statRow('Unique', fmtNum(f.unique_count) + ' (' + f.unique_pct + '%)')}`;
+    let html = `<div>${metaPills}`;
 
     if (f.type === 'numeric' && f.stats) {
-        html += statRow('Mean', fmtNum6(f.stats.mean));
-        html += statRow('Median', fmtNum6(f.stats.median));
-        html += statRow('Std dev', fmtNum6(f.stats.std));
-        html += statRow('Min', fmtNum6(f.stats.min));
-        html += statRow('Max', fmtNum6(f.stats.max));
-        html += statRow('Q1 / Q3', fmtNum6(f.stats.q1) + ' / ' + fmtNum6(f.stats.q3));
-        html += statRow('IQR', fmtNum6(f.stats.iqr));
-        if (f.stats.skewness !== null) html += statRow('Skewness', f.stats.skewness);
-        if (f.stats.kurtosis !== null) html += statRow('Kurtosis', f.stats.kurtosis);
-    } else if (f.type === 'categorical' && f.stats) {
-        html += statRow('Mode', esc(String(f.stats.mode ?? '—')));
-    } else if (f.type === 'datetime' && f.stats) {
-        html += statRow('Min date', f.stats.min_date ?? '—');
-        html += statRow('Max date', f.stats.max_date ?? '—');
-        html += statRow('Date range', f.stats.date_range_days != null ? f.stats.date_range_days + ' days' : '—');
-    } else if (f.type === 'text' && f.stats) {
-        html += statRow('Avg length', f.stats.avg_length);
-        html += statRow('Min length', f.stats.min_length);
-        html += statRow('Max length', f.stats.max_length);
-    }
+        // ── Two stat cards + charts ───────────────────────────────────────────
+        html += `<div class="grid lg:grid-cols-2 gap-4 mb-4">`;
 
-    html += `</tbody></table></div></div>`;
+        // Card 1: Central tendency
+        html += `<div>
+            <h4 class="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">Central tendency</h4>
+            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden text-sm">
+                <table class="w-full">
+                    <tbody>
+                        ${statRow('Mean', fmtNum6(f.stats.mean), 'Average value')}
+                        ${statRow('Median', fmtNum6(f.stats.median), 'Middle value')}
+                        ${statRow('Mode', fmtNum6(f.stats.mode), 'Most common value')}
+                    </tbody>
+                </table>
+            </div>
+        </div>`;
 
-    // Charts column
-    html += `<div class="space-y-4">`;
+        // Card 2: Spread / variability
+        const spreadRows = [
+            statRow('Std deviation', fmtNum6(f.stats.std), 'σ'),
+            statRow('Variance', fmtNum6(f.stats.variance), 'σ²'),
+            statRow('Min', fmtNum6(f.stats.min)),
+            statRow('Max', fmtNum6(f.stats.max)),
+            statRow('Range', fmtNum6(f.stats.range), 'Max − Min'),
+            statRow('IQR', fmtNum6(f.stats.iqr), 'Q3 − Q1'),
+            statRow('Q1 / Q3', `${fmtNum6(f.stats.q1)} / ${fmtNum6(f.stats.q3)}`),
+            f.stats.skewness !== null ? statRow('Skewness', f.stats.skewness) : '',
+            f.stats.kurtosis !== null ? statRow('Kurtosis', f.stats.kurtosis) : '',
+        ].join('');
 
-    if (f.type === 'numeric') {
+        html += `<div>
+            <h4 class="text-xs font-semibold text-purple-600 uppercase tracking-wider mb-2">Spread / variability</h4>
+            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden text-sm">
+                <table class="w-full"><tbody>${spreadRows}</tbody></table>
+            </div>
+        </div>`;
+
+        html += `</div>`; // end two-card grid
+
+        // Charts row
+        html += `<div class="grid lg:grid-cols-2 gap-4">`;
         if (f.histogram && f.histogram.length) {
             html += `<div>
-                <h4 class="text-sm font-semibold text-slate-600 mb-2 uppercase tracking-wide">Distribution</h4>
+                <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Distribution</h4>
                 <div class="bg-white rounded-xl border border-gray-200 p-3">
                     <canvas id="hist-${CSS.escape(f.name)}" height="140"></canvas>
                 </div>
@@ -300,21 +314,47 @@ function renderDetailHTML(f) {
         }
         if (f.box_plot) {
             html += `<div>
-                <h4 class="text-sm font-semibold text-slate-600 mb-2 uppercase tracking-wide">Box Plot</h4>
-                <div id="boxplot-${CSS.escape(f.name)}" class="bg-white rounded-xl border border-gray-200 p-4">
+                <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Box Plot</h4>
+                <div id="boxplot-${CSS.escape(f.name)}" class="bg-white rounded-xl border border-gray-200 p-4"></div>
+            </div>`;
+        }
+        html += `</div>`;
+
+    } else {
+        // ── Non-numeric: single stats table + chart ───────────────────────────
+        html += `<div class="grid lg:grid-cols-2 gap-4">`;
+        html += `<div>
+            <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Statistics</h4>
+            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden text-sm">
+                <table class="w-full"><tbody>`;
+
+        if (f.type === 'categorical' && f.stats) {
+            html += statRow('Mode', esc(String(f.stats.mode ?? '—')));
+        } else if (f.type === 'datetime' && f.stats) {
+            html += statRow('Min date', f.stats.min_date ?? '—');
+            html += statRow('Max date', f.stats.max_date ?? '—');
+            html += statRow('Date range', f.stats.date_range_days != null ? f.stats.date_range_days + ' days' : '—');
+        } else if (f.type === 'text' && f.stats) {
+            html += statRow('Avg length', f.stats.avg_length);
+            html += statRow('Min length', f.stats.min_length);
+            html += statRow('Max length', f.stats.max_length);
+        }
+
+        html += `</tbody></table></div></div>`;
+
+        if ((f.type === 'categorical' || f.type === 'text') && f.top_values && f.top_values.length) {
+            html += `<div>
+                <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Top values</h4>
+                <div class="bg-white rounded-xl border border-gray-200 p-3">
+                    <canvas id="bar-${CSS.escape(f.name)}" height="180"></canvas>
                 </div>
             </div>`;
         }
-    } else if ((f.type === 'categorical' || f.type === 'text') && f.top_values && f.top_values.length) {
-        html += `<div>
-            <h4 class="text-sm font-semibold text-slate-600 mb-2 uppercase tracking-wide">Top values</h4>
-            <div class="bg-white rounded-xl border border-gray-200 p-3">
-                <canvas id="bar-${CSS.escape(f.name)}" height="180"></canvas>
-            </div>
-        </div>`;
+
+        html += `</div>`;
     }
 
-    html += `</div></div>`;
+    html += `</div>`;
     return html;
 }
 
@@ -493,6 +533,254 @@ function corrColor(val) {
         : `hsl(0,${saturation}%,${lightness}%)`;
 }
 
+// ─── Section E: Numeric Distributions ────────────────────────────────────────
+
+function classifyDistribution(skewness, kurtosis) {
+    if (skewness == null) return { label: null, color: 'gray', desc: '' };
+    const s = skewness, k = kurtosis ?? 0;
+    if (Math.abs(s) <= 0.5 && k > 2)  return { label: 'Heavy-tailed',       color: 'amber',  desc: 'Excess kurtosis — more extreme values than a normal distribution' };
+    if (Math.abs(s) <= 0.5 && k < -1) return { label: 'Light-tailed',        color: 'teal',   desc: 'Platykurtic — fewer extreme values than normal' };
+    if (Math.abs(s) <= 0.5)            return { label: 'Normal-like',         color: 'green',  desc: 'Approximately symmetric and bell-shaped' };
+    if (s > 1)                         return { label: 'Highly right-skewed', color: 'red',    desc: 'Heavy right tail — consider log transform' };
+    if (s > 0.5)                       return { label: 'Right-skewed',        color: 'orange', desc: 'Tail extends to the right' };
+    if (s < -1)                        return { label: 'Highly left-skewed',  color: 'red',    desc: 'Heavy left tail' };
+    return                                    { label: 'Left-skewed',         color: 'purple', desc: 'Tail extends to the left' };
+}
+
+function buildBoxPlotSVG(bp, stats) {
+    const W = 520, H = 130;
+    const PL = 14, PR = 14;
+    const plotW = W - PL - PR;
+
+    // Scale bounds — extend to include outliers so dots don't clip
+    let lo = bp.whisker_low, hi = bp.whisker_high;
+    if (bp.outlier_values?.length) {
+        lo = Math.min(lo, Math.min(...bp.outlier_values));
+        hi = Math.max(hi, Math.max(...bp.outlier_values));
+    }
+    const span = (hi - lo) || 1;
+    const pad  = span * 0.07;
+    lo -= pad; hi += pad;
+    const range = hi - lo;
+    const px = v => PL + ((v - lo) / range) * plotW;
+
+    const BOX_Y = 42, BOX_H = 34, BOX_MID = BOX_Y + BOX_H / 2;
+
+    const xWL   = px(bp.whisker_low);
+    const xQ1   = px(bp.q1);
+    const xMed  = px(bp.median);
+    const xQ3   = px(bp.q3);
+    const xWH   = px(bp.whisker_high);
+    const xMean = stats?.mean != null ? px(stats.mean) : null;
+
+    // Clamp label anchor x to stay inside viewBox
+    const clamp = x => Math.max(PL + 24, Math.min(W - PR - 24, x));
+
+    let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" class="w-full" style="max-height:${H}px">`;
+
+    // ── Whisker lines ─────────────────────────────────────────────────────────
+    s += `<line x1="${xWL}" y1="${BOX_MID}" x2="${xQ1}"  y2="${BOX_MID}" stroke="#cbd5e1" stroke-width="1.5"/>`;
+    s += `<line x1="${xQ3}" y1="${BOX_MID}" x2="${xWH}"  y2="${BOX_MID}" stroke="#cbd5e1" stroke-width="1.5"/>`;
+    // End caps
+    const capH = 12;
+    s += `<line x1="${xWL}" y1="${BOX_MID - capH/2}" x2="${xWL}" y2="${BOX_MID + capH/2}" stroke="#94a3b8" stroke-width="2"/>`;
+    s += `<line x1="${xWH}" y1="${BOX_MID - capH/2}" x2="${xWH}" y2="${BOX_MID + capH/2}" stroke="#94a3b8" stroke-width="2"/>`;
+
+    // ── IQR box ───────────────────────────────────────────────────────────────
+    const boxW = Math.max(2, xQ3 - xQ1);
+    s += `<rect x="${xQ1}" y="${BOX_Y}" width="${boxW}" height="${BOX_H}" fill="rgba(59,130,246,0.13)" stroke="#3b82f6" stroke-width="1.5" rx="3"/>`;
+
+    // ── Median line ───────────────────────────────────────────────────────────
+    s += `<line x1="${xMed}" y1="${BOX_Y}" x2="${xMed}" y2="${BOX_Y + BOX_H}" stroke="#1d4ed8" stroke-width="2.5"/>`;
+
+    // ── Mean diamond ─────────────────────────────────────────────────────────
+    if (xMean !== null) {
+        const d = 5;
+        s += `<polygon points="${xMean},${BOX_MID-d} ${xMean+d},${BOX_MID} ${xMean},${BOX_MID+d} ${xMean-d},${BOX_MID}" fill="#fbbf24" stroke="#d97706" stroke-width="1.2"/>`;
+    }
+
+    // ── Outlier dots (deterministic jitter on y so stacked values spread) ────
+    if (bp.outlier_values?.length) {
+        bp.outlier_values.forEach((v, i) => {
+            const x = px(v);
+            const jitter = ((i * 7 + 3) % 9 - 4) * 0.9;
+            s += `<circle cx="${x}" cy="${BOX_MID + jitter}" r="3" fill="rgba(239,68,68,0.38)" stroke="rgba(220,38,38,0.65)" stroke-width="0.8"/>`;
+        });
+    }
+
+    // ── Labels above box: Q1, Median, Q3 ─────────────────────────────────────
+    const aboveY  = BOX_Y - 4;
+    const tickLen = 9;
+
+    const aboveLabel = (x, text, color) => {
+        const cx = clamp(x);
+        return `<line x1="${x}" y1="${aboveY}" x2="${cx}" y2="${aboveY - tickLen}" stroke="${color}" stroke-width="0.8" opacity="0.55"/>` +
+               `<text x="${cx}" y="${aboveY - tickLen - 3}" text-anchor="middle" font-size="9" fill="${color}" font-family="ui-monospace,monospace">${text}</text>`;
+    };
+
+    s += aboveLabel(xQ1,  `Q1 ${fmtNum6(bp.q1)}`,       '#3b82f6');
+    s += aboveLabel(xMed, `Med ${fmtNum6(bp.median)}`,   '#1d4ed8');
+    s += aboveLabel(xQ3,  `Q3 ${fmtNum6(bp.q3)}`,       '#3b82f6');
+
+    // ── Labels below box: Min, Mean, Max ─────────────────────────────────────
+    const belowY = BOX_Y + BOX_H + 4;
+
+    const belowLabel = (x, text, color) => {
+        const cx = clamp(x);
+        return `<line x1="${x}" y1="${belowY}" x2="${cx}" y2="${belowY + tickLen}" stroke="${color}" stroke-width="0.8" opacity="0.55"/>` +
+               `<text x="${cx}" y="${belowY + tickLen + 11}" text-anchor="middle" font-size="9" fill="${color}" font-family="ui-monospace,monospace">${text}</text>`;
+    };
+
+    s += belowLabel(xWL, `Min ${fmtNum6(bp.whisker_low)}`,  '#64748b');
+    s += belowLabel(xWH, `Max ${fmtNum6(bp.whisker_high)}`, '#64748b');
+    if (xMean !== null) {
+        s += belowLabel(xMean, `Mean ${fmtNum6(stats.mean)}`, '#d97706');
+    }
+
+    s += '</svg>';
+    return s;
+}
+
+function renderDistributionHistogram(canvas, bins, stats) {
+    const existing = Chart.getChart(canvas);
+    if (existing) existing.destroy();
+
+    // Pick bar color by distribution shape
+    const s = stats?.skewness ?? 0;
+    const k = stats?.kurtosis ?? 0;
+    let color;
+    if (Math.abs(s) <= 0.5 && k > 2)  color = 'rgba(245,158,11,0.65)';   // amber  — heavy-tailed
+    else if (Math.abs(s) <= 0.5)       color = 'rgba(99,102,241,0.65)';   // indigo — normal-like
+    else if (s > 0)                    color = 'rgba(249,115,22,0.65)';   // orange — right-skewed
+    else                               color = 'rgba(168,85,247,0.65)';   // purple — left-skewed
+
+    new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: bins.map(b => fmtNum6(b.bin_start)),
+            datasets: [{
+                data: bins.map(b => b.count),
+                backgroundColor: color,
+                borderColor: color.replace('0.65', '0.9'),
+                borderWidth: 1,
+                borderRadius: 2,
+                barPercentage: 1.0,
+                categoryPercentage: 1.0,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        title: items => {
+                            const i = items[0].dataIndex;
+                            return `${fmtNum6(bins[i].bin_start)} – ${fmtNum6(bins[i].bin_end)}`;
+                        },
+                        label: item => ` count: ${fmtNum(item.raw)}`,
+                    }
+                }
+            },
+            scales: {
+                x: { ticks: { maxTicksLimit: 5, font: { size: 9 } }, grid: { display: false } },
+                y: { ticks: { font: { size: 9 } }, grid: { color: 'rgba(0,0,0,0.04)' } }
+            }
+        }
+    });
+}
+
+function renderDistributions(features) {
+    const el = document.getElementById('profiler-distributions');
+    if (!el) return;
+
+    const numFeatures = features.filter(f => f.type === 'numeric');
+    if (!numFeatures.length) { el.innerHTML = ''; return; }
+
+    const badgeClass = {
+        green:  'bg-green-100 text-green-700',
+        orange: 'bg-orange-100 text-orange-700',
+        red:    'bg-red-100 text-red-700',
+        purple: 'bg-purple-100 text-purple-700',
+        amber:  'bg-amber-100 text-amber-700',
+        teal:   'bg-teal-100 text-teal-700',
+        gray:   'bg-gray-100 text-gray-500',
+    };
+
+    const cards = numFeatures.map(f => {
+        const dist = classifyDistribution(f.stats?.skewness, f.stats?.kurtosis);
+        const badge = dist.label
+            ? `<span class="px-2 py-0.5 rounded-full text-xs font-medium ${badgeClass[dist.color] || badgeClass.gray}">${dist.label}</span>`
+            : '';
+        const statsLine = [
+            f.stats?.skewness != null ? `skew ${f.stats.skewness}` : null,
+            f.stats?.kurtosis != null ? `kurt ${f.stats.kurtosis}` : null,
+        ].filter(Boolean).join(' · ');
+
+        const histPanel = f.histogram?.length ? `
+            <div>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Histogram</p>
+                <div class="rounded-xl bg-slate-50 p-2">
+                    <canvas id="dist-hist-${CSS.escape(f.name)}" height="110"></canvas>
+                </div>
+                ${dist.desc ? `<p class="text-xs text-slate-400 mt-1.5 italic leading-tight">${dist.desc}</p>` : ''}
+            </div>` : '<div></div>';
+
+        const outlierNote = f.box_plot?.outlier_count > 0
+            ? `<span class="inline-flex items-center gap-1 text-red-400"><span class="w-2 h-2 rounded-full bg-red-400 inline-block opacity-60"></span>${fmtNum(f.box_plot.outlier_count)} outlier${f.box_plot.outlier_count !== 1 ? 's' : ''}</span>`
+            : '';
+
+        const boxPanel = f.box_plot ? `
+            <div>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Box Plot</p>
+                <div class="rounded-xl bg-slate-50 p-3">
+                    <div id="dist-box-${CSS.escape(f.name)}"></div>
+                </div>
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs text-slate-400">
+                    <span class="inline-flex items-center gap-1"><span class="w-3 h-0.5 bg-blue-300 inline-block rounded"></span>IQR box</span>
+                    <span class="inline-flex items-center gap-1"><span class="w-0.5 h-3 bg-blue-700 inline-block"></span>Median</span>
+                    <span class="inline-flex items-center gap-1"><span class="inline-block w-2 h-2 bg-amber-400 rotate-45"></span>Mean</span>
+                    ${outlierNote}
+                </div>
+            </div>` : '';
+
+        return `
+        <div class="bg-white border border-gray-200 rounded-2xl p-5">
+            <div class="flex items-start justify-between gap-2 mb-4">
+                <h3 class="font-semibold text-slate-800 text-sm truncate">${esc(f.name)}</h3>
+                <div class="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+                    ${badge}
+                    ${statsLine ? `<span class="text-xs text-slate-400 font-mono">${statsLine}</span>` : ''}
+                </div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+                ${histPanel}
+                ${boxPanel}
+            </div>
+        </div>`;
+    }).join('');
+
+    el.innerHTML = `
+        <div>
+            <h2 class="text-xl font-bold text-slate-800 mb-4">
+                Numeric Distributions
+                <span class="text-slate-400 font-normal text-base">(${numFeatures.length} feature${numFeatures.length !== 1 ? 's' : ''})</span>
+            </h2>
+            <div class="grid lg:grid-cols-2 gap-5">${cards}</div>
+        </div>`;
+
+    numFeatures.forEach(f => {
+        if (f.histogram?.length) {
+            const canvas = document.getElementById(`dist-hist-${CSS.escape(f.name)}`);
+            if (canvas) renderDistributionHistogram(canvas, f.histogram, f.stats);
+        }
+        if (f.box_plot) {
+            const container = document.getElementById(`dist-box-${CSS.escape(f.name)}`);
+            if (container) container.innerHTML = buildBoxPlotSVG(f.box_plot, f.stats);
+        }
+    });
+}
+
 // ─── Utilities ────────────────────────────────────────────────────────────────
 
 function fmtNum(n) {
@@ -534,17 +822,29 @@ function typeBadge(type) {
 }
 
 function keyStatLabel(f) {
-    if (f.type === 'numeric' && f.stats && f.stats.mean != null) return `mean: ${fmtNum6(f.stats.mean)}`;
+    if (f.type === 'numeric' && f.stats) {
+        const parts = [];
+        if (f.stats.mean != null) parts.push(`mean: ${fmtNum6(f.stats.mean)}`);
+        if (f.stats.std != null) parts.push(`σ: ${fmtNum6(f.stats.std)}`);
+        return parts.join(' · ') || '—';
+    }
     if (f.type === 'categorical' && f.stats && f.stats.mode != null) return `mode: ${esc(String(f.stats.mode))}`;
     if (f.type === 'datetime' && f.stats && f.stats.min_date) return f.stats.min_date + ' → ' + f.stats.max_date;
     if (f.type === 'text' && f.stats && f.stats.avg_length != null) return `avg len: ${f.stats.avg_length}`;
     return '—';
 }
 
-function statRow(label, value) {
+function statRow(label, value, hint = '') {
+    const hintHtml = hint ? `<span class="ml-1 text-slate-400 font-normal">(${hint})</span>` : '';
     return `<tr class="border-b border-gray-50 last:border-0">
-        <td class="px-3 py-2 text-slate-500 font-medium w-28">${label}</td>
+        <td class="px-3 py-2 text-slate-500 font-medium w-36 whitespace-nowrap">${label}${hintHtml}</td>
         <td class="px-3 py-2 text-slate-800 font-mono text-xs">${esc(String(value))}</td>
+    </tr>`;
+}
+
+function statSectionHeader(label) {
+    return `<tr class="bg-slate-50 border-b border-gray-100">
+        <td colspan="2" class="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">${label}</td>
     </tr>`;
 }
 
