@@ -1,7 +1,7 @@
 ---
 title: "Getting Started with Data Quality for ML"
 slug: getting-started-with-data-quality
-date: "2025-01-15"
+date: "2026-03-13"
 description: "Why data quality matters more than model choice, and how to audit your dataset before training."
 tags:
   - data quality

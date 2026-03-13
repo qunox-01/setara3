@@ -1,0 +1,148 @@
+# =============================================================================
+# robots.txt for Xariff / Covality
+# https://xariff.com/robots.txt
+# Last updated: 2026-03-13
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Default rules for all crawlers
+# -----------------------------------------------------------------------------
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /internal/
+Disallow: /api/
+Disallow: /login/
+Disallow: /register/
+Disallow: /reset-password/
+Disallow: /account/
+Disallow: /settings/
+Disallow: /private/
+Disallow: /staging/
+Disallow: /tmp/
+Disallow: /search?
+Disallow: /*?sort=
+Disallow: /*?filter=
+Disallow: /*?ref=
+Disallow: /*?utm_
+
+# -----------------------------------------------------------------------------
+# Google - Full access (primary SEO target)
+# -----------------------------------------------------------------------------
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /internal/
+Disallow: /api/
+Disallow: /login/
+Disallow: /account/
+Disallow: /private/
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-Video
+Allow: /
+
+# -----------------------------------------------------------------------------
+# Bing - Full access
+# -----------------------------------------------------------------------------
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 5
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /internal/
+Disallow: /api/
+Disallow: /login/
+Disallow: /account/
+Disallow: /private/
+
+# -----------------------------------------------------------------------------
+# Other search engines - Full access
+# -----------------------------------------------------------------------------
+User-agent: Slurp
+Allow: /
+Crawl-delay: 5
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 10
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 10
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+
+# -----------------------------------------------------------------------------
+# AI training crawlers - Blocked
+# Protects your content from being used for AI model training
+# -----------------------------------------------------------------------------
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+# -----------------------------------------------------------------------------
+# Bad bots / Scrapers - Blocked
+# -----------------------------------------------------------------------------
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+# -----------------------------------------------------------------------------
+# Sitemap
+# -----------------------------------------------------------------------------
+Sitemap: https://xariff.com/sitemap.xml

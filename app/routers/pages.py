@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 
 router = APIRouter()
@@ -19,3 +19,8 @@ async def about(request: Request):
 @router.get("/tools", response_class=HTMLResponse)
 async def tools_index(request: Request):
     return templates.TemplateResponse("tools/index.html", {"request": request})
+
+
+@router.get("/robots.txt", include_in_schema=False)
+async def robots_txt():
+    return FileResponse("robots.txt", media_type="text/plain")

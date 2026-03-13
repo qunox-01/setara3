@@ -1,0 +1,6 @@
+1) Create a robot.txt 
+
+2) in tools/quality page add a small comment that state an outlier are sample that is lower than 1st percantile or higher then the 3rd pecentile 
+
+3) in https://xariff.com/blog/getting-started-with-data-quality,  change the date of the 2026 
+
