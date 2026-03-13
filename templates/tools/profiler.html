@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Dataset Profiler — xariff{% endblock %}
+{% block description %}Instantly profile any CSV dataset. See distributions, missing values, statistics, and correlations. No login required.{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-10">
+
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center gap-2 text-sm text-slate-500 mb-3">
+            <a href="/tools" class="hover:text-blue-500 transition-colors">Tools</a>
+            <span>/</span>
+            <span class="text-slate-800 font-medium">Dataset Profiler</span>
+        </div>
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Dataset Profiler</h1>
+        <p class="text-slate-600">Upload a CSV and get an instant visual profile: distributions, missing values, statistics, and correlations.</p>
+    </div>
+
+    <!-- Upload Zone -->
+    <div id="upload-section" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm mb-6">
+        <div id="drop-zone-profiler"
+             class="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all duration-200"
+             onclick="document.getElementById('profiler-file-input').click()">
+            <svg class="w-14 h-14 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <p class="text-slate-700 font-semibold text-lg mb-1">Drop a CSV file here or click to upload</p>
+            <p class="text-slate-400 text-sm mb-1">No login required. Your file is never stored.</p>
+            <p class="text-slate-400 text-sm">Max 50MB</p>
+            <p id="profiler-file-name" class="text-blue-500 font-medium mt-3 hidden"></p>
+        </div>
+
+        <input type="file" id="profiler-file-input" accept=".csv" class="hidden" />
+
+        <div class="mt-5 flex flex-col sm:flex-row gap-3">
+            <button id="profiler-analyse-btn"
+                    disabled
+                    onclick="startProfiler()"
+                    class="flex-1 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                Profile dataset
+            </button>
+            <button type="button"
+                    onclick="loadProfilerSample()"
+                    class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl transition-colors">
+                Try sample data
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="profiler-loading" class="hidden text-center py-16">
+        <div class="inline-block w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-slate-600 font-medium text-lg">Analysing your dataset...</p>
+        <p id="profiler-loading-filename" class="text-slate-400 text-sm mt-1"></p>
+    </div>
+
+    <!-- Error State -->
+    <div id="profiler-error" class="hidden p-5 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm mb-6"></div>
+
+    <!-- Results -->
+    <div id="profiler-results" class="hidden space-y-8">
+
+        <!-- Section A: Dataset Overview -->
+        <div id="profiler-overview"></div>
+
+        <!-- Section B & C: Feature Table + Expanded Detail -->
+        <div id="profiler-features"></div>
+
+        <!-- CTA Banner -->
+        <div id="profiler-cta" class="rounded-2xl bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100 p-6">
+            <p class="text-slate-700 font-semibold mb-3">Want to go deeper?</p>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <a href="/tools/quality"
+                   class="flex-1 flex items-center justify-between px-4 py-3 bg-white border border-blue-200 rounded-xl hover:border-blue-400 hover:shadow-sm transition-all group">
+                    <div>
+                        <p class="font-semibold text-slate-800 text-sm">Data Quality Checker</p>
+                        <p class="text-slate-500 text-xs mt-0.5">Detect issues, get a quality score</p>
+                    </div>
+                    <svg class="w-4 h-4 text-blue-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+                <a href="/tools/scorecard"
+                   class="flex-1 flex items-center justify-between px-4 py-3 bg-white border border-purple-200 rounded-xl hover:border-purple-400 hover:shadow-sm transition-all group">
+                    <div>
+                        <p class="font-semibold text-slate-800 text-sm">ML Readiness Scorecard</p>
+                        <p class="text-slate-500 text-xs mt-0.5">Get a readiness score for ML</p>
+                    </div>
+                    <svg class="w-4 h-4 text-purple-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- Section D: Correlation Heatmap -->
+        <div id="profiler-correlations"></div>
+
+    </div>
+
+</div>
+
+<!-- Below the fold: what this tool does -->
+<div class="bg-white border-t border-gray-100 py-12 mt-4">
+    <div class="max-w-5xl mx-auto px-4">
+        <h2 class="text-xl font-bold text-slate-800 mb-4">What you get</h2>
+        <div class="grid sm:grid-cols-3 gap-6 text-sm text-slate-600">
+            <div>
+                <p class="font-semibold text-slate-700 mb-1">Dataset overview</p>
+                <p>Row count, column count, missing %, duplicate rows, and memory size at a glance.</p>
+            </div>
+            <div>
+                <p class="font-semibold text-slate-700 mb-1">Per-column stats &amp; charts</p>
+                <p>Histograms, box plots, top value bars, and key statistics for every column.</p>
+            </div>
+            <div>
+                <p class="font-semibold text-slate-700 mb-1">Correlation heatmap</p>
+                <p>Instantly see which numeric features are correlated with each other.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/profiler.js" defer></script>
+{% endblock %}
