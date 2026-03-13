@@ -34,6 +34,9 @@ function initProfilerDropZone() {
             showBanner('Only CSV files are supported.', 'error');
             return;
         }
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        input.files = dt.files;
         setProfilerFile(file);
     });
 
