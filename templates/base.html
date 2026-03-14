@@ -96,36 +96,79 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-10 mt-auto">
+    <footer class="bg-slate-900 text-slate-400 py-12 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                <div>
-                    <h3 class="text-white font-semibold mb-3">xariff</h3>
-                    <p class="text-sm leading-relaxed">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+
+                <!-- Brand -->
+                <div class="col-span-2 md:col-span-1">
+                    <a href="/" class="flex items-center gap-2 text-white font-bold text-lg mb-3 hover:text-blue-300 transition-colors">
+                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        xariff
+                    </a>
+                    <p class="text-sm leading-relaxed text-slate-400">
                         Free ML dataset analysis tools for data scientists and ML engineers.
                         No signup required.
                     </p>
                 </div>
+
+                <!-- Tools -->
                 <div>
-                    <h3 class="text-white font-semibold mb-3">Tools</h3>
-                    <ul class="space-y-1 text-sm">
+                    <h3 class="text-white font-semibold mb-4 text-sm uppercase tracking-wide">Tools</h3>
+                    <ul class="space-y-2 text-sm">
                         <li><a href="/tools/profiler" class="hover:text-white transition-colors">Dataset Profiler</a></li>
-                        <li><a href="/tools/quality" class="hover:text-white transition-colors">Quality Checker</a></li>
+                        <li><a href="/tools/coverage" class="hover:text-white transition-colors">Feature-Space Coverage</a></li>
                         <li><a href="/tools/scorecard" class="hover:text-white transition-colors">ML Scorecard</a></li>
-                        <li><a href="/tools" class="hover:text-white transition-colors">All Tools</a></li>
+                        <li><a href="/tools/quality" class="hover:text-white transition-colors">Quality Checker</a></li>
+                        <li>
+                            <a href="/tools" class="hover:text-white transition-colors inline-flex items-center gap-1">
+                                All tools
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                            </a>
+                        </li>
                     </ul>
                 </div>
+
+                <!-- Resources -->
                 <div>
-                    <h3 class="text-white font-semibold mb-3">Resources</h3>
-                    <ul class="space-y-1 text-sm">
+                    <h3 class="text-white font-semibold mb-4 text-sm uppercase tracking-wide">Resources</h3>
+                    <ul class="space-y-2 text-sm">
                         <li><a href="/blog" class="hover:text-white transition-colors">Blog</a></li>
                         <li><a href="/about" class="hover:text-white transition-colors">About</a></li>
                         <li><a href="/sitemap.xml" class="hover:text-white transition-colors">Sitemap</a></li>
                     </ul>
                 </div>
+
+                <!-- Why xariff -->
+                <div>
+                    <h3 class="text-white font-semibold mb-4 text-sm uppercase tracking-wide">Why xariff</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0"></span>
+                            No signup required
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0"></span>
+                            Data never stored
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0"></span>
+                            Up to 500K rows
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0"></span>
+                            4 free tools
+                        </li>
+                    </ul>
+                </div>
+
             </div>
-            <div class="border-t border-slate-700 pt-6 text-center text-xs">
+            <div class="border-t border-slate-700 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
                 <p>&copy; 2026 xariff. Built for ML practitioners.</p>
+                <p>Upload your CSV. Get instant insights.</p>
             </div>
         </div>
     </footer>

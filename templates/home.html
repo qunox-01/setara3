@@ -19,22 +19,18 @@
             Upload your CSV and get instant analysis: statistical profiles, quality scores,
             distributions, class balance, and actionable recommendations — in seconds.
         </p>
-        <div class="flex flex-wrap gap-3 justify-center">
-            <a href="/tools/quality"
-               class="px-7 py-3.5 bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded-xl shadow-lg transition-all hover:shadow-blue-500/25 hover:scale-105">
-                Check Data Quality
-            </a>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="/tools/profiler"
-               class="px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all">
-                Profile Dataset
-            </a>
-            <a href="/tools/scorecard"
-               class="px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all">
-                ML Scorecard
+               class="px-8 py-3.5 bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded-xl shadow-lg transition-all hover:shadow-blue-500/25 hover:scale-105">
+                Profile My Dataset
             </a>
             <a href="/tools/coverage"
-               class="px-7 py-3.5 bg-orange-500/80 hover:bg-orange-500 text-white font-semibold rounded-xl border border-orange-400/40 transition-all hover:scale-105">
-                Coverage Analysis
+               class="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all">
+                Check Coverage
+            </a>
+            <a href="/tools/scorecard"
+               class="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all">
+                ML Scorecard
             </a>
         </div>
     </div>
@@ -68,55 +64,10 @@
             <p class="text-slate-500 text-lg">No code. No signup. Upload your CSV and get results instantly.</p>
         </div>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-
-            <!-- Quality Checker Card -->
-            <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl hover:border-blue-200 transition-all duration-300">
-                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-blue-500 transition-colors">
-                    <svg class="w-6 h-6 text-blue-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <div class="flex items-center gap-2 mb-3">
-                    <h3 class="text-xl font-bold text-slate-900">Quality Checker</h3>
-                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Live</span>
-                </div>
-                <p class="text-slate-600 mb-6 leading-relaxed">
-                    Detect missing values, outliers, duplicate rows, and mixed data types.
-                    Get a quality score from 0–100 with column-level breakdown.
-                </p>
-                <ul class="space-y-2 mb-6">
-                    <li class="flex items-center gap-2 text-sm text-slate-600">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                        Missing value detection per column
-                    </li>
-                    <li class="flex items-center gap-2 text-sm text-slate-600">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                        IQR-based outlier counting
-                    </li>
-                    <li class="flex items-center gap-2 text-sm text-slate-600">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                        Download flagged rows as CSV
-                    </li>
-                </ul>
-                <a href="/tools/quality"
-                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition-colors">
-                    Analyse my data
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </a>
-            </div>
+        <div class="grid md:grid-cols-3 gap-6">
 
             <!-- Dataset Profiler Card -->
-            <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl hover:border-indigo-200 transition-all duration-300">
+            <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 flex flex-col">
                 <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-indigo-500 transition-colors">
                     <svg class="w-6 h-6 text-indigo-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -127,86 +78,33 @@
                     <h3 class="text-xl font-bold text-slate-900">Dataset Profiler</h3>
                     <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Live</span>
                 </div>
-                <p class="text-slate-600 mb-6 leading-relaxed">
+                <p class="text-slate-600 mb-6 leading-relaxed flex-1">
                     Get a full statistical profile of every column — distributions, histograms,
                     box plots, correlations, and skewness analysis in one view.
                 </p>
-                <ul class="space-y-2 mb-6">
-                    <li class="flex items-center gap-2 text-sm text-slate-600">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                        Mean, median, mode, variance, IQR per column
+                <ul class="space-y-2 mb-6 text-sm text-slate-600">
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                        Mean, median, std, IQR per column
                     </li>
-                    <li class="flex items-center gap-2 text-sm text-slate-600">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                        Histograms, box plots with outlier dots
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                        Histograms and box plots
                     </li>
-                    <li class="flex items-center gap-2 text-sm text-slate-600">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
                         Pearson correlation heatmap
                     </li>
                 </ul>
                 <a href="/tools/profiler"
                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold rounded-lg transition-colors">
                     Profile my dataset
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </a>
-            </div>
-
-            <!-- ML Scorecard Card -->
-            <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl hover:border-purple-200 transition-all duration-300">
-                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-purple-500 transition-colors">
-                    <svg class="w-6 h-6 text-purple-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                    </svg>
-                </div>
-                <div class="flex items-center gap-2 mb-3">
-                    <h3 class="text-xl font-bold text-slate-900">ML Readiness Scorecard</h3>
-                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Live</span>
-                </div>
-                <p class="text-slate-600 mb-6 leading-relaxed">
-                    Is your dataset ready for ML training? Get a comprehensive scorecard covering
-                    quality, balance, completeness, volume, and uniqueness.
-                </p>
-                <ul class="space-y-2 mb-6">
-                    <li class="flex items-center gap-2 text-sm text-slate-600">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                        Class balance analysis
-                    </li>
-                    <li class="flex items-center gap-2 text-sm text-slate-600">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                        Stage-aware scoring (exploration/training/production)
-                    </li>
-                    <li class="flex items-center gap-2 text-sm text-slate-600">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                        Shareable report link
-                    </li>
-                </ul>
-                <a href="/tools/scorecard"
-                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-500 hover:bg-purple-600 text-white text-sm font-semibold rounded-lg transition-colors">
-                    Score my dataset
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                 </a>
             </div>
 
             <!-- Feature-Space Coverage Card -->
-            <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl hover:border-orange-200 transition-all duration-300">
+            <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl hover:border-orange-200 transition-all duration-300 flex flex-col">
                 <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-orange-500 transition-colors">
                     <svg class="w-6 h-6 text-orange-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -217,40 +115,79 @@
                     <h3 class="text-xl font-bold text-slate-900">Feature-Space Coverage</h3>
                     <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Live</span>
                 </div>
-                <p class="text-slate-600 mb-6 leading-relaxed">
-                    Detect gaps in the combined feature space — regions where your model will be forced to extrapolate
-                    in production. Goes beyond column-by-column checks.
+                <p class="text-slate-600 mb-6 leading-relaxed flex-1">
+                    Detect gaps in the combined feature space — regions where your model will be forced to
+                    extrapolate in production. Goes beyond column-by-column checks.
                 </p>
-                <ul class="space-y-2 mb-6">
-                    <li class="flex items-center gap-2 text-sm text-slate-600">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
+                <ul class="space-y-2 mb-6 text-sm text-slate-600">
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
                         2D coverage map with gap overlay
                     </li>
-                    <li class="flex items-center gap-2 text-sm text-slate-600">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
                         Feature-level gap profiles
                     </li>
-                    <li class="flex items-center gap-2 text-sm text-slate-600">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
                         Confidence-scored findings
                     </li>
                 </ul>
                 <a href="/tools/coverage"
                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg transition-colors">
                     Check coverage
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </a>
+            </div>
+
+            <!-- ML Scorecard Card -->
+            <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl hover:border-purple-200 transition-all duration-300 flex flex-col">
+                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-purple-500 transition-colors">
+                    <svg class="w-6 h-6 text-purple-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                     </svg>
+                </div>
+                <div class="flex items-center gap-2 mb-3">
+                    <h3 class="text-xl font-bold text-slate-900">ML Readiness Scorecard</h3>
+                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Live</span>
+                </div>
+                <p class="text-slate-600 mb-6 leading-relaxed flex-1">
+                    Is your dataset ready for ML training? Get a comprehensive scorecard covering
+                    quality, balance, completeness, volume, and uniqueness.
+                </p>
+                <ul class="space-y-2 mb-6 text-sm text-slate-600">
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                        Class balance analysis
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                        Stage-aware scoring
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                        Shareable report link
+                    </li>
+                </ul>
+                <a href="/tools/scorecard"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-500 hover:bg-purple-600 text-white text-sm font-semibold rounded-lg transition-colors">
+                    Score my dataset
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                 </a>
             </div>
 
         </div>
+
+        <!-- View all tools link -->
+        <div class="mt-10 text-center">
+            <a href="/tools"
+               class="inline-flex items-center gap-2 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition-colors text-sm">
+                View all tools
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </a>
+        </div>
+
     </div>
 </section>
 
