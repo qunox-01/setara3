@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.database import create_tables
-from app.routers import pages, tools, analysis, articles, reports, api, profiler
+from app.routers import pages, tools, analysis, articles, reports, api, profiler, coverage
 
 
 @asynccontextmanager
@@ -23,6 +23,7 @@ templates = Jinja2Templates(directory="templates")
 
 app.include_router(pages.router)
 app.include_router(profiler.router)
+app.include_router(coverage.router)
 app.include_router(tools.router)
 app.include_router(analysis.router)
 app.include_router(articles.router)

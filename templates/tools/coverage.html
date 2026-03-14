@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Feature-Space Coverage Analysis — xariff{% endblock %}
+{% block description %}Check whether your dataset covers the combined feature space. Detect gaps that cause models to extrapolate and fail in production. No login required.{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-10">
+
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center gap-2 text-sm text-slate-500 mb-3">
+            <a href="/tools" class="hover:text-blue-500 transition-colors">Tools</a>
+            <span>/</span>
+            <span class="text-slate-800 font-medium">Feature-Space Coverage</span>
+        </div>
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Feature-Space Coverage Analysis</h1>
+        <p class="text-slate-600 max-w-3xl leading-relaxed">
+            This tool checks whether your dataset has gaps in the <strong>combined feature space</strong>. Unlike column-by-column checks,
+            this analysis looks at how features interact: are there combinations of feature values where you have little or no data?
+            These are the regions where your model will be forced to extrapolate, potentially producing unreliable predictions.
+        </p>
+        <p class="text-slate-500 text-sm mt-2">
+            How it works: We project your features into a 2D map using PCA, divide the map into a grid, and identify cells with few or no samples.
+            For each gap, we report which original features define that region so you can decide whether to collect more data.
+        </p>
+    </div>
+
+    <!-- Upload Zone -->
+    <div id="upload-section" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm mb-6">
+        <div id="drop-zone-coverage"
+             class="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all duration-200"
+             onclick="document.getElementById('coverage-file-input').click()">
+            <svg class="w-14 h-14 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <p class="text-slate-700 font-semibold text-lg mb-1">Drop a CSV file here or click to upload</p>
+            <p class="text-slate-400 text-sm mb-1">No login required. Your file is never stored.</p>
+            <p class="text-slate-400 text-sm">Max 50MB &middot; at least 50 rows &middot; at least 3 numeric columns</p>
+            <p id="coverage-file-name" class="text-blue-500 font-medium mt-3 hidden"></p>
+        </div>
+
+        <input type="file" id="coverage-file-input" accept=".csv" class="hidden" />
+
+        <!-- Optional settings -->
+        <div class="mt-5 grid sm:grid-cols-2 gap-4">
+            <div>
+                <label for="label-col-input" class="block text-sm font-medium text-slate-700 mb-1">
+                    Target / label column <span class="text-slate-400 font-normal">(optional)</span>
+                </label>
+                <input type="text" id="label-col-input" placeholder="e.g. target, label, y"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" />
+                <p class="text-xs text-slate-400 mt-1">If provided, label distribution per region is shown and color-by-label toggle is enabled.</p>
+            </div>
+            <div>
+                <label for="grid-size-input" class="block text-sm font-medium text-slate-700 mb-1">
+                    Grid size <span class="text-slate-400 font-normal">(optional, 6–20)</span>
+                </label>
+                <input type="number" id="grid-size-input" placeholder="Auto (recommended)" min="6" max="20"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" />
+                <p class="text-xs text-slate-400 mt-1">Leave blank to auto-select based on dataset size.</p>
+            </div>
+        </div>
+
+        <div class="mt-5 flex flex-col sm:flex-row gap-3">
+            <button id="coverage-analyse-btn"
+                    disabled
+                    onclick="startCoverage()"
+                    class="flex-1 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                Analyse coverage
+            </button>
+            <button type="button"
+                    onclick="loadCoverageSample()"
+                    class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl transition-colors">
+                Try sample data
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="coverage-loading" class="hidden text-center py-16">
+        <div class="inline-block w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-slate-600 font-medium text-lg">Analysing feature-space coverage…</p>
+        <p class="text-slate-400 text-sm mt-1">Running PCA projection and gap detection</p>
+    </div>
+
+    <!-- Error -->
+    <div id="coverage-error" class="hidden p-5 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm mb-6"></div>
+
+    <!-- Results -->
+    <div id="coverage-results" class="hidden space-y-6">
+
+        <!-- 1. Score Banner -->
+        <div id="coverage-score-banner"></div>
+
+        <!-- 2. Coverage Map -->
+        <div id="coverage-map-container" class="relative"></div>
+
+        <!-- 3. Flagged Regions Table -->
+        <div id="coverage-flagged-table"></div>
+
+        <!-- 4. PCA Confidence Panel -->
+        <div id="coverage-pca-panel"></div>
+
+        <!-- CTA -->
+        <div class="rounded-2xl bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100 p-6">
+            <p class="text-slate-700 font-semibold mb-3">Continue your pre-training checklist</p>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <a href="/tools/quality"
+                   class="flex-1 flex items-center justify-between px-4 py-3 bg-white border border-blue-200 rounded-xl hover:border-blue-400 hover:shadow-sm transition-all group">
+                    <div>
+                        <p class="font-semibold text-slate-800 text-sm">Data Quality Checker</p>
+                        <p class="text-slate-500 text-xs mt-0.5">Detect missing values, outliers, duplicates</p>
+                    </div>
+                    <svg class="w-4 h-4 text-blue-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+                <a href="/tools/scorecard"
+                   class="flex-1 flex items-center justify-between px-4 py-3 bg-white border border-purple-200 rounded-xl hover:border-purple-400 hover:shadow-sm transition-all group">
+                    <div>
+                        <p class="font-semibold text-slate-800 text-sm">ML Readiness Scorecard</p>
+                        <p class="text-slate-500 text-xs mt-0.5">Get a full ML readiness score</p>
+                    </div>
+                    <svg class="w-4 h-4 text-purple-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer Disclaimer -->
+        <p class="text-xs text-slate-400 text-center px-4 pb-2">
+            This analysis uses PCA projection to approximate your dataset's feature-space coverage. The 2D map is a simplified view of a
+            higher-dimensional space. Some coverage gaps may exist in dimensions not captured by the projection, and some flagged gaps may be
+            projection artifacts. Use the confidence indicators and nearest-row inspection to validate findings before making data collection decisions.
+        </p>
+
+    </div>
+</div>
+
+<!-- What this tool does -->
+<div class="bg-white border-t border-gray-100 py-12 mt-4">
+    <div class="max-w-5xl mx-auto px-4">
+        <h2 class="text-xl font-bold text-slate-800 mb-4">What you get</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 text-sm text-slate-600">
+            <div>
+                <p class="font-semibold text-slate-700 mb-1">Coverage score</p>
+                <p>A single 0–100 score summarising how well your dataset covers the combined feature space, with a colour-coded verdict.</p>
+            </div>
+            <div>
+                <p class="font-semibold text-slate-700 mb-1">2D coverage map</p>
+                <p>An interactive heatmap showing dense, sparse, and empty regions. Overlays actual data points and flags gap cells with red outlines.</p>
+            </div>
+            <div>
+                <p class="font-semibold text-slate-700 mb-1">Flagged gap profiles</p>
+                <p>For each gap, the exact original-feature ranges that define it — so you know what data to collect, not just where the hole is.</p>
+            </div>
+            <div>
+                <p class="font-semibold text-slate-700 mb-1">Confidence scoring</p>
+                <p>Each flagged region is rated High / Medium / Low confidence based on PCA quality, interior-ness, and local neighbourhood consistency.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/coverage.js" defer></script>
+{% endblock %}

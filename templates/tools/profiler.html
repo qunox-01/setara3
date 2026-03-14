@@ -109,18 +109,22 @@
 <div class="bg-white border-t border-gray-100 py-12 mt-4">
     <div class="max-w-5xl mx-auto px-4">
         <h2 class="text-xl font-bold text-slate-800 mb-4">What you get</h2>
-        <div class="grid sm:grid-cols-3 gap-6 text-sm text-slate-600">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 text-sm text-slate-600">
             <div>
                 <p class="font-semibold text-slate-700 mb-1">Dataset overview</p>
-                <p>Row count, column count, missing %, duplicate rows, and memory size at a glance.</p>
+                <p>Row count, column count, and memory size. Supports up to 50MB and 50 columns.</p>
             </div>
             <div>
                 <p class="font-semibold text-slate-700 mb-1">Per-column stats &amp; charts</p>
-                <p>Central tendency (mean, median, mode), spread (std, variance, range, IQR), skewness, kurtosis, histograms, box plots, and top value bars.</p>
+                <p>Central tendency (mean, median, mode), spread (std, variance, range, IQR), skewness, kurtosis, and top value bars for every column type.</p>
+            </div>
+            <div>
+                <p class="font-semibold text-slate-700 mb-1">Numeric distributions</p>
+                <p>Histogram colored by distribution shape (normal, skewed, heavy-tailed) and a labeled box plot with outlier dots, mean, median, and quartile markers.</p>
             </div>
             <div>
                 <p class="font-semibold text-slate-700 mb-1">Correlation heatmap</p>
-                <p>Instantly see which numeric features are correlated with each other.</p>
+                <p>Pearson correlation matrix across all numeric columns. Instantly spot strongly correlated features.</p>
             </div>
         </div>
     </div>

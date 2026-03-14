@@ -126,6 +126,32 @@ async def sample_data(tool: str):
                 "text": [f"sample text {i}" if i % 30 != 0 else None for i in range(n)],
             }
         )
+    elif tool == "coverage":
+        # Synthetic seismic dataset with deliberate feature-space gaps
+        # (high-magnitude + low-distance events are underrepresented)
+        n_common = 220
+        n_rare   = 30
+        df = pd.DataFrame(
+            {
+                "magnitude": np.concatenate([
+                    rng.uniform(3.0, 5.5, n_common),   # common: low-medium magnitude
+                    rng.uniform(6.8, 8.5, n_rare),      # rare: high magnitude
+                ]),
+                "dmin": np.concatenate([
+                    rng.uniform(80, 600, n_common),     # common: far events
+                    rng.uniform(5, 40, n_rare),         # rare: close events
+                ]),
+                "depth": rng.uniform(5, 200, n_common + n_rare).round(1),
+                "gap": rng.uniform(50, 320, n_common + n_rare).round(1),
+                "nst": rng.integers(4, 80, n_common + n_rare).tolist(),
+                "label": np.concatenate([
+                    rng.choice([0, 1], n_common, p=[0.85, 0.15]),
+                    rng.choice([0, 1], n_rare,   p=[0.30, 0.70]),
+                ]).tolist(),
+            }
+        ).sample(frac=1, random_state=42).reset_index(drop=True)
+        df["magnitude"] = df["magnitude"].round(3)
+        df["dmin"]      = df["dmin"].round(1)
     else:
         n = 100
         df = pd.DataFrame(

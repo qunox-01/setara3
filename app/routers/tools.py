@@ -16,13 +16,6 @@ async def scorecard_tool(request: Request):
     return templates.TemplateResponse("tools/scorecard.html", {"request": request})
 
 
-@router.get("/tools/coverage", response_class=HTMLResponse)
-async def coverage_tool(request: Request):
-    return templates.TemplateResponse(
-        "tools/coming_soon.html",
-        {"request": request, "tool_name": "Coverage Checker", "coming_soon": True},
-    )
-
 
 @router.get("/tools/outliers", response_class=HTMLResponse)
 async def outliers_tool(request: Request):
