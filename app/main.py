@@ -1,3 +1,4 @@
+import logging
 import uuid
 from contextlib import asynccontextmanager
 
@@ -8,10 +9,16 @@ from fastapi.templating import Jinja2Templates
 from app.database import create_tables
 from app.routers import pages, tools, analysis, articles, reports, api, profiler, coverage
 
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await create_tables()
+    try:
+        await create_tables()
+    except Exception:
+        # Keep serving even if DB bootstrap fails; Fly health checks need a live listener.
+        logger.exception("Database initialization failed during startup")
     yield
 
 
