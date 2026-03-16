@@ -152,6 +152,39 @@ async def sample_data(tool: str):
         ).sample(frac=1, random_state=42).reset_index(drop=True)
         df["magnitude"] = df["magnitude"].round(3)
         df["dmin"]      = df["dmin"].round(1)
+    elif tool == "outliers":
+        # Synthetic credit-risk dataset with realistic outlier structure:
+        #   - most customers cluster around normal income/spend/age ranges
+        #   - ~5% are injected as extreme outliers (very high spend, unusual age, etc.)
+        n_normal = 285
+        n_outlier = 15
+        df_normal = pd.DataFrame(
+            {
+                "age":             rng.integers(22, 65, n_normal).tolist(),
+                "annual_income":   rng.normal(55_000, 12_000, n_normal).round(0),
+                "monthly_spend":   rng.normal(1_800, 400, n_normal).round(0),
+                "credit_score":    rng.integers(580, 850, n_normal).tolist(),
+                "num_accounts":    rng.integers(1, 8, n_normal).tolist(),
+                "late_payments":   rng.integers(0, 3, n_normal).tolist(),
+                "label":           rng.choice([0, 1], n_normal, p=[0.85, 0.15]).tolist(),
+            }
+        )
+        df_outlier = pd.DataFrame(
+            {
+                "age":             rng.choice([17, 91, 95, 14, 88], n_outlier).tolist(),
+                "annual_income":   rng.choice([320_000, 5_000, 280_000, 3_500], n_outlier).tolist(),
+                "monthly_spend":   rng.choice([18_000, 22_000, 150, 25_000], n_outlier).tolist(),
+                "credit_score":    rng.choice([200, 210, 950, 980, 190], n_outlier).tolist(),
+                "num_accounts":    rng.choice([25, 30, 0], n_outlier).tolist(),
+                "late_payments":   rng.choice([18, 22, 0], n_outlier).tolist(),
+                "label":           rng.choice([0, 1], n_outlier).tolist(),
+            }
+        )
+        df = (
+            pd.concat([df_normal, df_outlier], ignore_index=True)
+            .sample(frac=1, random_state=42)
+            .reset_index(drop=True)
+        )
     else:
         n = 100
         df = pd.DataFrame(

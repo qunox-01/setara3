@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.database import create_tables
-from app.routers import pages, tools, analysis, articles, reports, api, profiler, coverage
+from app.routers import pages, tools, analysis, articles, reports, api, profiler, coverage, outliers
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +36,7 @@ app.include_router(analysis.router)
 app.include_router(articles.router)
 app.include_router(reports.router)
 app.include_router(api.router)
+app.include_router(outliers.router)
 
 
 @app.middleware("http")

@@ -19,7 +19,4 @@ async def scorecard_tool(request: Request):
 
 @router.get("/tools/outliers", response_class=HTMLResponse)
 async def outliers_tool(request: Request):
-    return templates.TemplateResponse(
-        "tools/coming_soon.html",
-        {"request": request, "tool_name": "Outlier Detector", "coming_soon": True},
-    )
+    return templates.TemplateResponse("tools/outliers.html", {"request": request})

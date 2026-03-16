@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Outlier Detector — Isolation Forest & DBSCAN — xariff{% endblock %}
+{% block description %}Detect multivariate outliers in your dataset using Isolation Forest and DBSCAN. Get anomaly scores, feature contributions, and flagged rows. Free, no login required.{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-10">
+
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center gap-2 text-sm text-slate-500 mb-3">
+            <a href="/tools" class="hover:text-rose-500 transition-colors">Tools</a>
+            <span>/</span>
+            <span class="text-slate-800 font-medium">Outlier Detector</span>
+        </div>
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Outlier Detector</h1>
+        <p class="text-slate-600 max-w-3xl leading-relaxed">
+            Detect multivariate outliers using <strong>Isolation Forest</strong> and <strong>DBSCAN</strong> — two complementary methods that catch
+            different kinds of anomalies. Unlike column-by-column checks, this analysis finds rows that are unusual
+            <em>in combination</em>, even when each individual feature looks normal.
+        </p>
+        <p class="text-slate-500 text-sm mt-2">
+            How it works: features are standardised, then each algorithm independently scores every row. In ensemble mode,
+            rows flagged by either method are shown; rows flagged by <em>both</em> are marked as consensus outliers.
+        </p>
+    </div>
+
+    <!-- Upload Zone -->
+    <div id="upload-section" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm mb-6">
+        <div id="drop-zone-outliers"
+             class="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center cursor-pointer hover:border-rose-400 hover:bg-rose-50 transition-all duration-200"
+             onclick="document.getElementById('outliers-file-input').click()">
+            <svg class="w-14 h-14 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <p class="text-slate-700 font-semibold text-lg mb-1">Drop a CSV file here or click to upload</p>
+            <p class="text-slate-400 text-sm mb-1">No login required. Your file is never stored.</p>
+            <p class="text-slate-400 text-sm">Max 50MB &middot; at least 10 rows &middot; at least 2 numeric columns</p>
+            <p id="outliers-file-name" class="text-rose-500 font-medium mt-3 hidden"></p>
+        </div>
+
+        <input type="file" id="outliers-file-input" accept=".csv" class="hidden" />
+
+        <!-- Settings -->
+        <div class="mt-6 space-y-4">
+
+            <!-- Row 1: Method + Label col -->
+            <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Detection method</label>
+                    <select id="method-select"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent bg-white">
+                        <option value="ensemble" selected>Ensemble (Isolation Forest + DBSCAN)</option>
+                        <option value="isolation_forest">Isolation Forest only</option>
+                        <option value="dbscan">DBSCAN only</option>
+                    </select>
+                    <p class="text-xs text-slate-400 mt-1">Ensemble shows outliers flagged by either method; consensus = both.</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Target / label column <span class="text-slate-400 font-normal">(optional)</span>
+                    </label>
+                    <input type="text" id="label-col-input" placeholder="e.g. target, label, y"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent" />
+                    <p class="text-xs text-slate-400 mt-1">Excluded from features; shown in outlier row details.</p>
+                </div>
+            </div>
+
+            <!-- Row 2: Advanced params -->
+            <div id="advanced-toggle-wrap">
+                <button type="button" onclick="toggleAdvanced()"
+                    class="text-sm text-slate-500 hover:text-rose-600 font-medium flex items-center gap-1 transition-colors">
+                    <svg id="advanced-chevron" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                    Advanced parameters
+                </button>
+            </div>
+
+            <div id="advanced-params" class="hidden grid sm:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        Contamination <span class="text-slate-400 font-normal">(IF only, 0.001–0.5)</span>
+                    </label>
+                    <input type="number" id="contamination-input" value="0.05" min="0.001" max="0.5" step="0.005"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent" />
+                    <p class="text-xs text-slate-400 mt-1">Expected proportion of outliers.</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        DBSCAN eps <span class="text-slate-400 font-normal">(auto if blank)</span>
+                    </label>
+                    <input type="number" id="eps-input" placeholder="Auto" min="0.01" step="0.01"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent" />
+                    <p class="text-xs text-slate-400 mt-1">Neighbourhood radius (standardised space).</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">
+                        DBSCAN min samples <span class="text-slate-400 font-normal">(auto if blank)</span>
+                    </label>
+                    <input type="number" id="min-samples-input" placeholder="Auto" min="2" step="1"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent" />
+                    <p class="text-xs text-slate-400 mt-1">Minimum cluster size.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+            <button id="outliers-analyse-btn"
+                    disabled
+                    onclick="startOutliers()"
+                    class="flex-1 px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                Detect outliers
+            </button>
+            <button type="button"
+                    onclick="loadOutliersSample()"
+                    class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl transition-colors">
+                Try sample data
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="outliers-loading" class="hidden text-center py-16">
+        <div class="inline-block w-10 h-10 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-slate-600 font-medium text-lg">Running outlier detection…</p>
+        <p class="text-slate-400 text-sm mt-1">Fitting Isolation Forest and DBSCAN on your data</p>
+    </div>
+
+    <!-- Error -->
+    <div id="outliers-error" class="hidden p-5 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm mb-6"></div>
+
+    <!-- Results -->
+    <div id="outliers-results" class="hidden space-y-6">
+
+        <!-- 1. Score Banner -->
+        <div id="outliers-score-banner"></div>
+
+        <!-- 2. Method Stats Cards -->
+        <div id="outliers-method-cards"></div>
+
+        <!-- 3. Anomaly Score Chart -->
+        <div id="outliers-score-chart"></div>
+
+        <!-- 4. Feature Contributions -->
+        <div id="outliers-feature-contributions"></div>
+
+        <!-- 5. Outlier Rows Table -->
+        <div id="outliers-rows-table"></div>
+
+        <!-- CTA -->
+        <div class="rounded-2xl bg-gradient-to-r from-rose-50 to-orange-50 border border-rose-100 p-6">
+            <p class="text-slate-700 font-semibold mb-3">Continue your pre-training checklist</p>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <a href="/tools/quality"
+                   class="flex-1 flex items-center justify-between px-4 py-3 bg-white border border-blue-200 rounded-xl hover:border-blue-400 hover:shadow-sm transition-all group">
+                    <div>
+                        <p class="font-semibold text-slate-800 text-sm">Data Quality Checker</p>
+                        <p class="text-slate-500 text-xs mt-0.5">Detect missing values, duplicates, type issues</p>
+                    </div>
+                    <svg class="w-4 h-4 text-blue-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+                <a href="/tools/coverage"
+                   class="flex-1 flex items-center justify-between px-4 py-3 bg-white border border-orange-200 rounded-xl hover:border-orange-400 hover:shadow-sm transition-all group">
+                    <div>
+                        <p class="font-semibold text-slate-800 text-sm">Feature-Space Coverage</p>
+                        <p class="text-slate-500 text-xs mt-0.5">Detect gaps in the combined feature space</p>
+                    </div>
+                    <svg class="w-4 h-4 text-orange-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <p class="text-xs text-slate-400 text-center px-4 pb-2">
+            Outlier detection is inherently domain-dependent. A row that is statistically anomalous may be valid data.
+            Review flagged rows in context before removing them. Isolation Forest works best when outliers are sparse;
+            DBSCAN is better at detecting cluster-based anomalies. Ensemble mode reduces false negatives from either method alone.
+        </p>
+
+    </div>
+</div>
+
+<!-- What you get -->
+<div class="bg-white border-t border-gray-100 py-12 mt-4">
+    <div class="max-w-5xl mx-auto px-4">
+        <h2 class="text-xl font-bold text-slate-800 mb-4">What you get</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 text-sm text-slate-600">
+            <div>
+                <p class="font-semibold text-slate-700 mb-1">Health score</p>
+                <p>A 0–100 score based on the outlier rate, with a colour-coded verdict: Healthy, Needs attention, or Critical.</p>
+            </div>
+            <div>
+                <p class="font-semibold text-slate-700 mb-1">Method comparison</p>
+                <p>Side-by-side stats for Isolation Forest and DBSCAN — outlier counts, cluster breakdown, and anomaly score averages.</p>
+            </div>
+            <div>
+                <p class="font-semibold text-slate-700 mb-1">Feature contributions</p>
+                <p>Ranked list of features that most strongly separate outliers from inliers, using mean-shift Z-score.</p>
+            </div>
+            <div>
+                <p class="font-semibold text-slate-700 mb-1">Flagged rows</p>
+                <p>The top anomalous rows with their anomaly score, DBSCAN cluster, consensus flag, and full feature values.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/outliers.js" defer></script>
+{% endblock %}
