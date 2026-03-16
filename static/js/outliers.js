@@ -10,11 +10,21 @@ let outliersFile = null;
 let advancedOpen = false;
 let scoreChartCanvas = null;
 
+function hasOutliersConsent() {
+    return !!document.getElementById('outliers-legal-consent')?.checked;
+}
+
+function updateOutliersAnalyzeButton() {
+    const btn = document.getElementById('outliers-analyse-btn');
+    if (btn) btn.disabled = !(!!outliersFile && hasOutliersConsent());
+}
+
 // ─── File Input / Drag-Drop ───────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('outliers-file-input');
     const dropZone  = document.getElementById('drop-zone-outliers');
+    const legal     = document.getElementById('outliers-legal-consent');
 
     if (fileInput) {
         fileInput.addEventListener('change', () => {
@@ -45,14 +55,17 @@ document.addEventListener('DOMContentLoaded', () => {
             onFileSelected(f);
         });
     }
+
+    if (legal) {
+        legal.addEventListener('change', updateOutliersAnalyzeButton);
+    }
 });
 
 function onFileSelected(file) {
     outliersFile = file;
     const nameEl = document.getElementById('outliers-file-name');
     if (nameEl) { nameEl.textContent = file.name; nameEl.classList.remove('hidden'); }
-    const btn = document.getElementById('outliers-analyse-btn');
-    if (btn) btn.disabled = false;
+    updateOutliersAnalyzeButton();
 }
 
 // ─── Advanced Panel Toggle ────────────────────────────────────────────────────
@@ -80,7 +93,11 @@ async function loadOutliersSample() {
         // Pre-fill label column and auto-run
         const labelInput = document.getElementById('label-col-input');
         if (labelInput) labelInput.value = 'label';
-        startOutliers();
+        if (hasOutliersConsent()) {
+            startOutliers();
+        } else {
+            showBanner('Sample loaded. Accept legal terms, then click "Detect outliers".', 'info');
+        }
     } catch (e) {
         showError('Could not load sample data.');
     }
@@ -90,6 +107,10 @@ async function loadOutliersSample() {
 
 async function startOutliers() {
     if (!outliersFile) return;
+    if (!hasOutliersConsent()) {
+        showError('Please accept Terms, Privacy Policy, and Cookie Policy first.');
+        return;
+    }
 
     const method        = document.getElementById('method-select')?.value || 'ensemble';
     const labelCol      = (document.getElementById('label-col-input')?.value || '').trim() || null;
@@ -102,6 +123,8 @@ async function startOutliers() {
 
     const formData = new FormData();
     formData.append('file', outliersFile);
+    formData.append('accept_legal', 'true');
+    formData.append('policy_version', '2026-03-16');
 
     const params = new URLSearchParams();
     params.set('method', method);

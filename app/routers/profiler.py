@@ -1,11 +1,13 @@
 import io
 
 import pandas as pd
-from fastapi import APIRouter, Request, UploadFile, File, HTTPException
+from fastapi import APIRouter, Request, UploadFile, File, HTTPException, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
+from app.dependencies import get_session_id
 from app.services import profiler as profiler_service
+from app.utils.legal import validate_legal_acceptance, log_consent, POLICY_VERSION
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -17,7 +19,13 @@ async def profiler_tool(request: Request):
 
 
 @router.post("/api/tools/profiler/analyze")
-async def profiler_analyze(file: UploadFile = File(...)):
+async def profiler_analyze(
+    request: Request,
+    file: UploadFile = File(...),
+    accept_legal: str = Form(default=""),
+    policy_version: str = Form(default=POLICY_VERSION),
+):
+    validate_legal_acceptance(accept_legal, policy_version)
     filename = file.filename or ""
     if not filename.lower().endswith(".csv"):
         raise HTTPException(status_code=422, detail="Only CSV files are supported.")
@@ -53,5 +61,12 @@ async def profiler_analyze(file: UploadFile = File(...)):
         result = profiler_service.compute_profile(df)
     except MemoryError:
         raise HTTPException(status_code=413, detail="Dataset too large to process in memory.")
+
+    await log_consent(
+        session_id=get_session_id(request),
+        action="upload_profiler",
+        source="tool_profiler",
+        policy_version=policy_version,
+    )
 
     return JSONResponse(content=result)

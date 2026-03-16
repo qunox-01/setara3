@@ -13,11 +13,21 @@ let heatmapCanvas = null;
 let heatmapCtx = null;
 let currentSort = { col: 'type', dir: 'asc' };
 
+function hasCoverageConsent() {
+    return !!document.getElementById('coverage-legal-consent')?.checked;
+}
+
+function updateCoverageAnalyzeButton() {
+    const btn = document.getElementById('coverage-analyse-btn');
+    if (btn) btn.disabled = !(!!coverageFile && hasCoverageConsent());
+}
+
 // ─── File Input Handling ─────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('coverage-file-input');
     const dropZone  = document.getElementById('drop-zone-coverage');
+    const legal = document.getElementById('coverage-legal-consent');
 
     if (fileInput) {
         fileInput.addEventListener('change', () => {
@@ -48,14 +58,17 @@ document.addEventListener('DOMContentLoaded', () => {
             onFileSelected(f);
         });
     }
+
+    if (legal) {
+        legal.addEventListener('change', updateCoverageAnalyzeButton);
+    }
 });
 
 function onFileSelected(file) {
     coverageFile = file;
     const nameEl = document.getElementById('coverage-file-name');
     if (nameEl) { nameEl.textContent = file.name; nameEl.classList.remove('hidden'); }
-    const btn = document.getElementById('coverage-analyse-btn');
-    if (btn) btn.disabled = false;
+    updateCoverageAnalyzeButton();
 }
 
 // ─── Sample Data ─────────────────────────────────────────────────────────────
@@ -80,6 +93,10 @@ async function loadCoverageSample() {
 
 async function startCoverage() {
     if (!coverageFile) return;
+    if (!hasCoverageConsent()) {
+        showBanner('Please accept Terms, Privacy Policy, and Cookie Policy first.', 'error');
+        return;
+    }
 
     const labelCol  = (document.getElementById('label-col-input')?.value || '').trim() || null;
     const gridSizeEl = document.getElementById('grid-size-input');
@@ -90,6 +107,8 @@ async function startCoverage() {
 
     const formData = new FormData();
     formData.append('file', coverageFile);
+    formData.append('accept_legal', 'true');
+    formData.append('policy_version', '2026-03-16');
 
     let url = '/api/tools/coverage/analyze';
     const params = new URLSearchParams();

@@ -9,6 +9,7 @@ from fastapi.responses import HTMLResponse, Response, StreamingResponse
 from app.database import AsyncSessionLocal
 from app.dependencies import get_session_id
 from app.models import Email, Feedback, AnalyticsEvent
+from app.utils.legal import validate_legal_acceptance, log_consent, POLICY_VERSION
 
 router = APIRouter()
 
@@ -20,11 +21,23 @@ async def email_capture(
     source: str = Form(default=""),
     tool: str = Form(default=""),
     utm_source: str = Form(default=""),
+    accept_legal: str = Form(default=""),
+    policy_version: str = Form(default=POLICY_VERSION),
 ):
+    validate_legal_acceptance(accept_legal, policy_version)
+    session_id = get_session_id(request)
+
     async with AsyncSessionLocal() as session:
         record = Email(email=email, source=source, tool=tool, utm_source=utm_source)
         session.add(record)
         await session.commit()
+
+    await log_consent(
+        session_id=session_id,
+        action="email_submit",
+        source=source or "homepage",
+        policy_version=policy_version,
+    )
 
     return HTMLResponse(
         content="""

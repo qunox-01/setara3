@@ -12,15 +12,28 @@ from app.services import quality as quality_service
 from app.services import scorecard as scorecard_service
 from app.database import AsyncSessionLocal
 from app.models import Report
+from app.utils.legal import validate_legal_acceptance, log_consent, POLICY_VERSION
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 
 @router.post("/tools/quality/analyse", response_class=HTMLResponse)
-async def quality_analyse(request: Request, file: UploadFile = File(...)):
+async def quality_analyse(
+    request: Request,
+    file: UploadFile = File(...),
+    accept_legal: str = Form(default=""),
+    policy_version: str = Form(default=POLICY_VERSION),
+):
+    validate_legal_acceptance(accept_legal, policy_version)
     df = await validate_csv(file)
     result = quality_service.analyse(df)
+    await log_consent(
+        session_id=get_session_id(request),
+        action="upload_quality",
+        source="tool_quality",
+        policy_version=policy_version,
+    )
     return templates.TemplateResponse(
         "tools/partials/quality_results.html",
         {"request": request, **result},
@@ -54,12 +67,21 @@ async def scorecard_analyse(
     file: UploadFile = File(...),
     label_column: str = Form(default=""),
     stage: str = Form(default="exploration"),
+    accept_legal: str = Form(default=""),
+    policy_version: str = Form(default=POLICY_VERSION),
 ):
+    validate_legal_acceptance(accept_legal, policy_version)
     df = await validate_csv(file)
     result = scorecard_service.analyse(
         df,
         label_column=label_column or None,
         stage=stage,
+    )
+    await log_consent(
+        session_id=get_session_id(request),
+        action="upload_scorecard",
+        source="tool_scorecard",
+        policy_version=policy_version,
     )
     return templates.TemplateResponse(
         "tools/partials/scorecard_results.html",
@@ -74,7 +96,10 @@ async def scorecard_report(
     label_column: str = Form(default=""),
     stage: str = Form(default="exploration"),
     email: str = Form(default=""),
+    accept_legal: str = Form(default=""),
+    policy_version: str = Form(default=POLICY_VERSION),
 ):
+    validate_legal_acceptance(accept_legal, policy_version)
     df = await validate_csv(file)
     result = scorecard_service.analyse(
         df,
@@ -91,6 +116,13 @@ async def scorecard_report(
         )
         session.add(report)
         await session.commit()
+
+    await log_consent(
+        session_id=get_session_id(request),
+        action="report_generate",
+        source="tool_scorecard",
+        policy_version=policy_version,
+    )
 
     report_url = f"/report/{report_id}"
     return HTMLResponse(

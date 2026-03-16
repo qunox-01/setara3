@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Column, String, Integer, Boolean, Text, DateTime, Float
+from sqlalchemy import Column, String, Integer, Text, DateTime
 from app.database import Base
 
 
@@ -46,4 +46,15 @@ class AnalyticsEvent(Base):
     metadata_json = Column(Text, default="{}")
     utm_source = Column(String(100), default="")
     utm_campaign = Column(String(100), default="")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class ConsentLog(Base):
+    __tablename__ = "consent_logs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    session_id = Column(String(100), default="")
+    action = Column(String(100), nullable=False)
+    policy_version = Column(String(32), nullable=False)
+    source = Column(String(100), default="")
     created_at = Column(DateTime, default=datetime.utcnow)

@@ -1,11 +1,13 @@
 import io
 
 import pandas as pd
-from fastapi import APIRouter, HTTPException, Query, Request, UploadFile, File
+from fastapi import APIRouter, HTTPException, Query, Request, UploadFile, File, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
+from app.dependencies import get_session_id
 from app.services import coverage as coverage_service
+from app.utils.legal import validate_legal_acceptance, log_consent, POLICY_VERSION
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -18,10 +20,14 @@ async def coverage_tool(request: Request):
 
 @router.post("/api/tools/coverage/analyze")
 async def coverage_analyze(
+    request: Request,
     file: UploadFile = File(...),
     label_col: str = Query(None),
     grid_size: int = Query(None),
+    accept_legal: str = Form(default=""),
+    policy_version: str = Form(default=POLICY_VERSION),
 ):
+    validate_legal_acceptance(accept_legal, policy_version)
     filename = file.filename or ""
     if not filename.lower().endswith(".csv"):
         raise HTTPException(status_code=422, detail="Only CSV files are supported.")
@@ -63,5 +69,12 @@ async def coverage_analyze(
         raise HTTPException(status_code=422, detail=str(exc))
     except MemoryError:
         raise HTTPException(status_code=413, detail="Dataset too large to process in memory.")
+
+    await log_consent(
+        session_id=get_session_id(request),
+        action="upload_coverage",
+        source="tool_coverage",
+        policy_version=policy_version,
+    )
 
     return JSONResponse(content=result)

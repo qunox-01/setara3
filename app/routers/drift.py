@@ -1,10 +1,12 @@
 import io
 
 import pandas as pd
-from fastapi import APIRouter, HTTPException, Query, UploadFile, File
+from fastapi import APIRouter, HTTPException, Query, Request, UploadFile, File, Form
 from fastapi.responses import JSONResponse
 
+from app.dependencies import get_session_id
 from app.services import drift as drift_service
+from app.utils.legal import validate_legal_acceptance, log_consent, POLICY_VERSION
 
 router = APIRouter()
 
@@ -25,10 +27,14 @@ def _parse_csv(contents: bytes, label: str) -> pd.DataFrame:
 
 @router.post("/api/tools/drift/analyze")
 async def drift_analyze(
+    request: Request,
     reference_file: UploadFile = File(..., description="Reference (baseline) CSV dataset"),
     current_file: UploadFile = File(..., description="Current (new/production) CSV dataset"),
     n_bins: int = Query(10, ge=5, le=50, description="Number of bins for numeric PSI calculation"),
+    accept_legal: str = Form(default=""),
+    policy_version: str = Form(default=POLICY_VERSION),
 ):
+    validate_legal_acceptance(accept_legal, policy_version)
     # ── Validate files ────────────────────────────────────────────────────────
     for f, label in ((reference_file, "reference"), (current_file, "current")):
         fname = f.filename or ""
@@ -72,5 +78,12 @@ async def drift_analyze(
         raise HTTPException(status_code=422, detail=str(exc))
     except MemoryError:
         raise HTTPException(status_code=413, detail="Datasets too large to process in memory.")
+
+    await log_consent(
+        session_id=get_session_id(request),
+        action="upload_drift",
+        source="tool_drift",
+        policy_version=policy_version,
+    )
 
     return JSONResponse(content=result)

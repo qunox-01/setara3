@@ -10,6 +10,16 @@ let sortKey = 'name';
 let sortAsc = true;
 const chartInstances = {};
 
+function hasProfilerConsent() {
+    return !!document.getElementById('profiler-legal-consent')?.checked;
+}
+
+function updateProfilerAnalyseButton() {
+    const hasFile = !!document.getElementById('profiler-file-input')?.files?.[0];
+    const btn = document.getElementById('profiler-analyse-btn');
+    if (btn) btn.disabled = !(hasFile && hasProfilerConsent());
+}
+
 // ─── Drop Zone ──────────────────────────────────────────────────────────────
 
 function initProfilerDropZone() {
@@ -52,7 +62,7 @@ function setProfilerFile(file) {
         nameEl.classList.remove('hidden');
     }
     document.getElementById('drop-zone-profiler').classList.add('border-blue-400', 'bg-blue-50');
-    document.getElementById('profiler-analyse-btn').disabled = false;
+    updateProfilerAnalyseButton();
 }
 
 // ─── Upload & Analyse ────────────────────────────────────────────────────────
@@ -60,6 +70,10 @@ function setProfilerFile(file) {
 async function startProfiler() {
     const input = document.getElementById('profiler-file-input');
     if (!input.files[0]) return;
+    if (!hasProfilerConsent()) {
+        showBanner('Please accept Terms, Privacy Policy, and Cookie Policy first.', 'error');
+        return;
+    }
     const file = input.files[0];
 
     setState('loading');
@@ -67,6 +81,8 @@ async function startProfiler() {
 
     const form = new FormData();
     form.append('file', file);
+    form.append('accept_legal', 'true');
+    form.append('policy_version', '2026-03-16');
 
     try {
         const res = await fetch('/api/tools/profiler/analyze', { method: 'POST', body: form });
@@ -93,7 +109,11 @@ function loadProfilerSample() {
             const input = document.getElementById('profiler-file-input');
             input.files = dt.files;
             setProfilerFile(file);
-            setTimeout(startProfiler, 200);
+            if (hasProfilerConsent()) {
+                setTimeout(startProfiler, 200);
+            } else {
+                showBanner('Sample loaded. Accept legal terms, then click "Profile dataset".', 'info');
+            }
         })
         .catch(() => showBanner('Could not load sample data.', 'error'));
 }
@@ -849,4 +869,5 @@ function statSectionHeader(label) {
 
 document.addEventListener('DOMContentLoaded', () => {
     initProfilerDropZone();
+    document.getElementById('profiler-legal-consent')?.addEventListener('change', updateProfilerAnalyseButton);
 });

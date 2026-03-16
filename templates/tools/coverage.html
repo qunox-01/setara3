@@ -42,6 +42,17 @@
 
         <input type="file" id="coverage-file-input" accept=".csv" class="hidden" />
 
+        <label class="flex items-start gap-2 text-xs text-slate-500 mt-4">
+            <input type="checkbox" id="coverage-legal-consent" value="true" required
+                   class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-400" />
+            <span>
+                By using this tool, you agree to
+                <a href="/terms" class="underline hover:text-slate-700">Terms</a>,
+                <a href="/privacy" class="underline hover:text-slate-700">Privacy Policy</a>, and
+                <a href="/cookies" class="underline hover:text-slate-700">Cookie Policy</a>.
+            </span>
+        </label>
+
         <!-- Optional settings -->
         <div class="mt-5 grid sm:grid-cols-2 gap-4">
             <div>

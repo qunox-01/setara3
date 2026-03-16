@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2X7JEMXBPX"></script>
+    <!-- Google Analytics loader (initialized only after consent) -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-2X7JEMXBPX');
+      window.__xariffGaLoaded = false;
+      function loadAnalytics() {
+        if (window.__xariffGaLoaded) return;
+        window.__xariffGaLoaded = true;
+        var gaScript = document.createElement('script');
+        gaScript.async = true;
+        gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-2X7JEMXBPX';
+        document.head.appendChild(gaScript);
+        gtag('js', new Date());
+        gtag('config', 'G-2X7JEMXBPX');
+      }
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -164,7 +171,7 @@
                         </li>
                         <li class="flex items-center gap-2">
                             <span class="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0"></span>
-                            5 free tools
+                            6 free tools
                         </li>
                     </ul>
                 </div>
@@ -172,14 +179,72 @@
             </div>
             <div class="border-t border-slate-700 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
                 <p>&copy; 2026 xariff. Built for ML practitioners.</p>
-                <p>Upload your CSV. Get instant insights. <a href="/privacy" class="hover:text-white transition-colors">Privacy Policy</a></p>
+                <p>
+                    Upload your CSV. Get instant insights.
+                    <a href="/privacy" class="hover:text-white transition-colors">Privacy Policy</a>
+                    ·
+                    <button type="button" onclick="openCookieSettings()" class="hover:text-white transition-colors underline underline-offset-2">
+                        Cookie settings
+                    </button>
+                </p>
             </div>
         </div>
     </footer>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner"
+         class="hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-slate-900 border-t border-slate-700 shadow-2xl">
+        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-start gap-3 flex-1">
+                <svg class="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    We use cookies for analytics (Google Analytics) to understand how xariff is used and improve the tools.
+                    Raw uploads are processed for analysis and not retained by default.
+                    <a href="/cookies" class="text-blue-400 hover:text-blue-300 underline underline-offset-2 ml-1">Cookie policy</a>
+                </p>
+            </div>
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <button onclick="cookieConsent('necessary')"
+                        class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white border border-slate-600 hover:border-slate-400 rounded-lg transition-colors">
+                    Necessary only
+                </button>
+                <button onclick="cookieConsent('all')"
+                        class="px-5 py-2 text-sm font-semibold bg-blue-500 hover:bg-blue-400 text-white rounded-lg transition-colors">
+                    Accept all
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- App JS -->
     <script src="/static/js/app.js" defer></script>
 
     {% block scripts %}{% endblock %}
+
+    <script>
+        (function () {
+            var consent = localStorage.getItem('cookie_consent');
+            if (!consent) {
+                document.getElementById('cookie-banner').classList.remove('hidden');
+            } else if (consent === 'all') {
+                loadAnalytics();
+            }
+        })();
+
+        function cookieConsent(choice) {
+            localStorage.setItem('cookie_consent', choice);
+            document.getElementById('cookie-banner').classList.add('hidden');
+            if (choice === 'all') {
+                loadAnalytics();
+            }
+        }
+
+        function openCookieSettings() {
+            document.getElementById('cookie-banner').classList.remove('hidden');
+        }
+    </script>
 </body>
 </html>

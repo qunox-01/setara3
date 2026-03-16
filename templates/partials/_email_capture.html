@@ -2,13 +2,25 @@
 <form hx-post="/api/email-capture"
       hx-target="#email-capture-result"
       hx-swap="innerHTML"
-      class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+      class="max-w-md mx-auto space-y-3">
     <input type="hidden" name="source" value="homepage" />
-    <input type="email" name="email" required
-           placeholder="your@email.com"
-           class="flex-1 px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 border-0 focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
-    <button type="submit"
-            class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-sm transition-colors whitespace-nowrap">
-        Get updates
-    </button>
+    <input type="hidden" name="policy_version" value="2026-03-16" />
+    <div class="flex flex-col sm:flex-row gap-3">
+        <input type="email" name="email" required
+               placeholder="your@email.com"
+               class="flex-1 px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 border-0 focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
+        <button type="submit"
+                class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-sm transition-colors whitespace-nowrap">
+            Get updates
+        </button>
+    </div>
+    <label class="flex items-start gap-2 text-xs text-blue-100">
+        <input type="checkbox" name="accept_legal" value="true" required class="mt-0.5 rounded border-blue-200 text-blue-600 focus:ring-blue-300" />
+        <span>
+            By submitting, you agree to our
+            <a href="/terms" class="underline hover:text-white">Terms</a>,
+            <a href="/privacy" class="underline hover:text-white">Privacy Policy</a>, and
+            <a href="/cookies" class="underline hover:text-white">Cookie Policy</a>.
+        </span>
+    </label>
 </form>

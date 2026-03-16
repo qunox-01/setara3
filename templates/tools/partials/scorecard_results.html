@@ -121,6 +121,16 @@
                     Generate report link
                 </button>
             </div>
+            <label class="flex items-start gap-2 text-xs text-slate-500 mt-3">
+                <input type="checkbox" id="report-legal-consent" value="true" required
+                       class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-400" />
+                <span>
+                    By using this tool, you agree to
+                    <a href="/terms" class="underline hover:text-slate-700">Terms</a>,
+                    <a href="/privacy" class="underline hover:text-slate-700">Privacy Policy</a>, and
+                    <a href="/cookies" class="underline hover:text-slate-700">Cookie Policy</a>.
+                </span>
+            </label>
             <p class="text-xs text-slate-400 mt-2">Re-submitting the form above with your email will create a shareable link.</p>
         </div>
     </div>
@@ -134,6 +144,12 @@
 
 <script>
 function generateReport() {
+    const reportConsent = document.getElementById('report-legal-consent');
+    if (!reportConsent || !reportConsent.checked) {
+        alert('Please accept Terms, Privacy Policy, and Cookie Policy before generating a report link.');
+        return;
+    }
+
     const email = document.getElementById('report-email').value;
     const form = document.getElementById('scorecard-form') || document.querySelector('form[hx-post="/tools/scorecard/analyse"]');
     if (!form) {
@@ -154,6 +170,26 @@ function generateReport() {
         form.appendChild(emailInput);
     }
     emailInput.value = email;
+
+    let consentInput = form.querySelector('#report-accept-legal-hidden');
+    if (!consentInput) {
+        consentInput = document.createElement('input');
+        consentInput.type = 'hidden';
+        consentInput.id = 'report-accept-legal-hidden';
+        consentInput.name = 'accept_legal';
+        form.appendChild(consentInput);
+    }
+    consentInput.value = 'true';
+
+    let policyInput = form.querySelector('input[name="policy_version"]');
+    if (!policyInput) {
+        policyInput = document.createElement('input');
+        policyInput.type = 'hidden';
+        policyInput.name = 'policy_version';
+        form.appendChild(policyInput);
+    }
+    policyInput.value = '2026-03-16';
+
     htmx.trigger(form, 'submit');
     // Restore original action
     setTimeout(() => {

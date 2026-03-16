@@ -41,6 +41,18 @@
 
             <input type="file" id="file-input" name="file" accept=".csv,.tsv" class="hidden"
                    onchange="handleFileSelect(this)" />
+            <input type="hidden" name="policy_version" value="2026-03-16" />
+
+            <label class="flex items-start gap-2 text-xs text-slate-500 mb-4">
+                <input type="checkbox" id="legal-consent" name="accept_legal" value="true" required
+                       class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-400" />
+                <span>
+                    By using this tool, you agree to
+                    <a href="/terms" class="underline hover:text-slate-700">Terms</a>,
+                    <a href="/privacy" class="underline hover:text-slate-700">Privacy Policy</a>, and
+                    <a href="/cookies" class="underline hover:text-slate-700">Cookie Policy</a>.
+                </span>
+            </label>
 
             <div class="flex flex-col sm:flex-row gap-3">
                 <button type="submit"
@@ -75,9 +87,15 @@ function handleFileSelect(input) {
     if (file) {
         document.getElementById('file-name').textContent = file.name;
         document.getElementById('file-name').classList.remove('hidden');
-        document.getElementById('analyse-btn').disabled = false;
+        updateAnalyseButton();
         document.getElementById('drop-zone').classList.add('border-blue-400', 'bg-blue-50');
     }
+}
+
+function updateAnalyseButton() {
+    const hasFile = !!document.getElementById('file-input').files[0];
+    const hasConsent = document.getElementById('legal-consent').checked;
+    document.getElementById('analyse-btn').disabled = !(hasFile && hasConsent);
 }
 
 function loadSampleData() {
@@ -90,12 +108,13 @@ function loadSampleData() {
             const input = document.getElementById('file-input');
             input.files = dataTransfer.files;
             handleFileSelect(input);
-            // Auto-submit after a brief delay
-            setTimeout(() => {
-                document.getElementById('quality-form').dispatchEvent(new Event('submit', { bubbles: true }));
-            }, 300);
         })
         .catch(err => console.error('Could not load sample data:', err));
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const legal = document.getElementById('legal-consent');
+    if (legal) legal.addEventListener('change', updateAnalyseButton);
+});
 </script>
 {% endblock %}

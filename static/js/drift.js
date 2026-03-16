@@ -10,11 +10,16 @@ let refFile         = null;
 let curFile         = null;
 let distributionChart = null;
 
+function hasDriftConsent() {
+    return !!document.getElementById('drift-legal-consent')?.checked;
+}
+
 // ─── DOM Ready ────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
     const refInput = document.getElementById('ref-file-input');
     const curInput = document.getElementById('cur-file-input');
+    const legal = document.getElementById('drift-legal-consent');
 
     if (refInput) {
         refInput.addEventListener('change', () => {
@@ -29,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupDropZone('drop-zone-ref', refInput, onRefSelected, ['border-rose-400', 'bg-rose-50']);
     setupDropZone('drop-zone-cur', curInput, onCurSelected, ['border-indigo-400', 'bg-indigo-50']);
+    legal?.addEventListener('change', updateAnalyzeBtn);
 });
 
 // ─── File Selection ───────────────────────────────────────────────────────────
@@ -49,7 +55,7 @@ function onCurSelected(file) {
 
 function updateAnalyzeBtn() {
     const btn = document.getElementById('drift-analyse-btn');
-    if (btn) btn.disabled = !(refFile && curFile);
+    if (btn) btn.disabled = !(refFile && curFile && hasDriftConsent());
 }
 
 // ─── Drag-and-Drop Setup ──────────────────────────────────────────────────────
@@ -106,8 +112,11 @@ async function loadDriftSample() {
 
         onRefSelected(rFile);
         onCurSelected(cFile);
-
-        startDrift();
+        if (hasDriftConsent()) {
+            startDrift();
+        } else {
+            showBanner('Sample loaded. Accept legal terms, then click "Detect Drift".', 'info');
+        }
     } catch (err) {
         showError('Could not load sample data: ' + err.message);
     }
@@ -117,6 +126,10 @@ async function loadDriftSample() {
 
 async function startDrift() {
     if (!refFile || !curFile) return;
+    if (!hasDriftConsent()) {
+        showError('Please accept Terms, Privacy Policy, and Cookie Policy first.');
+        return;
+    }
 
     const nBins = document.getElementById('bins-select')?.value || '10';
 
@@ -126,6 +139,8 @@ async function startDrift() {
     const formData = new FormData();
     formData.append('reference_file', refFile);
     formData.append('current_file',   curFile);
+    formData.append('accept_legal', 'true');
+    formData.append('policy_version', '2026-03-16');
 
     const url = `/api/tools/drift/analyze?n_bins=${nBins}`;
 
