@@ -254,15 +254,23 @@ async def sample_data(tool: str):
 async def sitemap():
     base = "https://xariff.com"
     urls = [
-        "/",
-        "/tools",
-        "/tools/quality",
-        "/tools/scorecard",
-        "/blog",
-        "/about",
+        ("/",                    "1.0",  "weekly"),
+        ("/tools",               "0.9",  "weekly"),
+        ("/tools/profiler",      "0.8",  "monthly"),
+        ("/tools/quality",       "0.8",  "monthly"),
+        ("/tools/scorecard",     "0.8",  "monthly"),
+        ("/tools/coverage",      "0.8",  "monthly"),
+        ("/tools/outliers",      "0.8",  "monthly"),
+        ("/tools/drift",         "0.8",  "monthly"),
+        ("/blog",                "0.7",  "weekly"),
+        ("/about",               "0.5",  "monthly"),
+        ("/privacy",             "0.3",  "yearly"),
+        ("/terms",               "0.3",  "yearly"),
+        ("/cookies",             "0.3",  "yearly"),
     ]
     url_tags = "\n".join(
-        f"  <url><loc>{base}{u}</loc></url>" for u in urls
+        f"  <url><loc>{base}{u}</loc><changefreq>{freq}</changefreq><priority>{pri}</priority></url>"
+        for u, pri, freq in urls
     )
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -275,6 +283,13 @@ async def sitemap():
 async def robots():
     content = """User-agent: *
 Allow: /
+
+# Block API endpoints and internal paths
+Disallow: /api/
+Disallow: /sample-data/
+
+# Block query-string variants that duplicate content
+Disallow: /*?*
 
 Sitemap: https://xariff.com/sitemap.xml
 """
