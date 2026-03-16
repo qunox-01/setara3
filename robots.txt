@@ -1,7 +1,7 @@
 # =============================================================================
-# robots.txt for Xariff / Covality
+# robots.txt for xariff
 # https://xariff.com/robots.txt
-# Last updated: 2026-03-13
+# Last updated: 2026-03-16
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -9,6 +9,8 @@
 # -----------------------------------------------------------------------------
 User-agent: *
 Allow: /
+Allow: /blog/
+Allow: /tools/
 Disallow: /admin/
 Disallow: /dashboard/
 Disallow: /internal/
@@ -21,6 +23,7 @@ Disallow: /settings/
 Disallow: /private/
 Disallow: /staging/
 Disallow: /tmp/
+Disallow: /sample-data/
 Disallow: /search?
 Disallow: /*?sort=
 Disallow: /*?filter=
@@ -32,6 +35,8 @@ Disallow: /*?utm_
 # -----------------------------------------------------------------------------
 User-agent: Googlebot
 Allow: /
+Allow: /blog/
+Allow: /tools/
 Disallow: /admin/
 Disallow: /dashboard/
 Disallow: /internal/
@@ -39,6 +44,7 @@ Disallow: /api/
 Disallow: /login/
 Disallow: /account/
 Disallow: /private/
+Disallow: /sample-data/
 
 User-agent: Googlebot-Image
 Allow: /
@@ -51,6 +57,8 @@ Allow: /
 # -----------------------------------------------------------------------------
 User-agent: Bingbot
 Allow: /
+Allow: /blog/
+Allow: /tools/
 Crawl-delay: 5
 Disallow: /admin/
 Disallow: /dashboard/
@@ -59,6 +67,7 @@ Disallow: /api/
 Disallow: /login/
 Disallow: /account/
 Disallow: /private/
+Disallow: /sample-data/
 
 # -----------------------------------------------------------------------------
 # Other search engines - Full access
@@ -91,15 +100,43 @@ Disallow: /api/
 Disallow: /private/
 
 # -----------------------------------------------------------------------------
-# AI training crawlers - Blocked
-# Protects your content from being used for AI model training
+# AI answer engine crawlers - Allowed to index content
+# Enables citation in ChatGPT, Perplexity, and other AI assistants
 # -----------------------------------------------------------------------------
 User-agent: GPTBot
-Disallow: /
+Allow: /blog/
+Allow: /tools/
+Allow: /about/
+Disallow: /api/
+Disallow: /private/
 
 User-agent: ChatGPT-User
-Disallow: /
+Allow: /blog/
+Allow: /tools/
+Allow: /about/
+Disallow: /api/
+Disallow: /private/
 
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+Disallow: /private/
+
+User-agent: anthropic-ai
+Allow: /blog/
+Allow: /tools/
+Allow: /about/
+Disallow: /api/
+Disallow: /private/
+
+User-agent: ClaudeBot
+Allow: /blog/
+Allow: /tools/
+Allow: /about/
+Disallow: /api/
+Disallow: /private/
+
+# AI training crawlers - Blocked
 User-agent: CCBot
 Disallow: /
 
@@ -109,16 +146,10 @@ Disallow: /
 User-agent: Bytespider
 Disallow: /
 
-User-agent: ClaudeBot
-Disallow: /
-
 User-agent: Diffbot
 Disallow: /
 
 User-agent: Omgilibot
-Disallow: /
-
-User-agent: FacebookBot
 Disallow: /
 
 User-agent: Applebot-Extended
@@ -140,6 +171,9 @@ User-agent: DotBot
 Disallow: /
 
 User-agent: BLEXBot
+Disallow: /
+
+User-agent: FacebookBot
 Disallow: /
 
 # -----------------------------------------------------------------------------

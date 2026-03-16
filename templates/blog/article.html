@@ -2,20 +2,79 @@
 
 {% block title %}{{ article.metadata.title }} — xariff{% endblock %}
 {% block description %}{{ article.metadata.description | default("Read this article on ML data quality from xariff.") }}{% endblock %}
+{% block canonical %}https://xariff.com/blog/{{ article.metadata.slug }}{% endblock %}
+{% block og_type %}article{% endblock %}
+
+{% block jsonld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ article.metadata.title | tojson }},
+  "description": {{ (article.metadata.description | default("")) | tojson }},
+  "datePublished": {{ (article.metadata.date | string | default("")) | tojson }},
+  "dateModified": {{ (article.metadata.date | string | default("")) | tojson }},
+  "url": "https://xariff.com/blog/{{ article.metadata.slug }}",
+  "author": {
+    "@type": "Organization",
+    "name": "xariff",
+    "url": "https://xariff.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "xariff",
+    "url": "https://xariff.com"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://xariff.com/blog/{{ article.metadata.slug }}"
+  }{% if article.metadata.tags %},
+  "keywords": {{ article.metadata.tags | join(", ") | tojson }}{% endif %}
+}
+</script>
+{% if article.faq_items %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for item in article.faq_items %}
+    {
+      "@type": "Question",
+      "name": {{ item.question | tojson }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ item.answer | tojson }}
+      }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 py-12">
     <div class="flex flex-col lg:flex-row gap-10">
 
         <!-- Main Article Content -->
-        <article class="flex-1 min-w-0">
+        <article class="flex-1 min-w-0" itemscope itemtype="https://schema.org/Article">
 
             <!-- Breadcrumb -->
-            <div class="flex items-center gap-2 text-sm text-slate-500 mb-6">
-                <a href="/blog" class="hover:text-blue-500 transition-colors">Blog</a>
-                <span>/</span>
-                <span class="text-slate-800 truncate">{{ article.metadata.title }}</span>
-            </div>
+            <nav aria-label="Breadcrumb">
+                <ol class="flex items-center gap-2 text-sm text-slate-500 mb-6" itemscope itemtype="https://schema.org/BreadcrumbList">
+                    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a href="/blog" class="hover:text-blue-500 transition-colors" itemprop="item"><span itemprop="name">Blog</span></a>
+                        <meta itemprop="position" content="1" />
+                    </li>
+                    <li aria-hidden="true"><span>/</span></li>
+                    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <span class="text-slate-800 truncate" itemprop="name">{{ article.metadata.title }}</span>
+                        <meta itemprop="position" content="2" />
+                    </li>
+                </ol>
+            </nav>
 
             <!-- Header -->
             <header class="mb-8">
@@ -27,23 +86,33 @@
                 </div>
                 {% endif %}
 
-                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 leading-tight">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 leading-tight" itemprop="headline">
                     {{ article.metadata.title }}
                 </h1>
 
                 {% if article.metadata.description %}
-                <p class="text-xl text-slate-600 leading-relaxed mb-4">{{ article.metadata.description }}</p>
+                <p class="text-xl text-slate-600 leading-relaxed mb-4" itemprop="description">{{ article.metadata.description }}</p>
                 {% endif %}
 
-                {% if article.metadata.date %}
-                <div class="flex items-center gap-2 text-sm text-slate-400">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <time>{{ article.metadata.date }}</time>
+                <div class="flex items-center gap-4 text-sm text-slate-400">
+                    {% if article.metadata.date %}
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <time datetime="{{ article.metadata.date }}" itemprop="datePublished">{{ article.metadata.date }}</time>
+                    </div>
+                    {% endif %}
+                    {% if article.reading_time %}
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{{ article.reading_time }} min read</span>
+                    </div>
+                    {% endif %}
                 </div>
-                {% endif %}
             </header>
 
             <!-- Article Body -->
@@ -54,7 +123,8 @@
                         prose-code:text-blue-700 prose-code:bg-blue-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
                         prose-pre:bg-slate-900 prose-pre:text-slate-100
                         prose-blockquote:border-blue-400 prose-blockquote:text-slate-600
-                        prose-ul:text-slate-700 prose-ol:text-slate-700">
+                        prose-ul:text-slate-700 prose-ol:text-slate-700"
+                 itemprop="articleBody">
                 {{ article.content_html | safe }}
             </div>
 

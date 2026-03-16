@@ -52,6 +52,12 @@ async def drift_analyze(
     ref_df = _parse_csv(ref_contents, "reference")
     cur_df = _parse_csv(cur_contents, "current")
 
+    for df, label in ((ref_df, "Reference"), (cur_df, "Current")):
+        if len(df) > 500_000:
+            raise HTTPException(status_code=422, detail=f"{label} file has more than 500,000 rows.")
+        if len(df.columns) > 50:
+            raise HTTPException(status_code=422, detail=f"{label} file has more than 50 columns.")
+
     if len(ref_df) < 10:
         raise HTTPException(status_code=422, detail="Reference dataset must have at least 10 rows.")
     if len(cur_df) < 10:

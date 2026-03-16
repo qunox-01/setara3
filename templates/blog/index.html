@@ -2,6 +2,35 @@
 
 {% block title %}Blog — ML Data Quality Insights — xariff{% endblock %}
 {% block description %}Articles and guides on ML dataset quality, data preparation, and best practices for training better models.{% endblock %}
+{% block canonical %}https://xariff.com/blog{% endblock %}
+
+{% block jsonld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "xariff Blog",
+  "description": "Articles and guides on ML dataset quality, data preparation, and best practices for training better models.",
+  "url": "https://xariff.com/blog",
+  "publisher": {
+    "@type": "Organization",
+    "name": "xariff",
+    "url": "https://xariff.com"
+  }{% if articles %},
+  "blogPost": [
+    {% for article in articles %}
+    {
+      "@type": "BlogPosting",
+      "headline": {{ article.title | tojson }},
+      "url": "https://xariff.com/blog/{{ article.slug }}",
+      "datePublished": {{ (article.date | string | default("")) | tojson }}{% if article.description %},
+      "description": {{ article.description | tojson }}{% endif %}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]{% endif %}
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <div class="max-w-5xl mx-auto px-4 py-12">

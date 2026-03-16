@@ -22,6 +22,39 @@
     <title>{% block title %}xariff — ML Dataset Tools{% endblock %}</title>
     <meta name="description" content="{% block description %}Free ML dataset analysis tools for data scientists. Check data quality, scorecard readiness, and more.{% endblock %}" />
 
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{% block canonical %}https://xariff.com{% endblock %}" />
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="xariff" />
+    <meta property="og:title" content="{{ self.title() }}" />
+    <meta property="og:description" content="{{ self.description() }}" />
+    <meta property="og:url" content="{{ self.canonical() }}" />
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="{{ self.title() }}" />
+    <meta name="twitter:description" content="{{ self.description() }}" />
+
+    <!-- WebSite structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "xariff",
+      "url": "https://xariff.com",
+      "description": "Free ML dataset analysis tools for data scientists and ML engineers.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://xariff.com/blog?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    {% block jsonld %}{% endblock %}
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 

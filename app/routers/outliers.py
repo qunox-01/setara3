@@ -49,6 +49,12 @@ async def outliers_analyze(
     if df is None:
         raise HTTPException(status_code=422, detail=f"Could not parse CSV: {last_error}")
 
+    if len(df) > 500_000:
+        raise HTTPException(status_code=422, detail="File has more than 500,000 rows.")
+
+    if len(df.columns) > 50:
+        raise HTTPException(status_code=422, detail="File has more than 50 columns.")
+
     if len(df) < 10:
         raise HTTPException(status_code=422, detail="Dataset must have at least 10 rows.")
 

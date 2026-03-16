@@ -252,26 +252,35 @@ async def sample_data(tool: str):
 
 @router.get("/sitemap.xml")
 async def sitemap():
+    from app.utils.markdown import list_articles
     base = "https://xariff.com"
-    urls = [
-        ("/",                    "1.0",  "weekly"),
-        ("/tools",               "0.9",  "weekly"),
-        ("/tools/profiler",      "0.8",  "monthly"),
-        ("/tools/quality",       "0.8",  "monthly"),
-        ("/tools/scorecard",     "0.8",  "monthly"),
-        ("/tools/coverage",      "0.8",  "monthly"),
-        ("/tools/outliers",      "0.8",  "monthly"),
-        ("/tools/drift",         "0.8",  "monthly"),
-        ("/blog",                "0.7",  "weekly"),
-        ("/about",               "0.5",  "monthly"),
-        ("/privacy",             "0.3",  "yearly"),
-        ("/terms",               "0.3",  "yearly"),
-        ("/cookies",             "0.3",  "yearly"),
+    static_urls = [
+        ("/",               "1.0", "weekly",  "2026-03-16"),
+        ("/tools",          "0.9", "weekly",  "2026-03-16"),
+        ("/tools/profiler", "0.8", "monthly", "2026-03-16"),
+        ("/tools/quality",  "0.8", "monthly", "2026-03-16"),
+        ("/tools/scorecard","0.8", "monthly", "2026-03-16"),
+        ("/tools/coverage", "0.8", "monthly", "2026-03-16"),
+        ("/tools/outliers", "0.8", "monthly", "2026-03-16"),
+        ("/tools/drift",    "0.8", "monthly", "2026-03-16"),
+        ("/blog",           "0.7", "weekly",  "2026-03-16"),
+        ("/about",          "0.5", "monthly", "2026-03-16"),
+        ("/privacy",        "0.3", "yearly",  "2026-03-16"),
+        ("/terms",          "0.3", "yearly",  "2026-03-16"),
+        ("/cookies",        "0.3", "yearly",  "2026-03-16"),
     ]
     url_tags = "\n".join(
-        f"  <url><loc>{base}{u}</loc><changefreq>{freq}</changefreq><priority>{pri}</priority></url>"
-        for u, pri, freq in urls
+        f"  <url><loc>{base}{u}</loc><lastmod>{lastmod}</lastmod><changefreq>{freq}</changefreq><priority>{pri}</priority></url>"
+        for u, pri, freq, lastmod in static_urls
     )
+    # Add individual blog article URLs
+    articles = list_articles("content/articles")
+    for article in articles:
+        slug = article.get("slug", "")
+        date = article.get("date", "")
+        lastmod = f"<lastmod>{date}</lastmod>" if date else ""
+        url_tags += f"\n  <url><loc>{base}/blog/{slug}</loc>{lastmod}<changefreq>monthly</changefreq><priority>0.7</priority></url>"
+
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 {url_tags}
@@ -281,16 +290,11 @@ async def sitemap():
 
 @router.get("/robots.txt")
 async def robots():
-    content = """User-agent: *
-Allow: /
-
-# Block API endpoints and internal paths
-Disallow: /api/
-Disallow: /sample-data/
-
-# Block query-string variants that duplicate content
-Disallow: /*?*
-
-Sitemap: https://xariff.com/sitemap.xml
-"""
+    import os
+    robots_path = os.path.join(os.path.dirname(__file__), "..", "..", "robots.txt")
+    try:
+        with open(os.path.normpath(robots_path), "r", encoding="utf-8") as f:
+            content = f.read()
+    except FileNotFoundError:
+        content = "User-agent: *\nAllow: /\nSitemap: https://xariff.com/sitemap.xml\n"
     return Response(content=content, media_type="text/plain")
