@@ -20,3 +20,8 @@ async def scorecard_tool(request: Request):
 @router.get("/tools/outliers", response_class=HTMLResponse)
 async def outliers_tool(request: Request):
     return templates.TemplateResponse("tools/outliers.html", {"request": request})
+
+
+@router.get("/tools/drift", response_class=HTMLResponse)
+async def drift_tool(request: Request):
+    return templates.TemplateResponse("tools/drift.html", {"request": request})

@@ -152,6 +152,37 @@ async def sample_data(tool: str):
         ).sample(frac=1, random_state=42).reset_index(drop=True)
         df["magnitude"] = df["magnitude"].round(3)
         df["dmin"]      = df["dmin"].round(1)
+    elif tool == "drift_reference":
+        # Reference (training) dataset — stable credit applicant population
+        n = 400
+        df = pd.DataFrame({
+            "age":           rng.integers(22, 60, n).tolist(),
+            "annual_income": rng.normal(55_000, 10_000, n).round(0),
+            "loan_amount":   rng.normal(12_000, 3_000, n).round(0),
+            "credit_score":  rng.integers(600, 820, n).tolist(),
+            "employment_years": rng.integers(1, 20, n).tolist(),
+            "num_accounts":  rng.integers(1, 7, n).tolist(),
+            "region":        rng.choice(["North", "South", "East", "West"], n, p=[0.3, 0.3, 0.2, 0.2]).tolist(),
+            "product":       rng.choice(["Standard", "Premium", "Basic"], n, p=[0.5, 0.3, 0.2]).tolist(),
+            "default":       rng.choice([0, 1], n, p=[0.85, 0.15]).tolist(),
+        })
+
+    elif tool == "drift_current":
+        # Current (production) dataset — shifted population: younger, lower income, different region mix
+        rng2 = np.random.default_rng(99)
+        n = 350
+        df = pd.DataFrame({
+            "age":           rng2.integers(18, 45, n).tolist(),          # shifted younger
+            "annual_income": rng2.normal(42_000, 14_000, n).round(0),   # lower income + higher variance
+            "loan_amount":   rng2.normal(12_500, 3_200, n).round(0),    # similar
+            "credit_score":  rng2.integers(550, 780, n).tolist(),        # slightly lower
+            "employment_years": rng2.integers(0, 12, n).tolist(),        # less experience
+            "num_accounts":  rng2.integers(1, 5, n).tolist(),
+            "region":        rng2.choice(["North", "South", "East", "West"], n, p=[0.1, 0.1, 0.6, 0.2]).tolist(),  # East dominates
+            "product":       rng2.choice(["Standard", "Premium", "Basic"], n, p=[0.3, 0.1, 0.6]).tolist(),          # Basic dominates
+            "default":       rng2.choice([0, 1], n, p=[0.72, 0.28]).tolist(),  # higher default rate
+        })
+
     elif tool == "outliers":
         # Synthetic credit-risk dataset with realistic outlier structure:
         #   - most customers cluster around normal income/spend/age ranges
