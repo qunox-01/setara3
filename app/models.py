@@ -27,6 +27,19 @@ class Feedback(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class ContactMessage(Base):
+    __tablename__ = "contact_messages"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(120), nullable=False)
+    email = Column(String(255), nullable=False)
+    category = Column(String(40), default="general")
+    subject = Column(String(180), default="")
+    message = Column(Text, nullable=False)
+    session_id = Column(String(100), default="")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class Report(Base):
     __tablename__ = "reports"
 

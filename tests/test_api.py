@@ -39,6 +39,13 @@ def test_about_page(client):
     assert resp.status_code == 200
 
 
+def test_contact_page(client):
+    resp = client.get("/contact")
+    assert resp.status_code == 200
+    assert "contact" in resp.text.lower()
+    assert "contactus@xariff.com" in resp.text.lower()
+
+
 def test_tools_index(client):
     resp = client.get("/tools")
     assert resp.status_code == 200
@@ -153,6 +160,21 @@ def test_feedback_endpoint(client):
         data={"tool": "quality", "useful": "yes", "comment": ""},
     )
     assert resp.status_code == 200
+
+
+def test_contact_feedback_endpoint(client):
+    resp = client.post(
+        "/api/contact-feedback",
+        data={
+            "name": "Test User",
+            "email": "test@example.com",
+            "category": "feedback",
+            "subject": "Product feedback",
+            "message": "The tools are useful. Please add more export options.",
+        },
+    )
+    assert resp.status_code == 200
+    assert "message has been sent" in resp.text.lower()
 
 
 def test_track_endpoint(client):

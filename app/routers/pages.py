@@ -16,6 +16,11 @@ async def about(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
 
 
+@router.get("/contact", response_class=HTMLResponse)
+async def contact(request: Request):
+    return templates.TemplateResponse("contact.html", {"request": request})
+
+
 @router.get("/terms", response_class=HTMLResponse)
 async def terms(request: Request):
     return templates.TemplateResponse("legal/terms.html", {"request": request})

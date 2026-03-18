@@ -1,17 +1,19 @@
 import io
 import json
+import re
 
 import numpy as np
 import pandas as pd
-from fastapi import APIRouter, Request, Form, BackgroundTasks
+from fastapi import APIRouter, Request, Form, BackgroundTasks, HTTPException
 from fastapi.responses import HTMLResponse, Response, StreamingResponse
 
 from app.database import AsyncSessionLocal
 from app.dependencies import get_session_id
-from app.models import Email, Feedback, AnalyticsEvent
+from app.models import Email, Feedback, AnalyticsEvent, ContactMessage
 from app.utils.legal import validate_legal_acceptance, log_consent, POLICY_VERSION
 
 router = APIRouter()
+EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
 @router.post("/api/email-capture", response_class=HTMLResponse)
@@ -65,6 +67,49 @@ async def feedback(
         content="""
         <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-center">
             <p class="text-blue-800">Thanks for your feedback!</p>
+        </div>
+        """
+    )
+
+
+@router.post("/api/contact-feedback", response_class=HTMLResponse)
+async def contact_feedback(
+    request: Request,
+    name: str = Form(..., min_length=2, max_length=120),
+    email: str = Form(..., max_length=255),
+    category: str = Form(default="general", max_length=40),
+    subject: str = Form(default="", max_length=180),
+    message: str = Form(..., min_length=10, max_length=5000),
+):
+    session_id = get_session_id(request)
+    cleaned_email = email.strip().lower()
+    if not EMAIL_PATTERN.match(cleaned_email):
+        raise HTTPException(status_code=422, detail="Please provide a valid email address.")
+
+    cleaned_message = message.strip()
+    if not cleaned_message:
+        raise HTTPException(status_code=422, detail="Message cannot be empty.")
+
+    cleaned_subject = subject.strip() or "General inquiry"
+    cleaned_category = (category or "general").strip().lower()
+
+    async with AsyncSessionLocal() as session:
+        record = ContactMessage(
+            name=name.strip(),
+            email=cleaned_email,
+            category=cleaned_category,
+            subject=cleaned_subject,
+            message=cleaned_message,
+            session_id=session_id,
+        )
+        session.add(record)
+        await session.commit()
+
+    return HTMLResponse(
+        content="""
+        <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <p class="text-green-800 font-semibold">Thanks, your message has been sent.</p>
+            <p class="text-sm text-green-700 mt-1">We will reply as soon as possible. You can also email contactus@xariff.com directly.</p>
         </div>
         """
     )
@@ -265,6 +310,7 @@ async def sitemap():
         ("/tools/drift",    "0.8", "monthly", "2026-03-16"),
         ("/blog",           "0.7", "weekly",  "2026-03-16"),
         ("/about",          "0.5", "monthly", "2026-03-16"),
+        ("/contact",        "0.5", "monthly", "2026-03-16"),
         ("/privacy",        "0.3", "yearly",  "2026-03-16"),
         ("/terms",          "0.3", "yearly",  "2026-03-16"),
         ("/cookies",        "0.3", "yearly",  "2026-03-16"),
