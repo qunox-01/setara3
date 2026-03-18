@@ -5,8 +5,10 @@ from fastapi import APIRouter, Request, UploadFile, File, HTTPException, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
+from app.database import AsyncSessionLocal
 from app.dependencies import get_session_id
 from app.services import profiler as profiler_service
+from app.utils.analytics import track_event
 from app.utils.legal import validate_legal_acceptance, log_consent, POLICY_VERSION
 
 router = APIRouter()
@@ -65,11 +67,20 @@ async def profiler_analyze(
     except MemoryError:
         raise HTTPException(status_code=413, detail="Dataset too large to process in memory.")
 
+    session_id = get_session_id(request)
     await log_consent(
-        session_id=get_session_id(request),
+        session_id=session_id,
         action="upload_profiler",
         source="tool_profiler",
         policy_version=policy_version,
     )
+    async with AsyncSessionLocal() as db:
+        await track_event(
+            db,
+            event="file_upload",
+            tool="profiler",
+            session_id=session_id,
+            metadata={"rows": len(df), "cols": len(df.columns)},
+        )
 
     return JSONResponse(content=result)

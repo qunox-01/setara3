@@ -2,13 +2,22 @@ import io
 
 import pandas as pd
 from fastapi import APIRouter, HTTPException, Query, Request, UploadFile, File, Form
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.templating import Jinja2Templates
 
+from app.database import AsyncSessionLocal
 from app.dependencies import get_session_id
 from app.services import outliers as outliers_service
+from app.utils.analytics import track_event
 from app.utils.legal import validate_legal_acceptance, log_consent, POLICY_VERSION
 
 router = APIRouter()
+templates = Jinja2Templates(directory="templates")
+
+
+@router.get("/tools/outliers", response_class=HTMLResponse)
+async def outliers_tool(request: Request):
+    return templates.TemplateResponse("tools/outliers.html", {"request": request})
 
 _MAX_FILE_MB = 50
 _MAX_ROWS = 100_000
@@ -93,11 +102,20 @@ async def outliers_analyze(
     except MemoryError:
         raise HTTPException(status_code=413, detail="Dataset too large to process in memory.")
 
+    session_id = get_session_id(request)
     await log_consent(
-        session_id=get_session_id(request),
+        session_id=session_id,
         action="upload_outliers",
         source="tool_outliers",
         policy_version=policy_version,
     )
+    async with AsyncSessionLocal() as db:
+        await track_event(
+            db,
+            event="file_upload",
+            tool="outliers",
+            session_id=session_id,
+            metadata={"rows": len(df), "cols": len(df.columns), "method": method},
+        )
 
     return JSONResponse(content=result)

@@ -2,13 +2,22 @@ import io
 
 import pandas as pd
 from fastapi import APIRouter, HTTPException, Query, Request, UploadFile, File, Form
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.templating import Jinja2Templates
 
+from app.database import AsyncSessionLocal
 from app.dependencies import get_session_id
 from app.services import drift as drift_service
+from app.utils.analytics import track_event
 from app.utils.legal import validate_legal_acceptance, log_consent, POLICY_VERSION
 
 router = APIRouter()
+templates = Jinja2Templates(directory="templates")
+
+
+@router.get("/tools/drift", response_class=HTMLResponse)
+async def drift_tool(request: Request):
+    return templates.TemplateResponse("tools/drift.html", {"request": request})
 
 _MAX_FILE_MB = 50
 _MAX_ROWS = 100_000
@@ -85,11 +94,20 @@ async def drift_analyze(
     except MemoryError:
         raise HTTPException(status_code=413, detail="Datasets too large to process in memory.")
 
+    session_id = get_session_id(request)
     await log_consent(
-        session_id=get_session_id(request),
+        session_id=session_id,
         action="upload_drift",
         source="tool_drift",
         policy_version=policy_version,
     )
+    async with AsyncSessionLocal() as db:
+        await track_event(
+            db,
+            event="file_upload",
+            tool="drift",
+            session_id=session_id,
+            metadata={"ref_rows": len(ref_df), "cur_rows": len(cur_df), "common_cols": len(common)},
+        )
 
     return JSONResponse(content=result)
