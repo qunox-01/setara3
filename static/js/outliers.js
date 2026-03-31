@@ -160,6 +160,7 @@ function renderAll(data) {
     renderScoreChart(data);
     renderFeatureContributions(data);
     renderOutlierRows(data);
+    if (data.result_id) renderShareSection('outliers-share', 'outliers', data.result_id);
 }
 
 // ─── Component 1: Score Banner ────────────────────────────────────────────────

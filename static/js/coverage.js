@@ -13,6 +13,45 @@ let heatmapCanvas = null;
 let heatmapCtx = null;
 let currentSort = { col: 'type', dir: 'asc' };
 
+function normalizeCoverageData(data) {
+    const safe = data && typeof data === 'object' ? { ...data } : {};
+    safe.flagged_regions = Array.isArray(safe.flagged_regions) ? safe.flagged_regions : [];
+    safe.feature_names = Array.isArray(safe.feature_names) ? safe.feature_names : [];
+    safe.sample_2d_coords = Array.isArray(safe.sample_2d_coords) ? safe.sample_2d_coords : [];
+    safe.nearest_rows_data = safe.nearest_rows_data && typeof safe.nearest_rows_data === 'object' ? safe.nearest_rows_data : {};
+    safe.pca_explained_variance = Array.isArray(safe.pca_explained_variance) ? safe.pca_explained_variance : [];
+    safe.grid_data = safe.grid_data && typeof safe.grid_data === 'object' ? safe.grid_data : {};
+    safe.grid_data.counts = Array.isArray(safe.grid_data.counts) ? safe.grid_data.counts : [];
+    safe.grid_data.x_edges = Array.isArray(safe.grid_data.x_edges) ? safe.grid_data.x_edges : [];
+    safe.grid_data.y_edges = Array.isArray(safe.grid_data.y_edges) ? safe.grid_data.y_edges : [];
+    safe.total_samples = Number.isFinite(safe.total_samples) ? safe.total_samples : 0;
+    safe.total_features = Number.isFinite(safe.total_features) ? safe.total_features : safe.feature_names.length;
+    safe.grid_size = Number.isFinite(safe.grid_size) ? safe.grid_size : safe.grid_data.counts.length || 0;
+    safe.coverage_score = Number.isFinite(safe.coverage_score) ? safe.coverage_score : 0;
+    safe.pca_total_explained = Number.isFinite(safe.pca_total_explained) ? safe.pca_total_explained : 0;
+    safe.sample_labels = Array.isArray(safe.sample_labels) ? safe.sample_labels : null;
+    return safe;
+}
+
+function getVariance(data, index) {
+    const value = data.pca_explained_variance[index];
+    return Number.isFinite(value) ? value : 0;
+}
+
+function safeRegion(region) {
+    const safe = region && typeof region === 'object' ? { ...region } : {};
+    safe.cell_row = Number.isFinite(safe.cell_row) ? safe.cell_row : 0;
+    safe.cell_col = Number.isFinite(safe.cell_col) ? safe.cell_col : 0;
+    safe.cell_type = safe.cell_type === 'empty' ? 'empty' : 'sparse';
+    safe.sample_count = Number.isFinite(safe.sample_count) ? safe.sample_count : 0;
+    safe.feature_summary = safe.feature_summary && typeof safe.feature_summary === 'object' ? safe.feature_summary : {};
+    safe.top_deviating_features = Array.isArray(safe.top_deviating_features) ? safe.top_deviating_features : [];
+    safe.confidence = safe.confidence && typeof safe.confidence === 'object' ? safe.confidence : {};
+    safe.confidence.level = ['high', 'medium', 'low'].includes(safe.confidence.level) ? safe.confidence.level : 'low';
+    safe.label_distribution = safe.label_distribution && typeof safe.label_distribution === 'object' ? safe.label_distribution : null;
+    return safe;
+}
+
 function hasCoverageConsent() {
     return !!document.getElementById('coverage-legal-consent')?.checked;
 }
@@ -116,17 +155,25 @@ async function startCoverage() {
     if (gridSize)  params.set('grid_size', String(gridSize));
     if (params.toString()) url += '?' + params.toString();
 
+    let json;
     try {
         const resp = await fetch(url, { method: 'POST', body: formData });
-        const json = await resp.json();
+        json = await resp.json();
         if (!resp.ok) {
             showError(json.detail || `Error ${resp.status}`);
             return;
         }
-        coverageData = json;
-        renderAll(json);
     } catch (e) {
         showError('Network error. Please try again.');
+        return;
+    }
+
+    try {
+        coverageData = normalizeCoverageData(json);
+        renderAll(coverageData);
+    } catch (e) {
+        console.error('Coverage render failed:', e);
+        showError('Analysis completed, but the page hit a display error. Please refresh and try again.');
     } finally {
         setLoading(false);
     }
@@ -135,27 +182,29 @@ async function startCoverage() {
 // ─── Render Orchestrator ─────────────────────────────────────────────────────
 
 function renderAll(data) {
-    document.getElementById('coverage-results').classList.remove('hidden');
+    document.getElementById('coverage-results')?.classList.remove('hidden');
     renderScoreBanner(data);
     renderCoverageMap(data);
     renderFlaggedTable(data);
     renderPCAPanel(data);
+    if (data.result_id) renderShareSection('coverage-share', 'coverage', data.result_id);
 }
 
 // ─── Component 1: Score Banner ───────────────────────────────────────────────
 
 function renderScoreBanner(data) {
     const score = data.coverage_score;
+    const flaggedCount = data.flagged_regions.length;
     let color, verdict, msg;
 
     if (score >= 85) {
         color = 'from-green-50 to-emerald-50 border-green-200';
         verdict = '<span class="text-green-700 font-bold">Good Coverage</span>';
-        msg = `Your feature space is well-covered. The dataset has data in most regions of the combined feature space. <strong>${data.flagged_regions.length}</strong> minor gaps were detected, but they are unlikely to cause significant model issues.`;
+        msg = `Your feature space is well-covered. The dataset has data in most regions of the combined feature space. <strong>${flaggedCount}</strong> minor gaps were detected, but they are unlikely to cause significant model issues.`;
     } else if (score >= 60) {
         color = 'from-yellow-50 to-amber-50 border-yellow-200';
         verdict = '<span class="text-yellow-700 font-bold">Fair Coverage</span>';
-        msg = `Your feature space has some coverage gaps. <strong>${data.flagged_regions.length}</strong> regions were flagged where the dataset has thin or missing data. Review the gaps below to decide if these regions matter for your use case.`;
+        msg = `Your feature space has some coverage gaps. <strong>${flaggedCount}</strong> regions were flagged where the dataset has thin or missing data. Review the gaps below to decide if these regions matter for your use case.`;
     } else {
         color = 'from-red-50 to-rose-50 border-red-200';
         verdict = '<span class="text-red-700 font-bold">Poor Coverage</span>';
@@ -172,7 +221,9 @@ function renderScoreBanner(data) {
         </div>`;
     }
 
-    document.getElementById('coverage-score-banner').innerHTML = `
+    const container = document.getElementById('coverage-score-banner');
+    if (!container) return;
+    container.innerHTML = `
         <div class="bg-gradient-to-br ${color} border rounded-2xl p-6 shadow-sm">
             <div class="flex flex-col sm:flex-row items-center gap-6">
                 <div class="flex-shrink-0 w-28 h-28 rounded-full border-4 ${ringColor} flex flex-col items-center justify-center bg-white shadow-inner">
@@ -187,7 +238,7 @@ function renderScoreBanner(data) {
                         <span><strong class="text-slate-700">${data.total_samples.toLocaleString()}</strong> samples</span>
                         <span><strong class="text-slate-700">${data.total_features}</strong> features analysed</span>
                         <span><strong class="text-slate-700">${data.grid_size}×${data.grid_size}</strong> grid</span>
-                        <span><strong class="text-slate-700">${data.flagged_regions.length}</strong> flagged regions</span>
+                        <span><strong class="text-slate-700">${flaggedCount}</strong> flagged regions</span>
                     </div>
                 </div>
             </div>
@@ -198,8 +249,9 @@ function renderScoreBanner(data) {
 
 function renderCoverageMap(data) {
     const container = document.getElementById('coverage-map-container');
-    const pc1 = Math.round(data.pca_explained_variance[0] * 100);
-    const pc2 = Math.round(data.pca_explained_variance[1] * 100);
+    if (!container) return;
+    const pc1 = Math.round(getVariance(data, 0) * 100);
+    const pc2 = Math.round(getVariance(data, 1) * 100);
 
     container.innerHTML = `
         <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
@@ -248,10 +300,16 @@ function drawHeatmap(data) {
     canvas.style.height = H + 'px';
 
     const ctx = heatmapCtx;
+    if (!ctx) return;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.scale(dpr, dpr);
 
     const { counts, x_edges, y_edges } = data.grid_data;
     const gs  = data.grid_size;
+    if (!gs || !counts.length || x_edges.length < 2 || y_edges.length < 2) {
+        return;
+    }
     const PAD = { top: 10, right: 10, bottom: 36, left: 36 };
     const pw  = W - PAD.left - PAD.right;
     const ph  = H - PAD.top  - PAD.bottom;
@@ -261,7 +319,8 @@ function drawHeatmap(data) {
     const maxCount = Math.max(...counts.flat());
 
     // Flagged lookup
-    const flaggedSet = new Set(data.flagged_regions.map(r => `${r.cell_row}_${r.cell_col}`));
+    const regions = data.flagged_regions.map(safeRegion);
+    const flaggedSet = new Set(regions.map(r => `${r.cell_row}_${r.cell_col}`));
 
     // Draw heatmap cells
     for (let row = 0; row < gs; row++) {
@@ -278,7 +337,7 @@ function drawHeatmap(data) {
 
             // Flagged cell overlay
             if (flaggedSet.has(`${row}_${col}`)) {
-                const region = data.flagged_regions.find(r => r.cell_row === row && r.cell_col === col);
+                const region = regions.find(r => r.cell_row === row && r.cell_col === col);
                 if (region?.cell_type === 'empty') {
                     ctx.fillStyle = 'rgba(239,68,68,0.12)';
                     ctx.fillRect(x, y, cellW, cellH);
@@ -296,7 +355,8 @@ function drawHeatmap(data) {
     if (showScatter && data.sample_2d_coords) {
         const xMin = x_edges[0], xMax = x_edges[x_edges.length - 1];
         const yMin = y_edges[0], yMax = y_edges[y_edges.length - 1];
-        const xRange = xMax - xMin, yRange = yMax - yMin;
+        const xRange = xMax - xMin || 1;
+        const yRange = yMax - yMin || 1;
 
         const labelColors = buildLabelColorMap(data.sample_labels);
 
@@ -320,11 +380,11 @@ function drawHeatmap(data) {
     ctx.fillStyle = '#64748b';
     ctx.font = '11px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`PC1 (${Math.round(data.pca_explained_variance[0] * 100)}% variance)`, PAD.left + pw / 2, H - 6);
+    ctx.fillText(`PC1 (${Math.round(getVariance(data, 0) * 100)}% variance)`, PAD.left + pw / 2, H - 6);
     ctx.save();
     ctx.translate(12, PAD.top + ph / 2);
     ctx.rotate(-Math.PI / 2);
-    ctx.fillText(`PC2 (${Math.round(data.pca_explained_variance[1] * 100)}% variance)`, 0, 0);
+    ctx.fillText(`PC2 (${Math.round(getVariance(data, 1) * 100)}% variance)`, 0, 0);
     ctx.restore();
 
     // Hover interaction
@@ -404,6 +464,7 @@ function toggleLabelColor() {
 
 function renderFlaggedTable(data) {
     const container = document.getElementById('coverage-flagged-table');
+    if (!container) return;
     if (!data.flagged_regions || data.flagged_regions.length === 0) {
         container.innerHTML = `
             <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
@@ -413,7 +474,7 @@ function renderFlaggedTable(data) {
         return;
     }
 
-    const regions = [...data.flagged_regions];
+    const regions = [...data.flagged_regions].map(safeRegion);
 
     container.innerHTML = `
         <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
@@ -439,6 +500,7 @@ function renderFlaggedTable(data) {
 }
 
 function flaggedRow(r, data) {
+    r = safeRegion(r);
     const key    = `${r.cell_row}_${r.cell_col}`;
     const typeTag = r.cell_type === 'empty'
         ? '<span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">Empty</span>'
@@ -476,6 +538,7 @@ function flaggedRow(r, data) {
 }
 
 function featureProfileCard(r, data) {
+    r = safeRegion(r);
     const confMsg = {
         high:   'This gap is well-supported by the projection. It is likely a genuine coverage hole in your data.',
         medium: 'This gap appears in the projection but may be partially caused by dimensionality reduction. Verify by checking the nearest rows directly.',
@@ -592,8 +655,8 @@ function showNearestRows(key) {
 
 function renderPCAPanel(data) {
     const total = data.pca_total_explained;
-    const pc1   = data.pca_explained_variance[0];
-    const pc2   = data.pca_explained_variance[1];
+    const pc1   = getVariance(data, 0);
+    const pc2   = getVariance(data, 1);
 
     let msg, msgColor;
     if (total >= 0.60) {
@@ -607,11 +670,14 @@ function renderPCAPanel(data) {
         msgColor = 'text-red-700';
     }
 
-    const highs   = data.flagged_regions.filter(r => r.confidence.level === 'high').length;
-    const mediums = data.flagged_regions.filter(r => r.confidence.level === 'medium').length;
-    const lows    = data.flagged_regions.filter(r => r.confidence.level === 'low').length;
+    const safeRegions = data.flagged_regions.map(safeRegion);
+    const highs   = safeRegions.filter(r => r.confidence.level === 'high').length;
+    const mediums = safeRegions.filter(r => r.confidence.level === 'medium').length;
+    const lows    = safeRegions.filter(r => r.confidence.level === 'low').length;
 
-    document.getElementById('coverage-pca-panel').innerHTML = `
+    const container = document.getElementById('coverage-pca-panel');
+    if (!container) return;
+    container.innerHTML = `
         <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
             <h2 class="text-lg font-bold text-slate-800 mb-3">PCA Projection Confidence</h2>
             <div class="space-y-2 mb-4">
@@ -657,7 +723,7 @@ function setLoading(on) {
 function clearResults() {
     document.getElementById('coverage-results')?.classList.add('hidden');
     document.getElementById('coverage-error')?.classList.add('hidden');
-    ['coverage-score-banner','coverage-map-container','coverage-flagged-table','coverage-pca-panel'].forEach(id => {
+    ['coverage-score-banner','coverage-map-container','coverage-flagged-table','coverage-pca-panel','coverage-share'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = '';
     });

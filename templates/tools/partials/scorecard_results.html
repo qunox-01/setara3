@@ -107,33 +107,10 @@
     </div>
     {% endif %}
 
-    <!-- Save & Share Report -->
-    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6">
-        <h3 class="font-bold text-slate-800 mb-2">Save & share this report</h3>
-        <p class="text-slate-500 text-sm mb-4">Re-upload your file to generate a permanent shareable report link.</p>
-        <div id="report-cta">
-            <div class="flex flex-col sm:flex-row gap-3 items-center">
-                <input type="email" id="report-email"
-                       placeholder="your@email.com (optional)"
-                       class="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-                <button onclick="generateReport()"
-                        class="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap">
-                    Generate report link
-                </button>
-            </div>
-            <label class="flex items-start gap-2 text-xs text-slate-500 mt-3">
-                <input type="checkbox" id="report-legal-consent" value="true" required
-                       class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-400" />
-                <span>
-                    By using this tool, you agree to
-                    <a href="/terms" class="underline hover:text-slate-700">Terms</a>,
-                    <a href="/privacy" class="underline hover:text-slate-700">Privacy Policy</a>, and
-                    <a href="/cookies" class="underline hover:text-slate-700">Cookie Policy</a>.
-                </span>
-            </label>
-            <p class="text-xs text-slate-400 mt-2">Re-submitting the form above with your email will create a shareable link.</p>
-        </div>
-    </div>
+    <!-- Share & Download -->
+    {% with tool="scorecard" %}
+        {% include "partials/_share.html" %}
+    {% endwith %}
 
     <!-- Feedback -->
     <div id="feedback-section">
@@ -142,59 +119,3 @@
 
 </div>
 
-<script>
-function generateReport() {
-    const reportConsent = document.getElementById('report-legal-consent');
-    if (!reportConsent || !reportConsent.checked) {
-        alert('Please accept Terms, Privacy Policy, and Cookie Policy before generating a report link.');
-        return;
-    }
-
-    const email = document.getElementById('report-email').value;
-    const form = document.getElementById('scorecard-form') || document.querySelector('form[hx-post="/tools/scorecard/analyse"]');
-    if (!form) {
-        alert('Please scroll up and re-submit the form to generate a report.');
-        return;
-    }
-    // Change form action to report endpoint
-    const originalAction = form.getAttribute('hx-post');
-    const originalTarget = form.getAttribute('hx-target');
-    form.setAttribute('hx-post', '/tools/scorecard/report');
-    form.setAttribute('hx-target', '#report-cta');
-    // Add email
-    let emailInput = form.querySelector('input[name="report_email"]');
-    if (!emailInput) {
-        emailInput = document.createElement('input');
-        emailInput.type = 'hidden';
-        emailInput.name = 'email';
-        form.appendChild(emailInput);
-    }
-    emailInput.value = email;
-
-    let consentInput = form.querySelector('#report-accept-legal-hidden');
-    if (!consentInput) {
-        consentInput = document.createElement('input');
-        consentInput.type = 'hidden';
-        consentInput.id = 'report-accept-legal-hidden';
-        consentInput.name = 'accept_legal';
-        form.appendChild(consentInput);
-    }
-    consentInput.value = 'true';
-
-    let policyInput = form.querySelector('input[name="policy_version"]');
-    if (!policyInput) {
-        policyInput = document.createElement('input');
-        policyInput.type = 'hidden';
-        policyInput.name = 'policy_version';
-        form.appendChild(policyInput);
-    }
-    policyInput.value = '2026-03-16';
-
-    htmx.trigger(form, 'submit');
-    // Restore original action
-    setTimeout(() => {
-        form.setAttribute('hx-post', originalAction);
-        form.setAttribute('hx-target', originalTarget);
-    }, 500);
-}
-</script>

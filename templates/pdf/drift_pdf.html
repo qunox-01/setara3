@@ -1,0 +1,95 @@
+{% from "pdf/_base.html" import page_styles, header, footer %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dataset Drift Report — xariff</title>
+{{ page_styles() }}
+</head>
+<body>
+
+{{ header("Dataset Drift Report", generated_at) }}
+
+{% set s = result.summary or {} %}
+{% set score = (s.score or 0) | round | int %}
+{% set color = 'green' if score >= 80 else ('yellow' if score >= 55 else 'red') %}
+
+<!-- Score Banner -->
+<div class="banner">
+  <div class="banner-label">Overall Drift Verdict</div>
+  <div class="banner-verdict" style="font-size:22px; margin-top:8px;">{{ s.verdict }}</div>
+  <div class="banner-meta" style="margin-top:10px;">
+    Stability Score: <span>{{ s.score }}</span>
+    &nbsp;|&nbsp; Features Drifted: <span>{{ s.drifted_count }} / {{ s.total_features }}</span>
+    &nbsp;|&nbsp; Ref Rows: <span>{{ s.ref_rows | int }}</span>
+    &nbsp;|&nbsp; Current Rows: <span>{{ s.cur_rows | int }}</span>
+  </div>
+</div>
+
+<!-- Summary Stats -->
+<div class="section">
+  <div class="section-header">Summary</div>
+  <div class="stats-grid">
+    <div class="stat-cell">
+      <div class="stat-value">{{ s.ref_rows | int }}</div>
+      <div class="stat-label">Reference Rows</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">{{ s.cur_rows | int }}</div>
+      <div class="stat-label">Current Rows</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">{{ s.total_features }}</div>
+      <div class="stat-label">Features</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value c-{{ color }}">{{ s.drifted_count }}</div>
+      <div class="stat-label">Drifted</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value c-{{ color }}">{{ s.score }}</div>
+      <div class="stat-label">Stability Score</div>
+    </div>
+  </div>
+</div>
+
+<!-- Per-Feature Drift -->
+{% if result.features %}
+<div class="section">
+  <div class="section-header">Per-Feature Drift Analysis</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Type</th>
+        <th class="r">PSI</th>
+        <th class="r">KS Stat</th>
+        <th class="c">KS Drift</th>
+        <th class="c">Severity</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in result.features %}
+      {% set severity = f.psi_severity or 'stable' %}
+      {% set sc = 'green' if severity == 'stable' else ('yellow' if severity == 'moderate' else 'red') %}
+      <tr>
+        <td style="font-weight:600; max-width:140px; overflow:hidden; white-space:nowrap;">{{ f.feature }}</td>
+        <td><span class="badge badge-slate">{{ f.type }}</span></td>
+        <td class="r">{{ f.psi | round(4) if f.psi is not none else '—' }}</td>
+        <td class="r">{{ f.ks_statistic | round(4) if f.ks_statistic is not none else '—' }}</td>
+        <td class="c">
+          {% if f.ks_drift is not none %}
+            {% if f.ks_drift %}<span class="badge badge-red">Yes</span>{% else %}<span class="badge badge-green">No</span>{% endif %}
+          {% else %}—{% endif %}
+        </td>
+        <td class="c"><span class="badge badge-{{ sc }}">{{ severity }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{{ footer() }}
+</body>
+</html>

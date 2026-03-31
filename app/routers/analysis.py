@@ -7,13 +7,16 @@ from fastapi import APIRouter, Request, UploadFile, File, Form, HTTPException
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 
+from fastapi.encoders import jsonable_encoder
+
 from app.dependencies import validate_csv, get_session_id
 from app.services import quality as quality_service
 from app.services import scorecard as scorecard_service
 from app.database import AsyncSessionLocal
-from app.models import Report
+from app.models import Report, ToolResult
 from app.utils.analytics import track_event
 from app.utils.legal import validate_legal_acceptance, log_consent, POLICY_VERSION
+from app.utils.pdf import render_tool_pdf
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -36,6 +39,7 @@ async def quality_analyse(
         source="tool_quality",
         policy_version=policy_version,
     )
+    result_id = str(uuid.uuid4())
     async with AsyncSessionLocal() as db:
         await track_event(
             db,
@@ -44,10 +48,22 @@ async def quality_analyse(
             session_id=session_id,
             metadata={"rows": len(df), "cols": len(df.columns)},
         )
+        db.add(ToolResult(id=result_id, tool="quality", result_json=json.dumps(jsonable_encoder(result))))
+        await db.commit()
     return templates.TemplateResponse(
         "tools/partials/quality_results.html",
-        {"request": request, **result},
+        {"request": request, "result_id": result_id, **result},
     )
+
+
+@router.get("/tools/quality/pdf/{result_id}")
+async def quality_pdf(result_id: str):
+    return await render_tool_pdf("quality", result_id)
+
+
+@router.get("/tools/scorecard/pdf/{result_id}")
+async def scorecard_pdf(result_id: str):
+    return await render_tool_pdf("scorecard", result_id)
 
 
 @router.post("/tools/quality/download")
@@ -94,6 +110,7 @@ async def scorecard_analyse(
         source="tool_scorecard",
         policy_version=policy_version,
     )
+    result_id = str(uuid.uuid4())
     async with AsyncSessionLocal() as db:
         await track_event(
             db,
@@ -102,9 +119,11 @@ async def scorecard_analyse(
             session_id=session_id,
             metadata={"rows": len(df), "cols": len(df.columns), "label_column": label_column, "stage": stage},
         )
+        db.add(ToolResult(id=result_id, tool="scorecard", result_json=json.dumps(jsonable_encoder(result))))
+        await db.commit()
     return templates.TemplateResponse(
         "tools/partials/scorecard_results.html",
-        {"request": request, **result},
+        {"request": request, "result_id": result_id, **result},
     )
 
 

@@ -49,6 +49,15 @@ class Report(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class ToolResult(Base):
+    __tablename__ = "tool_results"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    tool = Column(String(50), nullable=False)
+    result_json = Column(Text, default="{}")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class AnalyticsEvent(Base):
     __tablename__ = "analytics_events"
 

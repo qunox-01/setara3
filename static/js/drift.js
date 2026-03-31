@@ -170,6 +170,7 @@ function renderAll(data) {
     renderNumericStats(data.features);
     populateChartSelector(data.features);
     renderSelectedChart();
+    if (data.result_id) renderShareSection('drift-share', 'drift', data.result_id);
 }
 
 // ─── Component 1: Score Banner ────────────────────────────────────────────────

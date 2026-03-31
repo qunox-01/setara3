@@ -1,0 +1,106 @@
+{% from "pdf/_base.html" import page_styles, header, footer %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Feature Coverage Report — xariff</title>
+{{ page_styles() }}
+</head>
+<body>
+
+{{ header("Feature-Space Coverage Report", generated_at) }}
+
+{% set score = (result.coverage_score or 0) | round | int %}
+{% set color = 'green' if score >= 80 else ('yellow' if score >= 55 else 'red') %}
+{% set flagged = result.flagged_regions or [] %}
+{% set empty_regions = flagged | selectattr('cell_type', 'equalto', 'empty') | list %}
+{% set sparse_regions = flagged | selectattr('cell_type', 'equalto', 'sparse') | list %}
+{% set verdict = 'Good Coverage' if score >= 85 else ('Fair Coverage' if score >= 60 else 'Poor Coverage') %}
+{% set confidence = ((result.pca_total_explained or 0) * 100) | round | int %}
+
+<!-- Score Banner -->
+<div class="banner">
+  <div class="banner-label">Coverage Score</div>
+  <div class="banner-score c-{{ color }}">{{ score }}</div>
+  <div class="banner-verdict">{{ verdict }}</div>
+  <div class="banner-bar-track">
+    <div class="banner-bar-fill bg-{{ color }}" style="width: {{ score }}%;"></div>
+  </div>
+  <div class="banner-meta">
+    PCA Variance Captured: <span>{{ confidence }}%</span>
+  </div>
+</div>
+
+<!-- Summary Stats -->
+<div class="section">
+  <div class="section-header">Summary</div>
+  <div class="stats-grid">
+    <div class="stat-cell">
+      <div class="stat-value">{{ result.total_samples | int }}</div>
+      <div class="stat-label">Rows</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">{{ result.total_features }}</div>
+      <div class="stat-label">Features</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value c-{{ color }}">{{ score }}%</div>
+      <div class="stat-label">Coverage</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">{{ sparse_regions | length }}</div>
+      <div class="stat-label">Sparse Regions</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">{{ empty_regions | length }}</div>
+      <div class="stat-label">Empty Regions</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">{{ (result.grid_size or 0) * (result.grid_size or 0) }}</div>
+      <div class="stat-label">Grid Cells</div>
+    </div>
+  </div>
+</div>
+
+<!-- Sparse / Empty Regions -->
+{% if result.flagged_regions %}
+<div class="section">
+  <div class="section-header">Flagged Regions (Sparse / Empty)</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Region</th>
+        <th class="c">Type</th>
+        <th class="r">Density</th>
+        <th>Feature Ranges</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for region in result.flagged_regions %}
+      <tr>
+        <td style="font-weight:600;">{{ region.cell_row }}, {{ region.cell_col }}</td>
+        <td class="c">
+          {% if region.cell_type == 'empty' %}
+            <span class="badge badge-red">Empty</span>
+          {% else %}
+            <span class="badge badge-yellow">Sparse</span>
+          {% endif %}
+        </td>
+        <td class="r">{{ region.sample_count if region.sample_count is not none else '—' }}</td>
+        <td style="font-size:9px; color:#64748b;">
+          {% if region.feature_summary %}
+            {% for fname, info in region.feature_summary.items() %}
+              {{ fname }}: [{{ info.region_q25 | round(2) }}, {{ info.region_q75 | round(2) }}]{% if not loop.last %}, {% endif %}
+            {% endfor %}
+          {% else %}—{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{{ footer() }}
+</body>
+</html>

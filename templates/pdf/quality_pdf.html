@@ -1,0 +1,98 @@
+{% from "pdf/_base.html" import page_styles, header, footer %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Data Quality Report — xariff</title>
+{{ page_styles() }}
+</head>
+<body>
+
+{{ header("Data Quality Report", generated_at) }}
+
+{% set s = result.summary %}
+{% set score = s.overall_score %}
+{% set color = 'green' if score >= 80 else ('yellow' if score >= 50 else 'red') %}
+
+<!-- Score Banner -->
+<div class="banner">
+  <div class="banner-label">Overall Quality Score</div>
+  <div class="banner-score c-{{ color }}">{{ score }}</div>
+  <div class="banner-verdict">{{ s.verdict }}</div>
+  <div class="banner-bar-track">
+    <div class="banner-bar-fill bg-{{ color }}" style="width: {{ score }}%;"></div>
+  </div>
+</div>
+
+<!-- Summary Stats -->
+<div class="section">
+  <div class="section-header">Dataset Summary</div>
+  <div class="stats-grid">
+    <div class="stat-cell">
+      <div class="stat-value">{{ s.total_rows | int }}</div>
+      <div class="stat-label">Rows</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">{{ s.total_columns }}</div>
+      <div class="stat-label">Columns</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value {% if s.missing_pct > 20 %}c-red{% elif s.missing_pct > 5 %}c-yellow{% endif %}">{{ s.missing_pct }}%</div>
+      <div class="stat-label">Missing Cells</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value {% if s.duplicate_pct > 20 %}c-red{% elif s.duplicate_pct > 5 %}c-yellow{% endif %}">{{ s.duplicate_pct }}%</div>
+      <div class="stat-label">Duplicate Rows</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">{{ result.flagged_count }}</div>
+      <div class="stat-label">Flagged Rows</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">{{ s.memory_mb }}</div>
+      <div class="stat-label">Memory (MB)</div>
+    </div>
+  </div>
+</div>
+
+<!-- Column Analysis -->
+{% if result.columns %}
+<div class="section">
+  <div class="section-header">Column Analysis</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Column</th>
+        <th>Type</th>
+        <th class="r">Missing</th>
+        <th class="r">Missing %</th>
+        <th class="r">Outliers</th>
+        <th class="c">Mixed?</th>
+        <th class="c">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for col in result.columns %}
+      {% set cs = 'ok' if col.status == 'ok' else ('warning' if col.status == 'warning' else 'critical') %}
+      <tr>
+        <td style="max-width:160px; overflow:hidden; white-space:nowrap;">{{ col.name }}</td>
+        <td style="font-family:monospace; font-size:9px;">{{ col.dtype }}</td>
+        <td class="r">{{ col.missing_count }}</td>
+        <td class="r {% if col.missing_pct > 20 %}" style="color:#dc2626; font-weight:700{% elif col.missing_pct > 5 %}" style="color:#ca8a04; font-weight:600{% endif %}">{{ col.missing_pct }}%</td>
+        <td class="r">{{ col.outlier_count }}</td>
+        <td class="c">{% if col.mixed_types %}<span class="badge badge-red">Yes</span>{% else %}—{% endif %}</td>
+        <td class="c">
+          {% if cs == 'ok' %}<span class="badge badge-green">OK</span>
+          {% elif cs == 'warning' %}<span class="badge badge-yellow">Warning</span>
+          {% else %}<span class="badge badge-red">Critical</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{{ footer() }}
+</body>
+</html>

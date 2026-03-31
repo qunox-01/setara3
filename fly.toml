@@ -19,6 +19,6 @@ primary_region = "syd"
   DATABASE_URL = "sqlite+aiosqlite:////data/xariff.db"
 
 [[vm]]
-  memory = "1gb"
+  memory = "2gb"
   cpus = 1
-  memory_mb = 1024
+  memory_mb = 2048

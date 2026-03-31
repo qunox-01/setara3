@@ -131,6 +131,50 @@ document.addEventListener('htmx:responseError', e => {
     showBanner(msg, 'error');
 });
 
+// ─── PDF Share Section ──────────────────────────────────────────────────────
+
+function renderShareSection(containerId, tool, resultId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const pdfUrl = `${location.origin}/tools/${tool}/pdf/${resultId}`;
+
+    container.innerHTML = `
+        <div class="mt-6 bg-slate-50 border border-slate-200 rounded-2xl p-5">
+            <h3 class="font-bold text-slate-800 mb-1">Download &amp; Share</h3>
+            <p class="text-slate-500 text-xs mb-4">Save a PDF copy of this report or share the download link.</p>
+            <a href="${pdfUrl}"
+               class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-900 hover:bg-slate-700 text-white text-sm font-semibold rounded-xl transition-colors mb-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V19a2 2 0 002 2h14a2 2 0 002-2v-2" />
+                </svg>
+                Download PDF Report
+            </a>
+            <div class="flex items-center gap-3 bg-white border border-slate-200 rounded-xl p-3">
+                <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                <code id="share-url-${resultId}" class="text-xs text-slate-600 flex-1 truncate">${pdfUrl}</code>
+                <button onclick="copyToolShareUrl('${resultId}')"
+                        class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg transition-colors flex-shrink-0">
+                    Copy link
+                </button>
+            </div>
+        </div>`;
+}
+
+function copyToolShareUrl(resultId) {
+    const el = document.getElementById('share-url-' + resultId);
+    if (!el) return;
+    navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+        const btn = event.target;
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy link'; }, 2000);
+    });
+}
+
 // ─── Init on DOM ready ──────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {

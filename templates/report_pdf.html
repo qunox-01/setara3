@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dataset Readiness Report — xariff</title>
+<style>
+  @page {
+    size: A4;
+    margin: 2cm 2.2cm;
+    @bottom-right {
+      content: "Page " counter(page) " of " counter(pages);
+      font-size: 9px;
+      color: #94a3b8;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    color: #1e293b;
+    line-height: 1.5;
+    background: #fff;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 24px;
+  }
+  .header-left .breadcrumb {
+    font-size: 9px;
+    color: #94a3b8;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .header-left h1 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+  }
+  .header-left .date {
+    font-size: 9px;
+    color: #94a3b8;
+    margin-top: 3px;
+  }
+  .header-right .brand {
+    font-size: 11px;
+    font-weight: 700;
+    color: #3b82f6;
+    background: #eff6ff;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Score banner ── */
+  .score-banner {
+    background: #0f172a;
+    color: #fff;
+    border-radius: 12px;
+    padding: 28px 24px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .score-label {
+    font-size: 9px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .score-number {
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .score-number.green { color: #4ade80; }
+  .score-number.yellow { color: #facc15; }
+  .score-number.red { color: #f87171; }
+
+  .score-verdict {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .score-bar-track {
+    height: 8px;
+    background: #334155;
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 240px;
+    margin: 0 auto 12px;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+  .score-bar-fill.green { background: #4ade80; }
+  .score-bar-fill.yellow { background: #facc15; }
+  .score-bar-fill.red { background: #f87171; }
+
+  .score-meta {
+    font-size: 9px;
+    color: #94a3b8;
+  }
+  .score-meta span { color: #cbd5e1; font-weight: 600; }
+
+  /* ── Section heading ── */
+  .section {
+    margin-bottom: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .section-header {
+    background: #f8fafc;
+    padding: 10px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 11px;
+    font-weight: 700;
+    color: #0f172a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Dimensions table ── */
+  .dim-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .dim-row:last-child { border-bottom: none; }
+
+  .dim-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dim-dot.green { background: #22c55e; }
+  .dim-dot.yellow { background: #eab308; }
+  .dim-dot.red { background: #ef4444; }
+
+  .dim-info { flex: 1; min-width: 0; }
+  .dim-name { font-weight: 700; font-size: 11px; color: #0f172a; }
+  .dim-detail { font-size: 9px; color: #64748b; margin-top: 1px; }
+
+  .dim-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .dim-bar-track {
+    width: 80px;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .dim-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .dim-bar-fill.green { background: #22c55e; }
+  .dim-bar-fill.yellow { background: #eab308; }
+  .dim-bar-fill.red { background: #ef4444; }
+
+  .dim-score {
+    font-size: 14px;
+    font-weight: 800;
+    min-width: 28px;
+    text-align: right;
+  }
+  .dim-score.green { color: #16a34a; }
+  .dim-score.yellow { color: #ca8a04; }
+  .dim-score.red { color: #dc2626; }
+
+  .dim-badge {
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .dim-badge.green { background: #dcfce7; color: #15803d; }
+  .dim-badge.yellow { background: #fef9c3; color: #a16207; }
+  .dim-badge.red { background: #fee2e2; color: #b91c1c; }
+
+  /* ── Recommendations ── */
+  .rec-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .rec-row:last-child { border-bottom: none; }
+
+  .rec-badge {
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .rec-badge.high { background: #fee2e2; color: #b91c1c; }
+  .rec-badge.medium { background: #fef9c3; color: #a16207; }
+
+  .rec-body .rec-message { font-size: 10px; color: #334155; }
+  .rec-body .rec-dim { font-size: 9px; color: #94a3b8; margin-top: 2px; }
+
+  .no-recs {
+    padding: 14px 16px;
+    font-size: 10px;
+    color: #16a34a;
+    text-align: center;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 24px;
+    padding-top: 14px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-brand { font-size: 11px; font-weight: 800; color: #0f172a; }
+  .footer-sub { font-size: 9px; color: #94a3b8; margin-top: 2px; }
+  .footer-url { font-size: 9px; color: #3b82f6; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <div class="breadcrumb">ML Readiness Scorecard / Report</div>
+    <h1>Dataset Readiness Report</h1>
+    {% if report.created_at %}
+    <div class="date">Generated {{ report.created_at.strftime('%B %d, %Y') }}</div>
+    {% endif %}
+  </div>
+  <div class="header-right">
+    <span class="brand">xariff</span>
+  </div>
+</div>
+
+{% if scorecard %}
+
+<!-- Score Banner -->
+{% set color = 'green' if scorecard.overall_score >= 80 else ('yellow' if scorecard.overall_score >= 55 else 'red') %}
+<div class="score-banner">
+  <div class="score-label">Overall ML Readiness Score</div>
+  <div class="score-number {{ color }}">{{ scorecard.overall_score }}</div>
+  <div class="score-verdict">{{ scorecard.verdict }}</div>
+  <div class="score-bar-track">
+    <div class="score-bar-fill {{ color }}" style="width: {{ scorecard.overall_score }}%;"></div>
+  </div>
+  {% if scorecard.stage or scorecard.label_column %}
+  <div class="score-meta">
+    {% if scorecard.stage %}Stage: <span>{{ scorecard.stage | capitalize }}</span>{% endif %}
+    {% if scorecard.stage and scorecard.label_column and scorecard.label_column != 'N/A' %} &nbsp;|&nbsp; {% endif %}
+    {% if scorecard.label_column and scorecard.label_column != 'N/A' %}Label: <span>{{ scorecard.label_column }}</span>{% endif %}
+  </div>
+  {% endif %}
+</div>
+
+<!-- Dimension Breakdown -->
+{% if scorecard.dimensions %}
+<div class="section">
+  <div class="section-header">Dimension Breakdown</div>
+  {% for dim in scorecard.dimensions %}
+  {% set dc = 'green' if dim.status == 'ok' else ('yellow' if dim.status == 'warning' else 'red') %}
+  <div class="dim-row">
+    <div class="dim-dot {{ dc }}"></div>
+    <div class="dim-info">
+      <div class="dim-name">{{ dim.name }}</div>
+      <div class="dim-detail">{{ dim.details }}</div>
+    </div>
+    <div class="dim-right">
+      <div class="dim-bar-track">
+        <div class="dim-bar-fill {{ dc }}" style="width: {{ dim.score }}%;"></div>
+      </div>
+      <div class="dim-score {{ dc }}">{{ dim.score }}</div>
+      <span class="dim-badge {{ dc }}">{{ dim.status }}</span>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Recommendations -->
+<div class="section">
+  <div class="section-header">Recommendations</div>
+  {% if scorecard.recommendations %}
+    {% for rec in scorecard.recommendations %}
+    <div class="rec-row">
+      <span class="rec-badge {{ rec.priority }}">{{ rec.priority }}</span>
+      <div class="rec-body">
+        <div class="rec-message">{{ rec.message }}</div>
+        <div class="rec-dim">{{ rec.dimension }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div class="no-recs">No critical recommendations — dataset looks good for ML.</div>
+  {% endif %}
+</div>
+
+{% else %}
+<p style="text-align:center; color:#64748b; padding: 40px 0;">Report data unavailable or malformed.</p>
+{% endif %}
+
+<!-- Footer -->
+<div class="footer">
+  <div>
+    <div class="footer-brand">xariff — Free ML Dataset Tools</div>
+    <div class="footer-sub">Check quality, score readiness, and get actionable recommendations.</div>
+  </div>
+  <div class="footer-url">xariff.com</div>
+</div>
+
+</body>
+</html>

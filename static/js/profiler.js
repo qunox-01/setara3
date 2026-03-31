@@ -94,6 +94,7 @@ async function startProfiler() {
         profileData = await res.json();
         renderResults(profileData);
         setState('results');
+        if (profileData.result_id) renderShareSection('profiler-share', 'profiler', profileData.result_id);
     } catch (err) {
         showError(err.message || 'Something went wrong. Please try again.');
     }

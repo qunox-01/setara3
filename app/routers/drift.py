@@ -1,15 +1,21 @@
 import io
+import json
+import uuid
 
 import pandas as pd
 from fastapi import APIRouter, HTTPException, Query, Request, UploadFile, File, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
+from fastapi.encoders import jsonable_encoder
+
 from app.database import AsyncSessionLocal
 from app.dependencies import get_session_id
+from app.models import ToolResult
 from app.services import drift as drift_service
 from app.utils.analytics import track_event
 from app.utils.legal import validate_legal_acceptance, log_consent, POLICY_VERSION
+from app.utils.pdf import render_tool_pdf
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -18,6 +24,11 @@ templates = Jinja2Templates(directory="templates")
 @router.get("/tools/drift", response_class=HTMLResponse)
 async def drift_tool(request: Request):
     return templates.TemplateResponse("tools/drift.html", {"request": request})
+
+
+@router.get("/tools/drift/pdf/{result_id}")
+async def drift_pdf(result_id: str):
+    return await render_tool_pdf("drift", result_id)
 
 _MAX_FILE_MB = 50
 _MAX_ROWS = 100_000
@@ -101,6 +112,7 @@ async def drift_analyze(
         source="tool_drift",
         policy_version=policy_version,
     )
+    result_id = str(uuid.uuid4())
     async with AsyncSessionLocal() as db:
         await track_event(
             db,
@@ -109,5 +121,7 @@ async def drift_analyze(
             session_id=session_id,
             metadata={"ref_rows": len(ref_df), "cur_rows": len(cur_df), "common_cols": len(common)},
         )
+        db.add(ToolResult(id=result_id, tool="drift", result_json=json.dumps(jsonable_encoder(result))))
+        await db.commit()
 
-    return JSONResponse(content=result)
+    return JSONResponse(content={**result, "result_id": result_id})

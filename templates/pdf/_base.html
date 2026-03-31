@@ -1,0 +1,222 @@
+{% macro page_styles() %}
+<style>
+  @page {
+    size: A4;
+    margin: 2cm 2.2cm;
+    @bottom-right {
+      content: "Page " counter(page) " of " counter(pages);
+      font-size: 9px;
+      color: #94a3b8;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    color: #1e293b;
+    line-height: 1.5;
+    background: #fff;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 20px;
+  }
+  .header-breadcrumb {
+    font-size: 9px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .header-title { font-size: 18px; font-weight: 800; color: #0f172a; }
+  .header-date { font-size: 9px; color: #94a3b8; margin-top: 3px; }
+  .brand {
+    font-size: 10px;
+    font-weight: 700;
+    color: #3b82f6;
+    background: #eff6ff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Score banner ── */
+  .banner {
+    background: #0f172a;
+    color: #fff;
+    border-radius: 10px;
+    padding: 22px 20px;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .banner-label {
+    font-size: 9px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .banner-score { font-size: 56px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+  .banner-verdict { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .banner-bar-track {
+    height: 7px; background: #334155; border-radius: 4px;
+    overflow: hidden; max-width: 200px; margin: 0 auto 10px;
+  }
+  .banner-bar-fill { height: 100%; border-radius: 4px; }
+  .banner-meta { font-size: 9px; color: #94a3b8; }
+  .banner-meta span { color: #cbd5e1; font-weight: 600; }
+
+  .c-green { color: #4ade80; }
+  .c-yellow { color: #facc15; }
+  .c-red { color: #f87171; }
+  .bg-green { background: #4ade80; }
+  .bg-yellow { background: #facc15; }
+  .bg-red { background: #f87171; }
+
+  /* ── Section card ── */
+  .section {
+    margin-bottom: 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .section-header {
+    background: #f8fafc;
+    padding: 8px 14px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 10px;
+    font-weight: 700;
+    color: #0f172a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Stats grid ── */
+  .stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .stat-cell {
+    flex: 1;
+    min-width: 80px;
+    padding: 12px 14px;
+    border-right: 1px solid #e2e8f0;
+    text-align: center;
+  }
+  .stat-cell:last-child { border-right: none; }
+  .stat-value { font-size: 20px; font-weight: 800; color: #0f172a; }
+  .stat-label { font-size: 8px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+
+  /* ── Table ── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .data-table th {
+    background: #f8fafc;
+    padding: 7px 10px;
+    text-align: left;
+    font-size: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .data-table th.r, .data-table td.r { text-align: right; }
+  .data-table th.c, .data-table td.c { text-align: center; }
+  .data-table td { padding: 6px 10px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+  .data-table tr:last-child td { border-bottom: none; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
+  .badge-green  { background: #dcfce7; color: #15803d; }
+  .badge-yellow { background: #fef9c3; color: #a16207; }
+  .badge-red    { background: #fee2e2; color: #b91c1c; }
+  .badge-blue   { background: #dbeafe; color: #1d4ed8; }
+  .badge-slate  { background: #f1f5f9; color: #475569; }
+
+  .dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+  .dot-green  { background: #22c55e; }
+  .dot-yellow { background: #eab308; }
+  .dot-red    { background: #ef4444; }
+
+  /* ── Mini bar ── */
+  .mini-bar-track {
+    display: inline-block;
+    width: 60px; height: 5px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+    vertical-align: middle;
+  }
+  .mini-bar-fill { height: 100%; border-radius: 3px; }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 20px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-brand { font-size: 11px; font-weight: 800; color: #0f172a; }
+  .footer-sub { font-size: 9px; color: #94a3b8; margin-top: 1px; }
+  .footer-url { font-size: 9px; color: #3b82f6; }
+</style>
+{% endmacro %}
+
+{% macro header(tool_name, generated_at=None) %}
+<div class="header">
+  <div>
+    <div class="header-breadcrumb">{{ tool_name }} / Report</div>
+    <div class="header-title">{{ tool_name }}</div>
+    {% if generated_at %}
+    <div class="header-date">Generated {{ generated_at }}</div>
+    {% endif %}
+  </div>
+  <span class="brand">xariff</span>
+</div>
+{% endmacro %}
+
+{% macro footer() %}
+<div class="footer">
+  <div>
+    <div class="footer-brand">xariff — Free ML Dataset Tools</div>
+    <div class="footer-sub">Check quality, score readiness, and get actionable recommendations.</div>
+  </div>
+  <div class="footer-url">xariff.com</div>
+</div>
+{% endmacro %}
+
+{% macro color_class(value, ok_threshold=80, warn_threshold=55) %}
+{% if value >= ok_threshold %}green{% elif value >= warn_threshold %}yellow{% else %}red{% endif %}
+{% endmacro %}
+
+{% macro status_color(status) %}
+{% if status == 'ok' or status == 'stable' %}green{% elif status == 'warning' or status == 'moderate' %}yellow{% else %}red{% endif %}
+{% endmacro %}

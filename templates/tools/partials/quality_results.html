@@ -185,6 +185,11 @@
         </a>
     </div>
 
+    <!-- Share & Download -->
+    {% with tool="quality" %}
+        {% include "partials/_share.html" %}
+    {% endwith %}
+
     <!-- Feedback -->
     <div id="feedback-section">
         {% include "partials/_feedback.html" %}

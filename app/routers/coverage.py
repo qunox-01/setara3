@@ -1,15 +1,21 @@
 import io
+import json
+import uuid
 
 import pandas as pd
 from fastapi import APIRouter, HTTPException, Query, Request, UploadFile, File, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
+from fastapi.encoders import jsonable_encoder
+
 from app.database import AsyncSessionLocal
 from app.dependencies import get_session_id
+from app.models import ToolResult
 from app.services import coverage as coverage_service
 from app.utils.analytics import track_event
 from app.utils.legal import validate_legal_acceptance, log_consent, POLICY_VERSION
+from app.utils.pdf import render_tool_pdf
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -18,6 +24,11 @@ templates = Jinja2Templates(directory="templates")
 @router.get("/tools/coverage", response_class=HTMLResponse)
 async def coverage_tool(request: Request):
     return templates.TemplateResponse("tools/coverage.html", {"request": request})
+
+
+@router.get("/tools/coverage/pdf/{result_id}")
+async def coverage_pdf(result_id: str):
+    return await render_tool_pdf("coverage", result_id)
 
 
 @router.post("/api/tools/coverage/analyze")
@@ -85,6 +96,7 @@ async def coverage_analyze(
         source="tool_coverage",
         policy_version=policy_version,
     )
+    result_id = str(uuid.uuid4())
     async with AsyncSessionLocal() as db:
         await track_event(
             db,
@@ -93,5 +105,7 @@ async def coverage_analyze(
             session_id=session_id,
             metadata={"rows": len(df), "cols": len(df.columns)},
         )
+        db.add(ToolResult(id=result_id, tool="coverage", result_json=json.dumps(jsonable_encoder(result))))
+        await db.commit()
 
-    return JSONResponse(content=result)
+    return JSONResponse(content={**result, "result_id": result_id})

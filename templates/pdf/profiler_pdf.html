@@ -1,0 +1,122 @@
+{% from "pdf/_base.html" import page_styles, header, footer %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dataset Profile Report — xariff</title>
+{{ page_styles() }}
+</head>
+<body>
+
+{{ header("Dataset Profile Report", generated_at) }}
+
+{% set s = result.dataset or {} %}
+
+<!-- Summary Stats -->
+<div class="section">
+  <div class="section-header">Dataset Summary</div>
+  <div class="stats-grid">
+    <div class="stat-cell">
+      <div class="stat-value">{{ s.rows | int }}</div>
+      <div class="stat-label">Rows</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">{{ s.columns }}</div>
+      <div class="stat-label">Columns</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value {% if s.missing_pct > 20 %}c-red{% elif s.missing_pct > 5 %}c-yellow{% endif %}">{{ s.missing_pct }}%</div>
+      <div class="stat-label">Missing</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">{{ s.duplicate_rows | int }}</div>
+      <div class="stat-label">Duplicates</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">{{ ((s.memory_bytes or 0) / (1024 * 1024)) | round(3) }}</div>
+      <div class="stat-label">Memory (MB)</div>
+    </div>
+    {% if s.sampled %}
+    <div class="stat-cell">
+      <div class="stat-value" style="font-size:11px; color:#94a3b8;">Sampled</div>
+      <div class="stat-label">Mode</div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Feature Overview -->
+{% if result.features %}
+<div class="section">
+  <div class="section-header">Feature Overview ({{ result.features | length }} features)</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Type</th>
+        <th class="r">Missing</th>
+        <th class="r">Missing %</th>
+        <th class="r">Unique</th>
+        <th class="r">Mean / Top Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in result.features %}
+      <tr>
+        <td style="max-width:150px; overflow:hidden; white-space:nowrap; font-weight:600;">{{ f.name }}</td>
+        <td><span class="badge badge-slate">{{ f.type or f.dtype }}</span></td>
+        <td class="r">{{ f.missing_count }}</td>
+        <td class="r {% if f.missing_pct > 20 %}" style="color:#dc2626; font-weight:700{% elif f.missing_pct > 5 %}" style="color:#ca8a04{% endif %}">{{ f.missing_pct }}%</td>
+        <td class="r">{{ f.unique_count }}</td>
+        <td class="r" style="font-size:9px; color:#64748b;">
+          {% if f.type == 'numeric' and f.stats %}
+            {{ f.stats.mean }}
+          {% elif f.top_values %}
+            {{ f.top_values[0].value }}
+          {% else %}—{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Numeric Stats Detail -->
+{% set numeric_features = result.features | selectattr('type', 'equalto', 'numeric') | list %}
+{% if numeric_features %}
+<div class="section" style="page-break-before: always;">
+  <div class="section-header">Numeric Feature Statistics</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th class="r">Mean</th>
+        <th class="r">Median</th>
+        <th class="r">Std</th>
+        <th class="r">Min</th>
+        <th class="r">Max</th>
+        <th class="r">Skewness</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in numeric_features %}
+      {% set st = f.stats or {} %}
+      <tr>
+        <td style="font-weight:600;">{{ f.name }}</td>
+        <td class="r">{{ st.mean if st.mean is not none else '—' }}</td>
+        <td class="r">{{ st.median if st.median is not none else '—' }}</td>
+        <td class="r">{{ st.std if st.std is not none else '—' }}</td>
+        <td class="r">{{ st.min if st.min is not none else '—' }}</td>
+        <td class="r">{{ st.max if st.max is not none else '—' }}</td>
+        <td class="r">{{ st.skewness if st.skewness is not none else '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endif %}
+
+{{ footer() }}
+</body>
+</html>
