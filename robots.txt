@@ -9,7 +9,7 @@
 # -----------------------------------------------------------------------------
 User-agent: *
 Allow: /
-Allow: /blog/
+Allow: /research/
 Allow: /tools/
 Disallow: /admin/
 Disallow: /dashboard/
@@ -35,7 +35,7 @@ Disallow: /*?utm_
 # -----------------------------------------------------------------------------
 User-agent: Googlebot
 Allow: /
-Allow: /blog/
+Allow: /research/
 Allow: /tools/
 Disallow: /admin/
 Disallow: /dashboard/
@@ -57,7 +57,7 @@ Allow: /
 # -----------------------------------------------------------------------------
 User-agent: Bingbot
 Allow: /
-Allow: /blog/
+Allow: /research/
 Allow: /tools/
 Crawl-delay: 5
 Disallow: /admin/
@@ -104,14 +104,14 @@ Disallow: /private/
 # Enables citation in ChatGPT, Perplexity, and other AI assistants
 # -----------------------------------------------------------------------------
 User-agent: GPTBot
-Allow: /blog/
+Allow: /research/
 Allow: /tools/
 Allow: /about/
 Disallow: /api/
 Disallow: /private/
 
 User-agent: ChatGPT-User
-Allow: /blog/
+Allow: /research/
 Allow: /tools/
 Allow: /about/
 Disallow: /api/
@@ -123,14 +123,14 @@ Disallow: /api/
 Disallow: /private/
 
 User-agent: anthropic-ai
-Allow: /blog/
+Allow: /research/
 Allow: /tools/
 Allow: /about/
 Disallow: /api/
 Disallow: /private/
 
 User-agent: ClaudeBot
-Allow: /blog/
+Allow: /research/
 Allow: /tools/
 Allow: /about/
 Disallow: /api/

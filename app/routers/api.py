@@ -308,7 +308,7 @@ async def sitemap():
         ("/tools/coverage", "0.8", "monthly", "2026-03-16"),
         ("/tools/outliers", "0.8", "monthly", "2026-03-16"),
         ("/tools/drift",    "0.8", "monthly", "2026-03-16"),
-        ("/blog",           "0.7", "weekly",  "2026-03-16"),
+        ("/research",       "0.7", "weekly",  "2026-03-16"),
         ("/about",          "0.5", "monthly", "2026-03-16"),
         ("/contact",        "0.5", "monthly", "2026-03-16"),
         ("/privacy",        "0.3", "yearly",  "2026-03-16"),
@@ -325,7 +325,7 @@ async def sitemap():
         slug = article.get("slug", "")
         date = article.get("date", "")
         lastmod = f"<lastmod>{date}</lastmod>" if date else ""
-        url_tags += f"\n  <url><loc>{base}/blog/{slug}</loc>{lastmod}<changefreq>monthly</changefreq><priority>0.7</priority></url>"
+        url_tags += f"\n  <url><loc>{base}/research/{slug}</loc>{lastmod}<changefreq>monthly</changefreq><priority>0.7</priority></url>"
 
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

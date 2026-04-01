@@ -1,7 +1,7 @@
 import os
 
 from fastapi import APIRouter, Request, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from app.utils.markdown import list_articles, parse_article
@@ -12,8 +12,22 @@ templates = Jinja2Templates(directory="templates")
 ARTICLES_DIR = "content/articles"
 
 
-@router.get("/blog", response_class=HTMLResponse)
-async def blog_index(request: Request):
+# --- Redirects: keep old /blog URLs working ---
+
+@router.get("/blog", response_class=RedirectResponse)
+async def blog_redirect():
+    return RedirectResponse(url="/research", status_code=301)
+
+
+@router.get("/blog/{slug}", response_class=RedirectResponse)
+async def blog_article_redirect(slug: str):
+    return RedirectResponse(url=f"/research/{slug}", status_code=301)
+
+
+# --- Research & Resources pages ---
+
+@router.get("/research", response_class=HTMLResponse)
+async def research_index(request: Request):
     articles = list_articles(ARTICLES_DIR)
     return templates.TemplateResponse(
         "blog/index.html",
@@ -21,8 +35,8 @@ async def blog_index(request: Request):
     )
 
 
-@router.get("/blog/{slug}", response_class=HTMLResponse)
-async def blog_article(request: Request, slug: str):
+@router.get("/research/{slug}", response_class=HTMLResponse)
+async def research_article(request: Request, slug: str):
     article_path = os.path.join(ARTICLES_DIR, f"{slug}.md")
     if not os.path.exists(article_path):
         raise HTTPException(status_code=404, detail="Article not found.")

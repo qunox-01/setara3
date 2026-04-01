@@ -2,7 +2,7 @@ import io
 import json
 
 from fastapi import APIRouter, Request, HTTPException
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select
 from weasyprint import HTML
@@ -13,6 +13,8 @@ from app.models import Report
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
+SAMPLE_REPORT_ARTICLE_PATH = "/research/sample-audit-report-coming-soon"
+
 
 def _get_report_context(report: Report) -> dict:
     try:
@@ -20,6 +22,11 @@ def _get_report_context(report: Report) -> dict:
     except (json.JSONDecodeError, TypeError):
         scorecard_data = {}
     return {"report": report, "scorecard": scorecard_data}
+
+
+@router.get("/report/sample", response_class=RedirectResponse)
+async def sample_report_redirect():
+    return RedirectResponse(url=SAMPLE_REPORT_ARTICLE_PATH, status_code=301)
 
 
 @router.get("/report/{report_id}", response_class=HTMLResponse)

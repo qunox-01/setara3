@@ -2,7 +2,7 @@
 
 {% block title %}{{ article.metadata.title }} — xariff{% endblock %}
 {% block description %}{{ article.metadata.description | default("Read this article on ML data quality from xariff.") }}{% endblock %}
-{% block canonical %}https://xariff.com/blog/{{ article.metadata.slug }}{% endblock %}
+{% block canonical %}https://xariff.com/research/{{ article.metadata.slug }}{% endblock %}
 {% block og_type %}article{% endblock %}
 
 {% block jsonld %}
@@ -14,7 +14,7 @@
   "description": {{ (article.metadata.description | default("")) | tojson }},
   "datePublished": {{ (article.metadata.date | string | default("")) | tojson }},
   "dateModified": {{ (article.metadata.date | string | default("")) | tojson }},
-  "url": "https://xariff.com/blog/{{ article.metadata.slug }}",
+  "url": "https://xariff.com/research/{{ article.metadata.slug }}",
   "author": {
     "@type": "Organization",
     "name": "xariff",
@@ -27,7 +27,7 @@
   },
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://xariff.com/blog/{{ article.metadata.slug }}"
+    "@id": "https://xariff.com/research/{{ article.metadata.slug }}"
   }{% if article.metadata.tags %},
   "keywords": {{ article.metadata.tags | join(", ") | tojson }}{% endif %}
 }
@@ -65,7 +65,7 @@
             <nav aria-label="Breadcrumb">
                 <ol class="flex items-center gap-2 text-sm text-slate-500 mb-6" itemscope itemtype="https://schema.org/BreadcrumbList">
                     <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <a href="/blog" class="hover:text-blue-500 transition-colors" itemprop="item"><span itemprop="name">Blog</span></a>
+                        <a href="/research" class="hover:text-blue-500 transition-colors" itemprop="item"><span itemprop="name">Research</span></a>
                         <meta itemprop="position" content="1" />
                     </li>
                     <li aria-hidden="true"><span>/</span></li>
@@ -149,11 +149,11 @@
 
             <!-- Back link -->
             <div class="mt-8">
-                <a href="/blog" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-500 text-sm transition-colors">
+                <a href="/research" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-500 text-sm transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
-                    Back to blog
+                    Back to Research & Resources
                 </a>
             </div>
 
@@ -179,7 +179,7 @@
                     <h3 class="font-bold text-slate-800 mb-4 text-sm uppercase tracking-wide">Related articles</h3>
                     <div class="space-y-4">
                         {% for rel in related %}
-                        <a href="/blog/{{ rel.slug }}"
+                        <a href="/research/{{ rel.slug }}"
                            class="block group">
                             <h4 class="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors leading-snug mb-1">
                                 {{ rel.title }}

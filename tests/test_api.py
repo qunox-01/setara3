@@ -76,20 +76,32 @@ def test_tools_outliers_coming_soon(client):
     assert resp.status_code == 200
 
 
-def test_blog_index(client):
-    resp = client.get("/blog")
+def test_research_index(client):
+    resp = client.get("/research")
     assert resp.status_code == 200
-    assert "blog" in resp.text.lower()
+    assert "research" in resp.text.lower()
 
 
-def test_blog_missing_article_returns_404(client):
-    resp = client.get("/blog/this-article-does-not-exist-xyz")
+def test_blog_index_redirects(client):
+    resp = client.get("/blog", follow_redirects=False)
+    assert resp.status_code == 301
+    assert resp.headers["location"] == "/research"
+
+
+def test_research_missing_article_returns_404(client):
+    resp = client.get("/research/this-article-does-not-exist-xyz")
     assert resp.status_code == 404
 
 
 def test_report_missing_returns_404(client):
     resp = client.get("/report/00000000-0000-0000-0000-000000000000")
     assert resp.status_code == 404
+
+
+def test_sample_report_redirects_to_coming_soon_article(client):
+    resp = client.get("/report/sample", follow_redirects=False)
+    assert resp.status_code == 301
+    assert resp.headers["location"] == "/research/sample-audit-report-coming-soon"
 
 
 # ─── Static assets ──────────────────────────────────────────────────────────
@@ -247,10 +259,23 @@ def test_quality_analyse_empty_csv(client):
     assert resp.status_code in (200, 422, 500)
 
 
-# ─── Blog article with existing content ─────────────────────────────────────
+# ─── Research article with existing content ──────────────────────────────────
 
-def test_blog_article_exists(client):
+def test_research_article_exists(client):
     """The sample article should be accessible by its slug."""
-    resp = client.get("/blog/getting-started-with-data-quality")
+    resp = client.get("/research/getting-started-with-data-quality")
     assert resp.status_code == 200
     assert "data quality" in resp.text.lower()
+
+
+def test_blog_article_redirects(client):
+    """Old /blog/{slug} URLs should redirect to /research/{slug}."""
+    resp = client.get("/blog/getting-started-with-data-quality", follow_redirects=False)
+    assert resp.status_code == 301
+    assert resp.headers["location"] == "/research/getting-started-with-data-quality"
+
+
+def test_sample_report_coming_soon_article_exists(client):
+    resp = client.get("/research/sample-audit-report-coming-soon")
+    assert resp.status_code == 200
+    assert "coming soon" in resp.text.lower()
