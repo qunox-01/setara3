@@ -28,7 +28,9 @@ async def coverage_tool(request: Request):
 
 @router.get("/tools/coverage/pdf/{result_id}")
 async def coverage_pdf(result_id: str):
-    return await render_tool_pdf("coverage", result_id)
+    response = await render_tool_pdf("coverage", result_id)
+    response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+    return response
 
 
 @router.post("/api/tools/coverage/analyze")

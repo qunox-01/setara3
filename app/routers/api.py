@@ -1,6 +1,8 @@
 import io
 import json
+import os
 import re
+from datetime import datetime, timezone
 
 import numpy as np
 import pandas as pd
@@ -389,22 +391,48 @@ async def sample_data(tool: str):
 @router.get("/sitemap.xml")
 async def sitemap():
     from app.utils.markdown import list_articles
+
     base = "https://xariff.com"
+    template_lastmods = {
+        "/": "templates/home.html",
+        "/tools": "templates/tools/index.html",
+        "/tools/profiler": "templates/tools/profiler.html",
+        "/tools/quality": "templates/tools/quality.html",
+        "/tools/scorecard": "templates/tools/scorecard.html",
+        "/tools/coverage": "templates/tools/coverage.html",
+        "/tools/outliers": "templates/tools/outliers.html",
+        "/tools/drift": "templates/tools/drift.html",
+        "/research": "templates/blog/index.html",
+        "/about": "templates/about.html",
+        "/contact": "templates/contact.html",
+        "/booking": "templates/booking.html",
+        "/privacy": "templates/legal/privacy.html",
+        "/terms": "templates/legal/terms.html",
+        "/cookies": "templates/legal/cookies.html",
+    }
+
+    def lastmod_for(path: str) -> str:
+        file_path = template_lastmods.get(path)
+        if not file_path or not os.path.exists(file_path):
+            return datetime.now(timezone.utc).date().isoformat()
+        return datetime.fromtimestamp(os.path.getmtime(file_path), tz=timezone.utc).date().isoformat()
+
     static_urls = [
-        ("/",               "1.0", "weekly",  "2026-03-16"),
-        ("/tools",          "0.9", "weekly",  "2026-03-16"),
-        ("/tools/profiler", "0.8", "monthly", "2026-03-16"),
-        ("/tools/quality",  "0.8", "monthly", "2026-03-16"),
-        ("/tools/scorecard","0.8", "monthly", "2026-03-16"),
-        ("/tools/coverage", "0.8", "monthly", "2026-03-16"),
-        ("/tools/outliers", "0.8", "monthly", "2026-03-16"),
-        ("/tools/drift",    "0.8", "monthly", "2026-03-16"),
-        ("/research",       "0.7", "weekly",  "2026-03-16"),
-        ("/about",          "0.5", "monthly", "2026-03-16"),
-        ("/contact",        "0.5", "monthly", "2026-03-16"),
-        ("/privacy",        "0.3", "yearly",  "2026-03-16"),
-        ("/terms",          "0.3", "yearly",  "2026-03-16"),
-        ("/cookies",        "0.3", "yearly",  "2026-03-16"),
+        ("/",               "1.0", "weekly",  lastmod_for("/")),
+        ("/tools",          "0.9", "weekly",  lastmod_for("/tools")),
+        ("/tools/profiler", "0.8", "monthly", lastmod_for("/tools/profiler")),
+        ("/tools/quality",  "0.8", "monthly", lastmod_for("/tools/quality")),
+        ("/tools/scorecard","0.8", "monthly", lastmod_for("/tools/scorecard")),
+        ("/tools/coverage", "0.8", "monthly", lastmod_for("/tools/coverage")),
+        ("/tools/outliers", "0.8", "monthly", lastmod_for("/tools/outliers")),
+        ("/tools/drift",    "0.8", "monthly", lastmod_for("/tools/drift")),
+        ("/research",       "0.7", "weekly",  lastmod_for("/research")),
+        ("/about",          "0.5", "monthly", lastmod_for("/about")),
+        ("/contact",        "0.5", "monthly", lastmod_for("/contact")),
+        ("/booking",        "0.6", "monthly", lastmod_for("/booking")),
+        ("/privacy",        "0.3", "yearly",  lastmod_for("/privacy")),
+        ("/terms",          "0.3", "yearly",  lastmod_for("/terms")),
+        ("/cookies",        "0.3", "yearly",  lastmod_for("/cookies")),
     ]
     url_tags = "\n".join(
         f"  <url><loc>{base}{u}</loc><lastmod>{lastmod}</lastmod><changefreq>{freq}</changefreq><priority>{pri}</priority></url>"
@@ -427,7 +455,6 @@ async def sitemap():
 
 @router.get("/robots.txt")
 async def robots():
-    import os
     robots_path = os.path.join(os.path.dirname(__file__), "..", "..", "robots.txt")
     try:
         with open(os.path.normpath(robots_path), "r", encoding="utf-8") as f:

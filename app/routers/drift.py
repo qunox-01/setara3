@@ -28,7 +28,9 @@ async def drift_tool(request: Request):
 
 @router.get("/tools/drift/pdf/{result_id}")
 async def drift_pdf(result_id: str):
-    return await render_tool_pdf("drift", result_id)
+    response = await render_tool_pdf("drift", result_id)
+    response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+    return response
 
 _MAX_FILE_MB = 50
 _MAX_ROWS = 100_000

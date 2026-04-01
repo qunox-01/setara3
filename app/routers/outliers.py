@@ -28,7 +28,9 @@ async def outliers_tool(request: Request):
 
 @router.get("/tools/outliers/pdf/{result_id}")
 async def outliers_pdf(result_id: str):
-    return await render_tool_pdf("outliers", result_id)
+    response = await render_tool_pdf("outliers", result_id)
+    response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+    return response
 
 _MAX_FILE_MB = 50
 _MAX_ROWS = 100_000

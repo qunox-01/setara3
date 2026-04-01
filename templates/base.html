@@ -37,18 +37,28 @@
     <meta name="twitter:title" content="{{ self.title() }}" />
     <meta name="twitter:description" content="{{ self.description() }}" />
 
-    <!-- WebSite structured data -->
+    <!-- Site structured data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "xariff",
       "url": "https://xariff.com",
-      "description": "Free ML dataset analysis tools for data scientists and ML engineers.",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://xariff.com/research?q={search_term_string}",
-        "query-input": "required name=search_term_string"
+      "description": "Free ML dataset analysis tools for data scientists and ML engineers."
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "xariff",
+      "url": "https://xariff.com",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "email": "contactus@xariff.com",
+        "url": "https://xariff.com/contact"
       }
     }
     </script>

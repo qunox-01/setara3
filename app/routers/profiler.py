@@ -28,7 +28,9 @@ async def profiler_tool(request: Request):
 
 @router.get("/tools/profiler/pdf/{result_id}")
 async def profiler_pdf(result_id: str):
-    return await render_tool_pdf("profiler", result_id)
+    response = await render_tool_pdf("profiler", result_id)
+    response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+    return response
 
 
 @router.post("/api/tools/profiler/analyze")

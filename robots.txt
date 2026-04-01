@@ -1,7 +1,7 @@
 # =============================================================================
 # robots.txt for xariff
 # https://xariff.com/robots.txt
-# Last updated: 2026-03-16
+# Last updated: 2026-04-02
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -24,6 +24,13 @@ Disallow: /private/
 Disallow: /staging/
 Disallow: /tmp/
 Disallow: /sample-data/
+Disallow: /report/
+Disallow: /tools/quality/pdf/
+Disallow: /tools/scorecard/pdf/
+Disallow: /tools/profiler/pdf/
+Disallow: /tools/coverage/pdf/
+Disallow: /tools/outliers/pdf/
+Disallow: /tools/drift/pdf/
 Disallow: /search?
 Disallow: /*?sort=
 Disallow: /*?filter=
@@ -45,6 +52,13 @@ Disallow: /login/
 Disallow: /account/
 Disallow: /private/
 Disallow: /sample-data/
+Disallow: /report/
+Disallow: /tools/quality/pdf/
+Disallow: /tools/scorecard/pdf/
+Disallow: /tools/profiler/pdf/
+Disallow: /tools/coverage/pdf/
+Disallow: /tools/outliers/pdf/
+Disallow: /tools/drift/pdf/
 
 User-agent: Googlebot-Image
 Allow: /
@@ -68,6 +82,13 @@ Disallow: /login/
 Disallow: /account/
 Disallow: /private/
 Disallow: /sample-data/
+Disallow: /report/
+Disallow: /tools/quality/pdf/
+Disallow: /tools/scorecard/pdf/
+Disallow: /tools/profiler/pdf/
+Disallow: /tools/coverage/pdf/
+Disallow: /tools/outliers/pdf/
+Disallow: /tools/drift/pdf/
 
 # -----------------------------------------------------------------------------
 # Other search engines - Full access
@@ -78,12 +99,14 @@ Crawl-delay: 5
 Disallow: /admin/
 Disallow: /api/
 Disallow: /private/
+Disallow: /report/
 
 User-agent: DuckDuckBot
 Allow: /
 Disallow: /admin/
 Disallow: /api/
 Disallow: /private/
+Disallow: /report/
 
 User-agent: Baiduspider
 Allow: /
@@ -91,6 +114,7 @@ Crawl-delay: 10
 Disallow: /admin/
 Disallow: /api/
 Disallow: /private/
+Disallow: /report/
 
 User-agent: YandexBot
 Allow: /
@@ -98,6 +122,7 @@ Crawl-delay: 10
 Disallow: /admin/
 Disallow: /api/
 Disallow: /private/
+Disallow: /report/
 
 # -----------------------------------------------------------------------------
 # AI answer engine crawlers - Allowed to index content
@@ -109,6 +134,13 @@ Allow: /tools/
 Allow: /about/
 Disallow: /api/
 Disallow: /private/
+Disallow: /report/
+Disallow: /tools/quality/pdf/
+Disallow: /tools/scorecard/pdf/
+Disallow: /tools/profiler/pdf/
+Disallow: /tools/coverage/pdf/
+Disallow: /tools/outliers/pdf/
+Disallow: /tools/drift/pdf/
 
 User-agent: ChatGPT-User
 Allow: /research/
@@ -116,11 +148,25 @@ Allow: /tools/
 Allow: /about/
 Disallow: /api/
 Disallow: /private/
+Disallow: /report/
+Disallow: /tools/quality/pdf/
+Disallow: /tools/scorecard/pdf/
+Disallow: /tools/profiler/pdf/
+Disallow: /tools/coverage/pdf/
+Disallow: /tools/outliers/pdf/
+Disallow: /tools/drift/pdf/
 
 User-agent: PerplexityBot
 Allow: /
 Disallow: /api/
 Disallow: /private/
+Disallow: /report/
+Disallow: /tools/quality/pdf/
+Disallow: /tools/scorecard/pdf/
+Disallow: /tools/profiler/pdf/
+Disallow: /tools/coverage/pdf/
+Disallow: /tools/outliers/pdf/
+Disallow: /tools/drift/pdf/
 
 User-agent: anthropic-ai
 Allow: /research/
@@ -128,6 +174,13 @@ Allow: /tools/
 Allow: /about/
 Disallow: /api/
 Disallow: /private/
+Disallow: /report/
+Disallow: /tools/quality/pdf/
+Disallow: /tools/scorecard/pdf/
+Disallow: /tools/profiler/pdf/
+Disallow: /tools/coverage/pdf/
+Disallow: /tools/outliers/pdf/
+Disallow: /tools/drift/pdf/
 
 User-agent: ClaudeBot
 Allow: /research/
@@ -135,6 +188,13 @@ Allow: /tools/
 Allow: /about/
 Disallow: /api/
 Disallow: /private/
+Disallow: /report/
+Disallow: /tools/quality/pdf/
+Disallow: /tools/scorecard/pdf/
+Disallow: /tools/profiler/pdf/
+Disallow: /tools/coverage/pdf/
+Disallow: /tools/outliers/pdf/
+Disallow: /tools/drift/pdf/
 
 # AI training crawlers - Blocked
 User-agent: CCBot

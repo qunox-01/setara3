@@ -61,12 +61,16 @@ async def quality_analyse(
 
 @router.get("/tools/quality/pdf/{result_id}")
 async def quality_pdf(result_id: str):
-    return await render_tool_pdf("quality", result_id)
+    response = await render_tool_pdf("quality", result_id)
+    response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+    return response
 
 
 @router.get("/tools/scorecard/pdf/{result_id}")
 async def scorecard_pdf(result_id: str):
-    return await render_tool_pdf("scorecard", result_id)
+    response = await render_tool_pdf("scorecard", result_id)
+    response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+    return response
 
 
 @router.post("/tools/quality/download")

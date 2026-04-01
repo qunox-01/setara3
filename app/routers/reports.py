@@ -40,10 +40,12 @@ async def view_report(request: Request, report_id: str):
     if not report:
         raise HTTPException(status_code=404, detail="Report not found.")
 
-    return templates.TemplateResponse(
+    response = templates.TemplateResponse(
         "report.html",
         {"request": request, **_get_report_context(report)},
     )
+    response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+    return response
 
 
 @router.get("/report/{report_id}/pdf")
@@ -64,8 +66,10 @@ async def download_report_pdf(report_id: str):
     pdf_bytes = HTML(string=html_string).write_pdf()
 
     filename = f"xariff-report-{report_id[:8]}.pdf"
-    return StreamingResponse(
+    response = StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",
         headers={"Content-Disposition": f"attachment; filename={filename}"},
     )
+    response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+    return response
