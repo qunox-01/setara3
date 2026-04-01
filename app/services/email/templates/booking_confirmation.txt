@@ -1,0 +1,13 @@
+Hi {{ name }},
+
+Thank you for requesting a Data Terrain Analysis Audit with Xariff.
+
+We've received your booking details and our team will review them shortly. You can expect a reply within 1-2 business days to confirm the scope and next steps.
+{% if dataset_description %}
+Dataset you described:
+{{ dataset_description }}
+{% endif %}
+In the meantime, feel free to explore our free audit tools at https://xariff.com/tools or reply to this email if you have any questions.
+
+— The Xariff Team
+{{ reply_to }}

@@ -1,0 +1,9 @@
+New contact message
+
+Name: {{ name }}
+Email: {{ email }}
+Category: {{ category }}
+Subject: {{ subject }}
+
+Message:
+{{ message }}

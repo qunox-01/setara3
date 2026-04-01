@@ -1,0 +1,15 @@
+<html>
+  <body style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6; max-width: 600px; margin: 0 auto;">
+    <p>Hi {{ name }},</p>
+    <p>Thank you for requesting a <strong>Data Terrain Analysis Audit</strong> with Xariff.</p>
+    <p>We've received your booking details and our team will review them shortly. You can expect a reply within <strong>1–2 business days</strong> to confirm the scope and next steps.</p>
+    {% if dataset_description %}
+    <p style="background:#f3f4f6; padding:12px 16px; border-radius:8px; font-size:14px;">
+      <strong>Dataset you described:</strong><br>{{ dataset_description }}
+    </p>
+    {% endif %}
+    <p>In the meantime, feel free to explore our <a href="https://xariff.com/tools" style="color:#3b82f6;">free audit tools</a> or reply to this email if you have any questions.</p>
+    <p>— The Xariff Team<br>
+    <a href="mailto:{{ reply_to }}" style="color:#3b82f6;">{{ reply_to }}</a></p>
+  </body>
+</html>

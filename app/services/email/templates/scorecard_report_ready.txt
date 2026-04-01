@@ -1,0 +1,6 @@
+Your Xariff report is ready.
+
+Open report: {{ report_url }}
+Report ID: {{ report_id }}
+
+Questions: {{ reply_to }}

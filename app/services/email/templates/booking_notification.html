@@ -1,0 +1,20 @@
+<html>
+  <body style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6; max-width: 600px; margin: 0 auto;">
+    <h2 style="color:#1e40af;">New Audit Booking Request</h2>
+
+    <h3 style="margin-bottom:4px;">Contact</h3>
+    <p style="margin:0;"><strong>Name:</strong> {{ name }}</p>
+    <p style="margin:0;"><strong>Email:</strong> <a href="mailto:{{ email }}" style="color:#3b82f6;">{{ email }}</a></p>
+    {% if company %}<p style="margin:0;"><strong>Company:</strong> {{ company }}</p>{% endif %}
+    {% if role %}<p style="margin:0;"><strong>Role:</strong> {{ role }}</p>{% endif %}
+
+    <h3 style="margin-top:20px; margin-bottom:4px;">Dataset Details</h3>
+    {% if dataset_description %}
+    <p style="margin:0;"><strong>Description:</strong></p>
+    <p style="background:#f3f4f6; padding:12px 16px; border-radius:8px; font-size:14px; margin-top:4px;">{{ dataset_description }}</p>
+    {% else %}
+    <p style="color:#6b7280; font-size:14px;">Not provided.</p>
+    {% endif %}
+    {% if dataset_size %}<p style="margin:0;"><strong>Size:</strong> {{ dataset_size }}</p>{% endif %}
+  </body>
+</html>

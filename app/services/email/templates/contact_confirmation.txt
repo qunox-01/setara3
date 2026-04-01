@@ -1,0 +1,9 @@
+Hi {{ name }},
+
+We received your message about "{{ subject }}".
+
+Our team will review it and reply as soon as possible.
+
+If you need to add more context, reply to {{ reply_to }}.
+
+Xariff

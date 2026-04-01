@@ -36,6 +36,11 @@ async def cookies(request: Request):
     return templates.TemplateResponse("legal/cookies.html", {"request": request})
 
 
+@router.get("/booking", response_class=HTMLResponse)
+async def booking(request: Request):
+    return templates.TemplateResponse("booking.html", {"request": request})
+
+
 @router.get("/tools", response_class=HTMLResponse)
 async def tools_index(request: Request):
     return templates.TemplateResponse("tools/index.html", {"request": request})

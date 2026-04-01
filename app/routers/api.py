@@ -9,7 +9,15 @@ from fastapi.responses import HTMLResponse, Response, StreamingResponse
 
 from app.database import AsyncSessionLocal
 from app.dependencies import get_session_id
-from app.models import Email, Feedback, AnalyticsEvent, ContactMessage
+from app.models import Email, Feedback, AnalyticsEvent, ContactMessage, BookingRequest
+from app.services.email import (
+    send_booking_confirmation,
+    send_booking_notification,
+    send_contact_confirmation,
+    send_contact_notification,
+    send_lead_capture_confirmation,
+    send_lead_capture_notification,
+)
 from app.utils.legal import validate_legal_acceptance, log_consent, POLICY_VERSION
 
 router = APIRouter()
@@ -19,6 +27,7 @@ EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 @router.post("/api/email-capture", response_class=HTMLResponse)
 async def email_capture(
     request: Request,
+    background_tasks: BackgroundTasks,
     email: str = Form(...),
     source: str = Form(default=""),
     tool: str = Form(default=""),
@@ -28,9 +37,12 @@ async def email_capture(
 ):
     validate_legal_acceptance(accept_legal, policy_version)
     session_id = get_session_id(request)
+    cleaned_email = email.strip().lower()
+    if not EMAIL_PATTERN.match(cleaned_email):
+        raise HTTPException(status_code=422, detail="Please provide a valid email address.")
 
     async with AsyncSessionLocal() as session:
-        record = Email(email=email, source=source, tool=tool, utm_source=utm_source)
+        record = Email(email=cleaned_email, source=source, tool=tool, utm_source=utm_source)
         session.add(record)
         await session.commit()
 
@@ -40,6 +52,8 @@ async def email_capture(
         source=source or "homepage",
         policy_version=policy_version,
     )
+    background_tasks.add_task(send_lead_capture_confirmation, cleaned_email, source, tool)
+    background_tasks.add_task(send_lead_capture_notification, cleaned_email, source, tool, utm_source)
 
     return HTMLResponse(
         content="""
@@ -75,6 +89,7 @@ async def feedback(
 @router.post("/api/contact-feedback", response_class=HTMLResponse)
 async def contact_feedback(
     request: Request,
+    background_tasks: BackgroundTasks,
     name: str = Form(..., min_length=2, max_length=120),
     email: str = Form(..., max_length=255),
     category: str = Form(default="general", max_length=40),
@@ -105,11 +120,87 @@ async def contact_feedback(
         session.add(record)
         await session.commit()
 
+    cleaned_name = name.strip()
+    background_tasks.add_task(
+        send_contact_notification,
+        name=cleaned_name,
+        email=cleaned_email,
+        category=cleaned_category,
+        subject=cleaned_subject,
+        message=cleaned_message,
+    )
+    background_tasks.add_task(
+        send_contact_confirmation,
+        name=cleaned_name,
+        email=cleaned_email,
+        subject=cleaned_subject,
+    )
+
     return HTMLResponse(
         content="""
         <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
             <p class="text-green-800 font-semibold">Thanks, your message has been sent.</p>
             <p class="text-sm text-green-700 mt-1">We will reply as soon as possible. You can also email contactus@xariff.com directly.</p>
+        </div>
+        """
+    )
+
+
+@router.post("/api/booking", response_class=HTMLResponse)
+async def booking_request(
+    request: Request,
+    background_tasks: BackgroundTasks,
+    name: str = Form(..., min_length=2, max_length=120),
+    email: str = Form(..., max_length=255),
+    company: str = Form(default="", max_length=120),
+    role: str = Form(default="", max_length=120),
+    dataset_description: str = Form(default="", max_length=3000),
+    use_case: str = Form(default="", max_length=3000),
+    dataset_size: str = Form(default="", max_length=80),
+    goals: str = Form(default="", max_length=3000),
+):
+    session_id = get_session_id(request)
+    cleaned_email = email.strip().lower()
+    if not EMAIL_PATTERN.match(cleaned_email):
+        raise HTTPException(status_code=422, detail="Please provide a valid email address.")
+
+    async with AsyncSessionLocal() as session:
+        record = BookingRequest(
+            name=name.strip(),
+            email=cleaned_email,
+            company=company.strip(),
+            role=role.strip(),
+            dataset_description=dataset_description.strip(),
+            use_case=use_case.strip(),
+            dataset_size=dataset_size.strip(),
+            goals=goals.strip(),
+            session_id=session_id,
+        )
+        session.add(record)
+        await session.commit()
+
+    background_tasks.add_task(
+        send_booking_notification,
+        name=name.strip(),
+        email=cleaned_email,
+        company=company.strip(),
+        role=role.strip(),
+        dataset_description=dataset_description.strip(),
+        dataset_size=dataset_size.strip(),
+    )
+    background_tasks.add_task(
+        send_booking_confirmation,
+        name=name.strip(),
+        email=cleaned_email,
+        dataset_description=dataset_description.strip(),
+    )
+
+    return HTMLResponse(
+        content="""
+        <div class="p-6 bg-green-50 border border-green-200 rounded-2xl text-center">
+            <div class="text-3xl mb-3">&#10003;</div>
+            <p class="text-green-800 font-bold text-lg">Booking request received!</p>
+            <p class="text-green-700 text-sm mt-2">We'll review your dataset details and get back to you within 1–2 business days to confirm your audit.</p>
         </div>
         """
     )

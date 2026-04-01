@@ -1,0 +1,12 @@
+Hi,
+
+We received your request from Xariff.
+
+Source: {{ source }}
+Tool: {{ tool }}
+
+We will follow up soon.
+
+Questions: {{ reply_to }}
+
+Xariff

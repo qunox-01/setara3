@@ -1,15 +1,17 @@
 import io
 import json
+import re
 import uuid
 
 import pandas as pd
-from fastapi import APIRouter, Request, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, Request, UploadFile, File, Form, HTTPException, BackgroundTasks
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 
 from fastapi.encoders import jsonable_encoder
 
 from app.dependencies import validate_csv, get_session_id
+from app.services.email import send_scorecard_report_ready
 from app.services import quality as quality_service
 from app.services import scorecard as scorecard_service
 from app.database import AsyncSessionLocal
@@ -20,6 +22,7 @@ from app.utils.pdf import render_tool_pdf
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
+EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
 @router.post("/tools/quality/analyse", response_class=HTMLResponse)
@@ -130,6 +133,7 @@ async def scorecard_analyse(
 @router.post("/tools/scorecard/report", response_class=HTMLResponse)
 async def scorecard_report(
     request: Request,
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     label_column: str = Form(default=""),
     stage: str = Form(default="exploration"),
@@ -138,6 +142,9 @@ async def scorecard_report(
     policy_version: str = Form(default=POLICY_VERSION),
 ):
     validate_legal_acceptance(accept_legal, policy_version)
+    cleaned_email = email.strip().lower()
+    if cleaned_email and not EMAIL_PATTERN.match(cleaned_email):
+        raise HTTPException(status_code=422, detail="Please provide a valid email address.")
     df = await validate_csv(file)
     result = scorecard_service.analyse(
         df,
@@ -149,7 +156,7 @@ async def scorecard_report(
     async with AsyncSessionLocal() as session:
         report = Report(
             id=report_id,
-            email=email,
+            email=cleaned_email,
             scorecard_json=json.dumps(result),
         )
         session.add(report)
@@ -169,6 +176,13 @@ async def scorecard_report(
             tool="scorecard",
             session_id=session_id,
             metadata={"rows": len(df), "cols": len(df.columns), "label_column": label_column, "stage": stage},
+        )
+
+    if cleaned_email:
+        background_tasks.add_task(
+            send_scorecard_report_ready,
+            email=cleaned_email,
+            report_id=report_id,
         )
 
     report_url = f"/report/{report_id}"

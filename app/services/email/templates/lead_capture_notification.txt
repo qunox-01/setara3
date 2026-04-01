@@ -1,0 +1,6 @@
+New lead capture
+
+Email: {{ email }}
+Source: {{ source }}
+Tool: {{ tool }}
+UTM source: {{ utm_source }}

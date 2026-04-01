@@ -71,6 +71,22 @@ class AnalyticsEvent(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class BookingRequest(Base):
+    __tablename__ = "booking_requests"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(120), nullable=False)
+    email = Column(String(255), nullable=False)
+    company = Column(String(120), default="")
+    role = Column(String(120), default="")
+    dataset_description = Column(Text, default="")
+    use_case = Column(Text, default="")
+    dataset_size = Column(String(80), default="")
+    goals = Column(Text, default="")
+    session_id = Column(String(100), default="")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class ConsentLog(Base):
     __tablename__ = "consent_logs"
 

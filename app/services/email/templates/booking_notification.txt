@@ -1,0 +1,11 @@
+New Audit Booking Request
+
+--- Contact ---
+Name:    {{ name }}
+Email:   {{ email }}
+{% if company %}Company: {{ company }}{% endif %}
+{% if role %}Role:    {{ role }}{% endif %}
+
+--- Dataset Details ---
+{% if dataset_description %}{{ dataset_description }}{% else %}Not provided.{% endif %}
+{% if dataset_size %}Size: {{ dataset_size }}{% endif %}
