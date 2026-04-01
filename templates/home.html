@@ -1,229 +1,920 @@
 {% extends "base.html" %}
 
-{% block title %}xariff — Clean data. Better models.{% endblock %}
+{% block title %}xariff — Data Terrain Analysis for ML Teams{% endblock %}
+{% block description %}Xariff helps ML teams find coverage gaps, anomalies, drift, and hidden failure zones in their datasets — before they become expensive problems in production.{% endblock %}
 
 {% block content %}
 
-<!-- Hero Section -->
+<!-- ─── 1. HERO ─────────────────────────────────────────────────────────── -->
 <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 text-white py-20 px-4">
-    <div class="max-w-4xl mx-auto text-center">
-        <div class="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 text-blue-300 text-sm px-4 py-1.5 rounded-full mb-6">
-            <span class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
-            Free ML dataset analysis — no signup needed
-        </div>
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
-            Clean data.<br class="hidden md:block" />
-            <span class="text-blue-400">Better models.</span>
-        </h1>
-        <p class="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Upload your CSV and get instant analysis: statistical profiles, quality scores,
-            distributions, class balance, and actionable recommendations — in seconds.
+  <div class="max-w-6xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+
+      <!-- Left column -->
+      <div>
+        <p class="text-blue-300 text-sm font-medium tracking-wide uppercase mb-4">
+          For ML teams, data scientists, and AI builders
         </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/tools/profiler"
-               class="px-8 py-3.5 bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded-xl shadow-lg transition-all hover:shadow-blue-500/25 hover:scale-105">
-                Profile My Dataset
-            </a>
-            <a href="/tools/coverage"
-               class="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all">
-                Check Coverage
-            </a>
-            <a href="/tools/scorecard"
-               class="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all">
-                ML Scorecard
-            </a>
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-5">
+          Understand and optimize your machine learning datasets with data terrain analysis
+        </h1>
+        <p class="text-slate-300 text-lg leading-relaxed mb-8">
+          Xariff is a machine learning dataset analysis service that helps teams find coverage gaps, anomalies, drift, weak regions, and hidden model failure zones — so they can improve datasets before those problems become expensive in production.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 mb-8">
+          <a href="/contact"
+             class="px-7 py-3.5 bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded-xl shadow-lg transition-all hover:shadow-blue-500/30 hover:scale-105 text-center">
+            Book a Data Terrain Audit
+          </a>
+          <a href="/report/sample"
+             class="px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all text-center">
+            See a Sample Report
+          </a>
         </div>
+        <!-- Proof strip -->
+        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-400">
+          <span class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>Coverage gaps
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>Edge cases
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>Drift
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>Rebalancing
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>Performance atlas
+          </span>
+        </div>
+      </div>
+
+      <!-- Right column: Terrain heatmap mockup -->
+      <div class="flex justify-center md:justify-end">
+        <div class="relative bg-slate-800/60 border border-slate-700 rounded-2xl p-5 w-full max-w-sm shadow-2xl">
+          <p class="text-xs text-slate-400 font-medium mb-3 uppercase tracking-wider">Feature-Space Coverage Map</p>
+          <!-- 8×6 heatmap grid -->
+          <svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" class="w-full rounded-lg">
+            <!-- Background -->
+            <rect width="240" height="180" fill="#1e293b" rx="6"/>
+
+            <!-- Axis labels -->
+            <text x="4" y="174" font-size="7" fill="#64748b" font-family="monospace">feature_1 →</text>
+            <text x="4" y="10" font-size="7" fill="#64748b" font-family="monospace" writing-mode="vertical-rl" transform="rotate(-90 8 90)" text-anchor="middle">feature_2</text>
+
+            <!-- Grid cells: 8 cols × 6 rows, each 27×26px, starting at x=16, y=14 -->
+            <!-- Row 0 -->
+            <rect x="16"  y="14" width="26" height="24" rx="2" fill="#1d4ed8" opacity="0.85"/>
+            <rect x="44"  y="14" width="26" height="24" rx="2" fill="#2563eb" opacity="0.9"/>
+            <rect x="72"  y="14" width="26" height="24" rx="2" fill="#3b82f6" opacity="0.95"/>
+            <rect x="100" y="14" width="26" height="24" rx="2" fill="#60a5fa" opacity="0.7"/>
+            <rect x="128" y="14" width="26" height="24" rx="2" fill="#334155" opacity="0.4"/>
+            <rect x="156" y="14" width="26" height="24" rx="2" fill="#1e293b" opacity="0.3"/>
+            <rect x="184" y="14" width="26" height="24" rx="2" fill="#1e293b" opacity="0.2"/>
+            <rect x="212" y="14" width="26" height="24" rx="2" fill="#1e293b" opacity="0.15"/>
+
+            <!-- Row 1 -->
+            <rect x="16"  y="40" width="26" height="24" rx="2" fill="#2563eb" opacity="0.9"/>
+            <rect x="44"  y="40" width="26" height="24" rx="2" fill="#3b82f6" opacity="1"/>
+            <rect x="72"  y="40" width="26" height="24" rx="2" fill="#60a5fa" opacity="0.9"/>
+            <rect x="100" y="40" width="26" height="24" rx="2" fill="#93c5fd" opacity="0.6"/>
+            <rect x="128" y="40" width="26" height="24" rx="2" fill="#334155" opacity="0.35"/>
+            <rect x="156" y="40" width="26" height="24" rx="2" fill="#1e293b" opacity="0.25"/>
+            <rect x="184" y="40" width="26" height="24" rx="2" fill="#1e293b" opacity="0.2"/>
+            <rect x="212" y="40" width="26" height="24" rx="2" fill="#1e293b" opacity="0.15"/>
+
+            <!-- Row 2 -->
+            <rect x="16"  y="66" width="26" height="24" rx="2" fill="#1d4ed8" opacity="0.7"/>
+            <rect x="44"  y="66" width="26" height="24" rx="2" fill="#2563eb" opacity="0.8"/>
+            <rect x="72"  y="66" width="26" height="24" rx="2" fill="#3b82f6" opacity="0.75"/>
+            <rect x="100" y="66" width="26" height="24" rx="2" fill="#f97316" opacity="0.5"/>
+            <rect x="128" y="66" width="26" height="24" rx="2" fill="#f97316" opacity="0.65"/>
+            <rect x="156" y="66" width="26" height="24" rx="2" fill="#334155" opacity="0.3"/>
+            <rect x="184" y="66" width="26" height="24" rx="2" fill="#1e293b" opacity="0.2"/>
+            <rect x="212" y="66" width="26" height="24" rx="2" fill="#1e293b" opacity="0.15"/>
+
+            <!-- Row 3 -->
+            <rect x="16"  y="92" width="26" height="24" rx="2" fill="#334155" opacity="0.4"/>
+            <rect x="44"  y="92" width="26" height="24" rx="2" fill="#334155" opacity="0.35"/>
+            <rect x="72"  y="92" width="26" height="24" rx="2" fill="#f97316" opacity="0.7"/>
+            <rect x="100" y="92" width="26" height="24" rx="2" fill="#fb923c" opacity="0.8"/>
+            <rect x="128" y="92" width="26" height="24" rx="2" fill="#fb923c" opacity="0.7"/>
+            <rect x="156" y="92" width="26" height="24" rx="2" fill="#334155" opacity="0.25"/>
+            <rect x="184" y="92" width="26" height="24" rx="2" fill="#1e293b" opacity="0.18"/>
+            <rect x="212" y="92" width="26" height="24" rx="2" fill="#1e293b" opacity="0.12"/>
+
+            <!-- Row 4 -->
+            <rect x="16"  y="118" width="26" height="24" rx="2" fill="#1e293b" opacity="0.2"/>
+            <rect x="44"  y="118" width="26" height="24" rx="2" fill="#1e293b" opacity="0.18"/>
+            <rect x="72"  y="118" width="26" height="24" rx="2" fill="#334155" opacity="0.25"/>
+            <rect x="100" y="118" width="26" height="24" rx="2" fill="#334155" opacity="0.3"/>
+            <rect x="128" y="118" width="26" height="24" rx="2" fill="#334155" opacity="0.28"/>
+            <rect x="156" y="118" width="26" height="24" rx="2" fill="#1e293b" opacity="0.15"/>
+            <rect x="184" y="118" width="26" height="24" rx="2" fill="#1e293b" opacity="0.12"/>
+            <rect x="212" y="118" width="26" height="24" rx="2" fill="#1e293b" opacity="0.1"/>
+
+            <!-- Row 5 -->
+            <rect x="16"  y="144" width="26" height="24" rx="2" fill="#1e293b" opacity="0.15"/>
+            <rect x="44"  y="144" width="26" height="24" rx="2" fill="#1e293b" opacity="0.12"/>
+            <rect x="72"  y="144" width="26" height="24" rx="2" fill="#1e293b" opacity="0.12"/>
+            <rect x="100" y="144" width="26" height="24" rx="2" fill="#1e293b" opacity="0.1"/>
+            <rect x="128" y="144" width="26" height="24" rx="2" fill="#1e293b" opacity="0.1"/>
+            <rect x="156" y="144" width="26" height="24" rx="2" fill="#1e293b" opacity="0.08"/>
+            <rect x="184" y="144" width="26" height="24" rx="2" fill="#1e293b" opacity="0.08"/>
+            <rect x="212" y="144" width="26" height="24" rx="2" fill="#1e293b" opacity="0.08"/>
+
+            <!-- Annotation: Dense coverage (top-left cluster) -->
+            <line x1="58" y1="28" x2="10" y2="6" stroke="#60a5fa" stroke-width="0.8" stroke-dasharray="2 2"/>
+            <text x="2" y="5" font-size="6" fill="#93c5fd" font-family="monospace">Dense coverage</text>
+
+            <!-- Annotation: Sparse region (bottom-right) -->
+            <rect x="156" y="118" width="82" height="50" rx="3" fill="none" stroke="#f97316" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
+            <text x="158" y="175" font-size="6" fill="#fb923c" font-family="monospace">Sparse region</text>
+
+            <!-- Anomaly marker -->
+            <circle cx="114" cy="79" r="5" fill="none" stroke="#fbbf24" stroke-width="1.2"/>
+            <circle cx="114" cy="79" r="2" fill="#fbbf24" opacity="0.8"/>
+            <text x="120" y="77" font-size="6" fill="#fbbf24" font-family="monospace">anomaly</text>
+          </svg>
+
+          <!-- Legend -->
+          <div class="flex items-center gap-4 mt-3 text-xs text-slate-400">
+            <span class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded-sm bg-blue-500 opacity-90 inline-block"></span>High density
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded-sm bg-orange-400 opacity-80 inline-block"></span>Edge zone
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded-sm bg-slate-700 inline-block"></span>Sparse
+            </span>
+          </div>
+        </div>
+      </div>
+
     </div>
+  </div>
 </section>
 
-<!-- Stats bar -->
-<section class="bg-slate-800 text-white py-6">
-    <div class="max-w-4xl mx-auto px-4">
-        <div class="grid grid-cols-3 gap-4 text-center">
-            <div>
-                <div class="text-2xl font-bold text-blue-400">6</div>
-                <div class="text-xs text-slate-400 mt-0.5">Free tools</div>
-            </div>
-            <div>
-                <div class="text-2xl font-bold text-blue-400">500K</div>
-                <div class="text-xs text-slate-400 mt-0.5">Max rows</div>
-            </div>
-            <div>
-                <div class="text-2xl font-bold text-blue-400">Raw</div>
-                <div class="text-xs text-slate-400 mt-0.5">Uploads not retained by default</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Tools Section -->
+<!-- ─── 2. WHAT IS DATA TERRAIN ANALYSIS? ────────────────────────────────── -->
 <section class="py-16 px-4 bg-white">
-    <div class="max-w-6xl mx-auto">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold text-slate-900 mb-3">Analyse your dataset in seconds</h2>
-            <p class="text-slate-500 text-lg">No code. No signup. Upload your CSV and get results instantly.</p>
+  <div class="max-w-5xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+
+      <!-- Left: explanation -->
+      <div>
+        <h2 class="text-3xl font-bold text-slate-900 mb-5">What is data terrain analysis?</h2>
+        <p class="text-slate-600 leading-relaxed mb-4">
+          Data terrain analysis is a way of looking at a dataset as a landscape instead of just a spreadsheet.
+        </p>
+        <p class="text-slate-600 leading-relaxed mb-4">
+          It shows where data is dense, sparse, imbalanced, drifting, unusual, or weakly represented across classes, features, and splits.
+        </p>
+        <p class="text-slate-600 leading-relaxed">
+          Instead of relying only on averages or summary metrics, teams can see where the dataset is strong, where it is fragile, and where the model may need caution.
+        </p>
+      </div>
+
+      <!-- Right: annotated visual -->
+      <div class="flex justify-center">
+        <div class="bg-gray-50 border border-gray-200 rounded-2xl p-5 w-full max-w-xs">
+          <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-3">Dataset as a landscape</p>
+          <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" class="w-full rounded-lg">
+            <!-- Background -->
+            <rect width="200" height="150" fill="#f8fafc" rx="6"/>
+
+            <!-- Dense region (top-left blob) -->
+            <ellipse cx="60" cy="55" rx="38" ry="28" fill="#3b82f6" opacity="0.15"/>
+            <ellipse cx="60" cy="55" rx="26" ry="18" fill="#3b82f6" opacity="0.25"/>
+            <ellipse cx="60" cy="55" rx="14" ry="10" fill="#3b82f6" opacity="0.45"/>
+            <!-- Data points dense -->
+            <circle cx="52" cy="50" r="2.5" fill="#2563eb" opacity="0.8"/>
+            <circle cx="62" cy="48" r="2.5" fill="#2563eb" opacity="0.8"/>
+            <circle cx="68" cy="56" r="2.5" fill="#2563eb" opacity="0.8"/>
+            <circle cx="55" cy="60" r="2.5" fill="#2563eb" opacity="0.8"/>
+            <circle cx="65" cy="63" r="2.5" fill="#2563eb" opacity="0.7"/>
+            <circle cx="48" cy="58" r="2.5" fill="#2563eb" opacity="0.7"/>
+            <!-- Dense label -->
+            <line x1="60" y1="30" x2="60" y2="22" stroke="#3b82f6" stroke-width="0.8"/>
+            <text x="62" y="20" font-size="7" fill="#3b82f6" font-family="monospace">Dense</text>
+
+            <!-- Sparse region (bottom-right) -->
+            <rect x="120" y="90" width="65" height="48" rx="4" fill="none" stroke="#f97316" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+            <circle cx="135" cy="105" r="2" fill="#94a3b8" opacity="0.5"/>
+            <circle cx="155" cy="115" r="2" fill="#94a3b8" opacity="0.5"/>
+            <circle cx="170" cy="100" r="2" fill="#94a3b8" opacity="0.5"/>
+            <circle cx="148" cy="128" r="2" fill="#94a3b8" opacity="0.5"/>
+            <!-- Sparse label -->
+            <text x="122" y="88" font-size="7" fill="#f97316" font-family="monospace">Sparse region</text>
+
+            <!-- Anomaly -->
+            <circle cx="140" cy="45" r="5" fill="none" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="2 1"/>
+            <circle cx="140" cy="45" r="2.5" fill="#fbbf24" opacity="0.9"/>
+            <text x="148" y="44" font-size="7" fill="#b45309" font-family="monospace">Anomaly</text>
+
+            <!-- Mismatch zone -->
+            <rect x="10" y="100" width="90" height="30" rx="3" fill="#8b5cf6" opacity="0.08"/>
+            <text x="12" y="98" font-size="7" fill="#7c3aed" font-family="monospace">Split mismatch zone</text>
+            <circle cx="30" cy="113" r="2.5" fill="#8b5cf6" opacity="0.5"/>
+            <circle cx="50" cy="118" r="2.5" fill="#8b5cf6" opacity="0.5"/>
+            <circle cx="70" cy="110" r="2.5" fill="#8b5cf6" opacity="0.5"/>
+            <circle cx="88" cy="122" r="2.5" fill="#8b5cf6" opacity="0.5"/>
+
+            <!-- Axis labels -->
+            <text x="4" y="148" font-size="6" fill="#94a3b8" font-family="monospace">feature A →</text>
+            <text x="4" y="12" font-size="6" fill="#94a3b8" font-family="monospace" transform="rotate(-90 8 75)" text-anchor="middle">feature B</text>
+          </svg>
         </div>
-
-        <div class="grid md:grid-cols-3 gap-6">
-
-            <!-- Dataset Profiler Card -->
-            <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 flex flex-col">
-                <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-indigo-500 transition-colors">
-                    <svg class="w-6 h-6 text-indigo-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                </div>
-                <div class="flex items-center gap-2 mb-3">
-                    <h3 class="text-xl font-bold text-slate-900">Dataset Profiler</h3>
-                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Live</span>
-                </div>
-                <p class="text-slate-600 mb-6 leading-relaxed flex-1">
-                    Get a full statistical profile of every column — distributions, histograms,
-                    box plots, correlations, and skewness analysis in one view.
-                </p>
-                <ul class="space-y-2 mb-6 text-sm text-slate-600">
-                    <li class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                        Mean, median, std, IQR per column
-                    </li>
-                    <li class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                        Histograms and box plots
-                    </li>
-                    <li class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                        Pearson correlation heatmap
-                    </li>
-                </ul>
-                <a href="/tools/profiler"
-                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold rounded-lg transition-colors">
-                    Profile my dataset
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                </a>
-            </div>
-
-            <!-- Feature-Space Coverage Card -->
-            <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl hover:border-orange-200 transition-all duration-300 flex flex-col">
-                <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-orange-500 transition-colors">
-                    <svg class="w-6 h-6 text-orange-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-                    </svg>
-                </div>
-                <div class="flex items-center gap-2 mb-3">
-                    <h3 class="text-xl font-bold text-slate-900">Feature-Space Coverage</h3>
-                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Live</span>
-                </div>
-                <p class="text-slate-600 mb-6 leading-relaxed flex-1">
-                    Detect gaps in the combined feature space — regions where your model will be forced to
-                    extrapolate in production. Goes beyond column-by-column checks.
-                </p>
-                <ul class="space-y-2 mb-6 text-sm text-slate-600">
-                    <li class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                        2D coverage map with gap overlay
-                    </li>
-                    <li class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                        Feature-level gap profiles
-                    </li>
-                    <li class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                        Confidence-scored findings
-                    </li>
-                </ul>
-                <a href="/tools/coverage"
-                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg transition-colors">
-                    Check coverage
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                </a>
-            </div>
-
-            <!-- ML Scorecard Card -->
-            <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl hover:border-purple-200 transition-all duration-300 flex flex-col">
-                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-purple-500 transition-colors">
-                    <svg class="w-6 h-6 text-purple-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                    </svg>
-                </div>
-                <div class="flex items-center gap-2 mb-3">
-                    <h3 class="text-xl font-bold text-slate-900">ML Readiness Scorecard</h3>
-                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Live</span>
-                </div>
-                <p class="text-slate-600 mb-6 leading-relaxed flex-1">
-                    Is your dataset ready for ML training? Get a comprehensive scorecard covering
-                    quality, balance, completeness, volume, and uniqueness.
-                </p>
-                <ul class="space-y-2 mb-6 text-sm text-slate-600">
-                    <li class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                        Class balance analysis
-                    </li>
-                    <li class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                        Stage-aware scoring
-                    </li>
-                    <li class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                        Shareable report link
-                    </li>
-                </ul>
-                <a href="/tools/scorecard"
-                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-500 hover:bg-purple-600 text-white text-sm font-semibold rounded-lg transition-colors">
-                    Score my dataset
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                </a>
-            </div>
-
-        </div>
-
-        <!-- View all tools link -->
-        <div class="mt-10 text-center">
-            <a href="/tools"
-               class="inline-flex items-center gap-2 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition-colors text-sm">
-                View all tools
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-            </a>
-        </div>
+      </div>
 
     </div>
+  </div>
 </section>
 
-<!-- How it works -->
+<!-- ─── 3. PROBLEM STRIP ──────────────────────────────────────────────────── -->
+<section class="bg-slate-800 text-white py-12 px-4">
+  <div class="max-w-3xl mx-auto text-center">
+    <p class="text-xl md:text-2xl font-bold text-white leading-snug mb-3">
+      Most teams know their accuracy. Few know how their machine learning data is actually distributed.
+    </p>
+    <p class="text-slate-400 text-base leading-relaxed">
+      Aggregate metrics can hide sparse regions, edge cases, split mismatch, and failure zones that only appear when you look at the data at higher resolution.
+    </p>
+  </div>
+</section>
+
+<!-- ─── 5. WHAT XARIFF ANALYZES ──────────────────────────────────────────── -->
+<section class="py-16 px-4 bg-white">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-slate-900 mb-3">What Xariff analyzes</h2>
+      <p class="text-slate-500 text-lg max-w-2xl mx-auto">
+        Xariff gives ML teams a structured view of how data is distributed, where it is weak, and how model behavior changes across the data terrain.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <!-- Card 1: Terrain Coverage -->
+      <div class="group border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-blue-200 transition-all duration-300">
+        <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-500 transition-colors">
+          <svg class="w-5 h-5 text-blue-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+          </svg>
+        </div>
+        <h3 class="font-bold text-slate-900 mb-2">Data Terrain Coverage</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Feature distribution by class, class imbalance, feature gaps, split mismatch across train, validation, and test, and signs of drift.
+        </p>
+      </div>
+
+      <!-- Card 2: Terrain Anomalies -->
+      <div class="group border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-orange-200 transition-all duration-300">
+        <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-500 transition-colors">
+          <svg class="w-5 h-5 text-orange-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          </svg>
+        </div>
+        <h3 class="font-bold text-slate-900 mb-2">Data Terrain Anomalies</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Surface anomalies, rare cases, and edge cases that standard summaries often miss, at both row and region level.
+        </p>
+      </div>
+
+      <!-- Card 3: Terrain Rebalancing -->
+      <div class="group border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-purple-200 transition-all duration-300">
+        <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-500 transition-colors">
+          <svg class="w-5 h-5 text-purple-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+        </div>
+        <h3 class="font-bold text-slate-900 mb-2">Data Terrain Rebalancing</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Strengthen weak regions through targeted augmentation, synthetic generation, and rebalancing strategies.
+        </p>
+      </div>
+
+      <!-- Card 4: Performance Atlas -->
+      <div class="group border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-teal-200 transition-all duration-300">
+        <div class="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-teal-500 transition-colors">
+          <svg class="w-5 h-5 text-teal-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <h3 class="font-bold text-slate-900 mb-2">Performance Atlas</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Map model performance by bin or region so you can see where the model is reliable and where caution is needed.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-10">
+      <a href="/contact"
+         class="inline-flex items-center gap-2 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition-colors text-sm">
+        See what's in a data terrain audit
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 4. WHY TERRAIN MATTERS ───────────────────────────────────────────── -->
 <section class="py-16 px-4 bg-gray-50">
-    <div class="max-w-4xl mx-auto text-center">
-        <h2 class="text-3xl font-bold text-slate-900 mb-12">How it works</h2>
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="text-center">
-                <div class="w-14 h-14 bg-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-                <h3 class="font-semibold text-slate-800 mb-2">Upload your CSV</h3>
-                <p class="text-slate-500 text-sm">Drag & drop or browse. Up to 50MB, 500K rows. Raw uploads are processed for analysis and not retained by default.</p>
-            </div>
-            <div class="text-center">
-                <div class="w-14 h-14 bg-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-                <h3 class="font-semibold text-slate-800 mb-2">Instant analysis</h3>
-                <p class="text-slate-500 text-sm">We run quality checks, statistical analysis, and ML readiness scoring in seconds.</p>
-            </div>
-            <div class="text-center">
-                <div class="w-14 h-14 bg-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-                <h3 class="font-semibold text-slate-800 mb-2">Get actionable insights</h3>
-                <p class="text-slate-500 text-sm">Download flagged rows, share reports, and follow recommendations to clean your data.</p>
-            </div>
-        </div>
+  <div class="max-w-5xl mx-auto">
+    <h2 class="text-3xl font-bold text-slate-900 mb-10 text-center">Why data terrain analysis matters</h2>
+
+    <div class="grid md:grid-cols-2 gap-6">
+
+      <div class="bg-white border border-gray-200 rounded-2xl p-7">
+        <h3 class="font-bold text-slate-900 mb-2">Average metrics can hide dangerous weak spots</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          A model can look fine overall while failing in sparse, unusual, or underrepresented regions. Data terrain analysis reveals those blind spots before they cause problems in production.
+        </p>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-2xl p-7">
+        <h3 class="font-bold text-slate-900 mb-2">Train, validation, and test can disagree quietly</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Split mismatch and drift can make evaluation look more trustworthy than it really is. Xariff surfaces these misalignments explicitly.
+        </p>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-2xl p-7">
+        <h3 class="font-bold text-slate-900 mb-2">Rare cases often matter more than averages</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Outliers, edge cases, and long-tail examples are often where real-world failure begins. Data terrain analysis makes these visible and actionable.
+        </p>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-2xl p-7">
+        <h3 class="font-bold text-slate-900 mb-2">Better visibility leads to better optimization decisions</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Instead of guessing what to collect or generate next, teams can target the exact weak zones — saving time and improving model reliability.
+        </p>
+      </div>
+
     </div>
+  </div>
 </section>
 
-<!-- Email Capture -->
-<section class="py-16 px-4 bg-blue-600">
-    <div class="max-w-xl mx-auto text-center text-white">
-        <h2 class="text-2xl font-bold mb-3">Stay updated</h2>
-        <p class="text-blue-100 mb-6">Get notified when we launch new tools — drift detection, bias auditing, and more.</p>
-        <div id="email-capture-result">
-            {% include "partials/_email_capture.html" %}
-        </div>
+<!-- ─── 5. SAMPLE DELIVERABLES ───────────────────────────────────────────── -->
+<section class="py-16 px-4 bg-white">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-slate-900 mb-3">What you receive</h2>
+      <p class="text-slate-500 text-lg max-w-xl mx-auto">
+        A data terrain audit turns your machine learning dataset and model behavior into maps, diagnostics, and optimization priorities your team can act on.
+      </p>
     </div>
+
+    <div class="grid md:grid-cols-3 gap-5">
+
+      <!-- Coverage map -->
+      <div class="border border-gray-200 rounded-2xl p-5">
+        <div class="bg-gray-50 rounded-xl p-3 mb-4 flex items-center justify-center h-28">
+          <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+            <!-- Mini heatmap -->
+            <rect x="5"  y="5"  width="20" height="16" rx="2" fill="#3b82f6" opacity="0.9"/>
+            <rect x="27" y="5"  width="20" height="16" rx="2" fill="#60a5fa" opacity="0.7"/>
+            <rect x="49" y="5"  width="20" height="16" rx="2" fill="#93c5fd" opacity="0.5"/>
+            <rect x="71" y="5"  width="20" height="16" rx="2" fill="#e2e8f0" opacity="0.8"/>
+            <rect x="93" y="5"  width="20" height="16" rx="2" fill="#e2e8f0" opacity="0.4"/>
+            <rect x="5"  y="23" width="20" height="16" rx="2" fill="#2563eb" opacity="0.95"/>
+            <rect x="27" y="23" width="20" height="16" rx="2" fill="#3b82f6" opacity="0.85"/>
+            <rect x="49" y="23" width="20" height="16" rx="2" fill="#f97316" opacity="0.6"/>
+            <rect x="71" y="23" width="20" height="16" rx="2" fill="#e2e8f0" opacity="0.5"/>
+            <rect x="93" y="23" width="20" height="16" rx="2" fill="#e2e8f0" opacity="0.3"/>
+            <rect x="5"  y="41" width="20" height="16" rx="2" fill="#dbeafe" opacity="0.8"/>
+            <rect x="27" y="41" width="20" height="16" rx="2" fill="#e2e8f0" opacity="0.5"/>
+            <rect x="49" y="41" width="20" height="16" rx="2" fill="#e2e8f0" opacity="0.4"/>
+            <rect x="71" y="41" width="20" height="16" rx="2" fill="#e2e8f0" opacity="0.3"/>
+            <rect x="93" y="41" width="20" height="16" rx="2" fill="#e2e8f0" opacity="0.2"/>
+            <text x="5" y="73" font-size="8" fill="#64748b" font-family="monospace">Coverage map + gap summary</text>
+          </svg>
+        </div>
+        <h3 class="font-semibold text-slate-800 text-sm">Coverage map and sparse-region summary</h3>
+      </div>
+
+      <!-- Split mismatch -->
+      <div class="border border-gray-200 rounded-2xl p-5">
+        <div class="bg-gray-50 rounded-xl p-3 mb-4 flex items-center justify-center h-28">
+          <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+            <!-- Distribution comparison bars -->
+            <text x="5" y="12" font-size="7" fill="#3b82f6" font-family="monospace">Train</text>
+            <text x="60" y="12" font-size="7" fill="#f97316" font-family="monospace">Test</text>
+            <!-- Train bars -->
+            <rect x="5" y="16" width="45" height="7" rx="1" fill="#3b82f6" opacity="0.85"/>
+            <rect x="5" y="26" width="30" height="7" rx="1" fill="#3b82f6" opacity="0.7"/>
+            <rect x="5" y="36" width="40" height="7" rx="1" fill="#3b82f6" opacity="0.75"/>
+            <rect x="5" y="46" width="20" height="7" rx="1" fill="#3b82f6" opacity="0.6"/>
+            <!-- Test bars -->
+            <rect x="60" y="16" width="35" height="7" rx="1" fill="#f97316" opacity="0.8"/>
+            <rect x="60" y="26" width="48" height="7" rx="1" fill="#f97316" opacity="0.9"/>
+            <rect x="60" y="36" width="22" height="7" rx="1" fill="#f97316" opacity="0.65"/>
+            <rect x="60" y="46" width="42" height="7" rx="1" fill="#f97316" opacity="0.85"/>
+            <text x="5" y="68" font-size="7" fill="#ef4444" font-family="monospace">⚠ Mismatch detected</text>
+          </svg>
+        </div>
+        <h3 class="font-semibold text-slate-800 text-sm">Split mismatch and drift findings</h3>
+      </div>
+
+      <!-- Rare-case shortlist -->
+      <div class="border border-gray-200 rounded-2xl p-5">
+        <div class="bg-gray-50 rounded-xl p-3 mb-4 flex items-center justify-center h-28">
+          <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+            <!-- Scatter points -->
+            <circle cx="20" cy="40" r="3" fill="#3b82f6" opacity="0.7"/>
+            <circle cx="30" cy="35" r="3" fill="#3b82f6" opacity="0.7"/>
+            <circle cx="25" cy="50" r="3" fill="#3b82f6" opacity="0.7"/>
+            <circle cx="35" cy="42" r="3" fill="#3b82f6" opacity="0.7"/>
+            <circle cx="40" cy="38" r="3" fill="#3b82f6" opacity="0.7"/>
+            <circle cx="28" cy="44" r="3" fill="#3b82f6" opacity="0.7"/>
+            <circle cx="33" cy="55" r="3" fill="#3b82f6" opacity="0.7"/>
+            <circle cx="45" cy="30" r="3" fill="#3b82f6" opacity="0.7"/>
+            <!-- Anomaly/rare cases far from cluster -->
+            <circle cx="90" cy="20" r="4" fill="#fbbf24" opacity="0.9"/>
+            <circle cx="95" cy="60" r="4" fill="#fbbf24" opacity="0.9"/>
+            <circle cx="75" cy="65" r="4" fill="#ef4444" opacity="0.85"/>
+            <circle cx="90" cy="20" r="7" fill="none" stroke="#fbbf24" stroke-width="1" stroke-dasharray="2 2"/>
+            <circle cx="95" cy="60" r="7" fill="none" stroke="#fbbf24" stroke-width="1" stroke-dasharray="2 2"/>
+            <circle cx="75" cy="65" r="7" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2 2"/>
+            <text x="5" y="76" font-size="7" fill="#64748b" font-family="monospace">3 rare cases flagged</text>
+          </svg>
+        </div>
+        <h3 class="font-semibold text-slate-800 text-sm">Rare-case and anomaly shortlist</h3>
+      </div>
+
+      <!-- Rebalancing recommendation -->
+      <div class="border border-gray-200 rounded-2xl p-5">
+        <div class="bg-gray-50 rounded-xl p-3 mb-4 flex items-center justify-center h-28">
+          <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+            <!-- Before/after bars -->
+            <text x="5" y="10" font-size="7" fill="#64748b" font-family="monospace">Before</text>
+            <rect x="5" y="14" width="60" height="8" rx="2" fill="#3b82f6" opacity="0.85"/>
+            <rect x="5" y="25" width="15" height="8" rx="2" fill="#3b82f6" opacity="0.6"/>
+            <rect x="5" y="36" width="8"  height="8" rx="2" fill="#ef4444" opacity="0.7"/>
+            <text x="5" y="55" font-size="7" fill="#64748b" font-family="monospace">After</text>
+            <rect x="5" y="58" width="45" height="8" rx="2" fill="#3b82f6" opacity="0.85"/>
+            <rect x="5" y="69" width="35" height="8" rx="2" fill="#3b82f6" opacity="0.7"/>
+            <rect x="5" y="80" width="38" height="8" rx="2" fill="#10b981" opacity="0.75"/>
+            <text x="70" y="36" font-size="7" fill="#10b981" font-family="monospace">Balanced</text>
+          </svg>
+        </div>
+        <h3 class="font-semibold text-slate-800 text-sm">Rebalancing recommendation</h3>
+      </div>
+
+      <!-- Performance Atlas -->
+      <div class="border border-gray-200 rounded-2xl p-5 md:col-span-2 md:col-start-2 lg:col-span-1 lg:col-start-auto">
+        <div class="bg-gray-50 rounded-xl p-3 mb-4 flex items-center justify-center h-28">
+          <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+            <!-- Performance by region heatmap -->
+            <rect x="5"  y="8"  width="22" height="18" rx="2" fill="#10b981" opacity="0.85"/>
+            <rect x="29" y="8"  width="22" height="18" rx="2" fill="#10b981" opacity="0.7"/>
+            <rect x="53" y="8"  width="22" height="18" rx="2" fill="#fbbf24" opacity="0.75"/>
+            <rect x="77" y="8"  width="22" height="18" rx="2" fill="#ef4444" opacity="0.65"/>
+            <rect x="101" y="8" width="14" height="18" rx="2" fill="#ef4444" opacity="0.5"/>
+            <rect x="5"  y="28" width="22" height="18" rx="2" fill="#10b981" opacity="0.9"/>
+            <rect x="29" y="28" width="22" height="18" rx="2" fill="#10b981" opacity="0.8"/>
+            <rect x="53" y="28" width="22" height="18" rx="2" fill="#fbbf24" opacity="0.6"/>
+            <rect x="77" y="28" width="22" height="18" rx="2" fill="#ef4444" opacity="0.55"/>
+            <rect x="101" y="28" width="14" height="18" rx="2" fill="#ef4444" opacity="0.4"/>
+            <rect x="5"  y="48" width="22" height="18" rx="2" fill="#34d399" opacity="0.6"/>
+            <rect x="29" y="48" width="22" height="18" rx="2" fill="#fbbf24" opacity="0.65"/>
+            <rect x="53" y="48" width="22" height="18" rx="2" fill="#ef4444" opacity="0.5"/>
+            <rect x="77" y="48" width="22" height="18" rx="2" fill="#ef4444" opacity="0.4"/>
+            <rect x="101" y="48" width="14" height="18" rx="2" fill="#ef4444" opacity="0.3"/>
+            <!-- Legend -->
+            <rect x="5"  y="70" width="8" height="6" rx="1" fill="#10b981" opacity="0.8"/>
+            <text x="15" y="76" font-size="6" fill="#64748b" font-family="monospace">Reliable</text>
+            <rect x="55" y="70" width="8" height="6" rx="1" fill="#fbbf24" opacity="0.8"/>
+            <text x="65" y="76" font-size="6" fill="#64748b" font-family="monospace">Caution</text>
+            <rect x="95" y="70" width="8" height="6" rx="1" fill="#ef4444" opacity="0.7"/>
+            <text x="105" y="76" font-size="6" fill="#64748b" font-family="monospace">Risk</text>
+          </svg>
+        </div>
+        <h3 class="font-semibold text-slate-800 text-sm">Performance atlas with confidence and caution zones</h3>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-10">
+      <a href="/report/sample"
+         class="inline-flex items-center gap-2 px-7 py-3.5 bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded-xl shadow-lg transition-all hover:shadow-blue-500/30 hover:scale-105">
+        See a Sample Report
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 6. HOW IT WORKS ───────────────────────────────────────────────────── -->
+<section class="py-16 px-4 bg-gray-50">
+  <div class="max-w-5xl mx-auto">
+    <h2 class="text-3xl font-bold text-slate-900 mb-12 text-center">How Xariff works</h2>
+
+    <div class="grid md:grid-cols-4 gap-6 mb-10">
+
+      <div class="text-center">
+        <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-4">1</div>
+        <h3 class="font-semibold text-slate-800 mb-2">Share your data and context</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">You provide the dataset, split information, labels, and model context if available.</p>
+      </div>
+
+      <div class="text-center">
+        <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-4">2</div>
+        <h3 class="font-semibold text-slate-800 mb-2">We map the data terrain</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">Xariff analyzes distribution, anomalies, drift, sparse regions, and structural weaknesses.</p>
+      </div>
+
+      <div class="text-center">
+        <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-4">3</div>
+        <h3 class="font-semibold text-slate-800 mb-2">We identify optimization opportunities</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">We highlight what is missing, unstable, or underrepresented and propose ways to strengthen it.</p>
+      </div>
+
+      <div class="text-center">
+        <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-4">4</div>
+        <h3 class="font-semibold text-slate-800 mb-2">You get an audit and action plan</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">Your team receives maps, findings, and prioritized next steps ready to act on.</p>
+      </div>
+
+    </div>
+
+    <div class="text-center">
+      <a href="/contact"
+         class="inline-flex items-center gap-2 px-7 py-3.5 bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded-xl shadow-lg transition-all hover:shadow-blue-500/30 hover:scale-105">
+        Book a Data Terrain Audit
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 7. WHO IT'S FOR ──────────────────────────────────────────────────── -->
+<section class="py-16 px-4 bg-white">
+  <div class="max-w-5xl mx-auto">
+    <h2 class="text-3xl font-bold text-slate-900 mb-10 text-center">Who Xariff is for</h2>
+
+    <div class="grid md:grid-cols-3 gap-6 mb-8">
+
+      <div class="border border-gray-200 rounded-2xl p-7">
+        <div class="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h3 class="font-bold text-slate-900 mb-2">ML teams preparing for deployment</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">Need to know where the model is reliable before shipping to production.</p>
+      </div>
+
+      <div class="border border-gray-200 rounded-2xl p-7">
+        <div class="w-9 h-9 bg-orange-50 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+          </svg>
+        </div>
+        <h3 class="font-bold text-slate-900 mb-2">Teams with messy or shifting datasets</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">Need visibility into imbalance, drift, mismatch, and hidden weak regions.</p>
+      </div>
+
+      <div class="border border-gray-200 rounded-2xl p-7">
+        <div class="w-9 h-9 bg-purple-50 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <h3 class="font-bold text-slate-900 mb-2">Regulated or risk-sensitive environments</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">Need more than a single headline metric to justify trust in model behavior.</p>
+      </div>
+
+    </div>
+
+    <div class="text-center">
+      <a href="/contact" class="text-blue-500 hover:text-blue-600 font-medium text-sm inline-flex items-center gap-1 transition-colors">
+        Talk through your use case
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 8. COMPARISON ─────────────────────────────────────────────────────── -->
+<section class="py-16 px-4 bg-slate-900 text-white">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-10 text-center">Beyond basic profiling</h2>
+
+    <div class="grid md:grid-cols-2 gap-8">
+
+      <div>
+        <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-4">Typical data checks</p>
+        <ul class="space-y-3">
+          <li class="flex items-center gap-3 text-slate-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-600 flex-shrink-0"></span>
+            Missing values
+          </li>
+          <li class="flex items-center gap-3 text-slate-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-600 flex-shrink-0"></span>
+            Duplicates
+          </li>
+          <li class="flex items-center gap-3 text-slate-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-600 flex-shrink-0"></span>
+            Column summaries
+          </li>
+          <li class="flex items-center gap-3 text-slate-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-600 flex-shrink-0"></span>
+            Overall accuracy metrics
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="text-blue-400 text-sm font-semibold uppercase tracking-wider mb-4">Xariff data terrain analysis</p>
+        <ul class="space-y-3">
+          <li class="flex items-center gap-3 text-slate-200">
+            <svg class="w-4 h-4 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Feature-space coverage and gap detection
+          </li>
+          <li class="flex items-center gap-3 text-slate-200">
+            <svg class="w-4 h-4 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Class and split mismatch analysis
+          </li>
+          <li class="flex items-center gap-3 text-slate-200">
+            <svg class="w-4 h-4 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Edge-case and rare-case surfacing
+          </li>
+          <li class="flex items-center gap-3 text-slate-200">
+            <svg class="w-4 h-4 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Rebalancing and augmentation guidance
+          </li>
+          <li class="flex items-center gap-3 text-slate-200">
+            <svg class="w-4 h-4 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            High-resolution performance atlas
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── 9. TRUST ──────────────────────────────────────────────────────────── -->
+<section class="py-16 px-4 bg-white">
+  <div class="max-w-5xl mx-auto">
+    <h2 class="text-3xl font-bold text-slate-900 mb-10 text-center">Built for serious ML work</h2>
+
+    <div class="grid md:grid-cols-2 gap-10">
+
+      <div>
+        <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-5">What we deliver</h3>
+        <ul class="space-y-4">
+          <li class="flex items-start gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 flex-shrink-0"></span>
+            <div>
+              <p class="font-semibold text-slate-800 text-sm">Clear analysis scope</p>
+              <p class="text-slate-500 text-sm">You know exactly what will be analyzed and what findings you will receive before work begins.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 flex-shrink-0"></span>
+            <div>
+              <p class="font-semibold text-slate-800 text-sm">Actionable outputs, not just dashboards</p>
+              <p class="text-slate-500 text-sm">Every finding comes with a concrete next step your team can act on.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 flex-shrink-0"></span>
+            <div>
+              <p class="font-semibold text-slate-800 text-sm">Technical depth where it counts</p>
+              <p class="text-slate-500 text-sm">Deep understanding of data quality, coverage, drift, and model weakness — not surface-level reporting.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-5">How we work</h3>
+        <ul class="space-y-4">
+          <li class="flex items-start gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 flex-shrink-0"></span>
+            <div>
+              <p class="font-semibold text-slate-800 text-sm">Private engagement options</p>
+              <p class="text-slate-500 text-sm">Sensitive projects can be handled under NDA with controlled data handling procedures.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 flex-shrink-0"></span>
+            <div>
+              <p class="font-semibold text-slate-800 text-sm">Clear data handling and retention</p>
+              <p class="text-slate-500 text-sm">We are transparent about what data is shared, how it is processed, and how long it is retained.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 flex-shrink-0"></span>
+            <div>
+              <p class="font-semibold text-slate-800 text-sm">Sample-based or full-dataset analysis</p>
+              <p class="text-slate-500 text-sm">We can work with a representative sample if sharing a full dataset is not possible.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 flex-shrink-0"></span>
+            <div>
+              <p class="font-semibold text-slate-800 text-sm">Honest scope — no over-promising</p>
+              <p class="text-slate-500 text-sm">We are clear about what the service does and does not guarantee upfront.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-10">
+      <a href="/contact" class="inline-flex items-center gap-2 px-6 py-3 border border-slate-300 hover:border-blue-400 hover:text-blue-500 text-slate-700 font-semibold rounded-xl transition-colors text-sm">
+        Request details
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 10. FREE TOOLS ─────────────────────────────────────────────────────── -->
+<section class="py-14 px-4 bg-gray-50">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-8">
+      <h2 class="text-2xl font-bold text-slate-900 mb-2">Try Xariff through free tools</h2>
+      <p class="text-slate-500 text-base">Explore parts of your machine learning dataset through lightweight self-serve tools.</p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
+
+      <a href="/tools/profiler" class="group flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-4 hover:border-indigo-200 hover:shadow-sm transition-all">
+        <div class="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-500 transition-colors">
+          <svg class="w-4 h-4 text-indigo-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <span class="font-medium text-slate-700 group-hover:text-slate-900 text-sm transition-colors">Dataset Profiler</span>
+      </a>
+
+      <a href="/tools/quality" class="group flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-4 hover:border-blue-200 hover:shadow-sm transition-all">
+        <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500 transition-colors">
+          <svg class="w-4 h-4 text-blue-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <span class="font-medium text-slate-700 group-hover:text-slate-900 text-sm transition-colors">Quality Checker</span>
+      </a>
+
+      <a href="/tools/scorecard" class="group flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-200 hover:shadow-sm transition-all">
+        <div class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-purple-500 transition-colors">
+          <svg class="w-4 h-4 text-purple-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+        </div>
+        <span class="font-medium text-slate-700 group-hover:text-slate-900 text-sm transition-colors">ML Readiness Scorecard</span>
+      </a>
+
+      <a href="/tools/coverage" class="group flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-4 hover:border-orange-200 hover:shadow-sm transition-all">
+        <div class="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-orange-500 transition-colors">
+          <svg class="w-4 h-4 text-orange-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+          </svg>
+        </div>
+        <span class="font-medium text-slate-700 group-hover:text-slate-900 text-sm transition-colors">Coverage Checker</span>
+      </a>
+
+      <a href="/tools/outliers" class="group flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-4 hover:border-red-200 hover:shadow-sm transition-all">
+        <div class="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-red-500 transition-colors">
+          <svg class="w-4 h-4 text-red-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          </svg>
+        </div>
+        <span class="font-medium text-slate-700 group-hover:text-slate-900 text-sm transition-colors">Outlier Detector</span>
+      </a>
+
+      <a href="/tools/drift" class="group flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-4 hover:border-teal-200 hover:shadow-sm transition-all">
+        <div class="w-8 h-8 bg-teal-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-teal-500 transition-colors">
+          <svg class="w-4 h-4 text-teal-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+        </div>
+        <span class="font-medium text-slate-700 group-hover:text-slate-900 text-sm transition-colors">Drift Detector</span>
+      </a>
+
+    </div>
+
+    <div class="text-center">
+      <a href="/tools" class="inline-flex items-center gap-2 px-6 py-2.5 bg-white hover:bg-slate-50 border border-gray-200 text-slate-700 font-semibold rounded-xl transition-colors text-sm">
+        Explore Free Tools
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 11. FAQ ────────────────────────────────────────────────────────────── -->
+<section class="py-16 px-4 bg-white">
+  <div class="max-w-2xl mx-auto">
+    <h2 class="text-3xl font-bold text-slate-900 mb-8 text-center">Questions</h2>
+
+    <div class="space-y-2">
+
+      <details class="group border border-gray-200 rounded-xl overflow-hidden">
+        <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-gray-50 transition-colors list-none">
+          What is data terrain analysis?
+          <svg class="w-4 h-4 text-slate-400 flex-shrink-0 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <div class="px-5 pb-4 text-slate-500 text-sm leading-relaxed">
+          Data terrain analysis goes beyond column-level summaries to examine how your data is distributed across the full feature space — identifying sparse regions, coverage gaps, edge cases, split mismatch, and failure zones that standard profiling misses.
+        </div>
+      </details>
+
+      <details class="group border border-gray-200 rounded-xl overflow-hidden">
+        <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-gray-50 transition-colors list-none">
+          How is this different from data profiling?
+          <svg class="w-4 h-4 text-slate-400 flex-shrink-0 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <div class="px-5 pb-4 text-slate-500 text-sm leading-relaxed">
+          Data profiling describes each column in isolation — mean, null rate, cardinality. Data terrain analysis looks at how features interact across the combined space, how different data splits compare, and where model reliability is likely to break down. It is higher-resolution and ML-specific.
+        </div>
+      </details>
+
+      <details class="group border border-gray-200 rounded-xl overflow-hidden">
+        <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-gray-50 transition-colors list-none">
+          Can Xariff work with train, validation, and test splits?
+          <svg class="w-4 h-4 text-slate-400 flex-shrink-0 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <div class="px-5 pb-4 text-slate-500 text-sm leading-relaxed">
+          Yes. Providing all three splits allows Xariff to detect mismatch across splits — an important source of inflated evaluation results. Split mismatch analysis is included in data terrain audits.
+        </div>
+      </details>
+
+      <details class="group border border-gray-200 rounded-xl overflow-hidden">
+        <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-gray-50 transition-colors list-none">
+          Can Xariff help with drift and edge cases?
+          <svg class="w-4 h-4 text-slate-400 flex-shrink-0 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <div class="px-5 pb-4 text-slate-500 text-sm leading-relaxed">
+          Yes. Drift detection compares reference and current distributions across features. Edge case analysis surfaces low-density, unusual, or statistically isolated examples that often represent real-world failure patterns.
+        </div>
+      </details>
+
+      <details class="group border border-gray-200 rounded-xl overflow-hidden">
+        <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-gray-50 transition-colors list-none">
+          Do you provide rebalancing and synthetic generation recommendations?
+          <svg class="w-4 h-4 text-slate-400 flex-shrink-0 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <div class="px-5 pb-4 text-slate-500 text-sm leading-relaxed">
+          Yes. Rather than guessing what data to collect next, Xariff identifies the specific regions that need strengthening and recommends targeted collection, augmentation, or synthetic generation strategies.
+        </div>
+      </details>
+
+      <details class="group border border-gray-200 rounded-xl overflow-hidden">
+        <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-gray-50 transition-colors list-none">
+          What does a data terrain audit include?
+          <svg class="w-4 h-4 text-slate-400 flex-shrink-0 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <div class="px-5 pb-4 text-slate-500 text-sm leading-relaxed">
+          A data terrain audit includes a coverage map with sparse-region summary, split mismatch and drift findings, a rare-case and anomaly shortlist, rebalancing recommendations, and a performance atlas with confidence and caution zones — delivered as a structured report with prioritized next steps.
+        </div>
+      </details>
+
+      <details class="group border border-gray-200 rounded-xl overflow-hidden">
+        <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-gray-50 transition-colors list-none">
+          Can this be done privately?
+          <svg class="w-4 h-4 text-slate-400 flex-shrink-0 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <div class="px-5 pb-4 text-slate-500 text-sm leading-relaxed">
+          Yes. Private engagement options are available including NDA, controlled data handling, and sample-based analysis for sensitive datasets. Contact us to discuss your requirements.
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── 12. FINAL CTA ─────────────────────────────────────────────────────── -->
+<section class="py-20 px-4 bg-gradient-to-br from-slate-900 to-blue-900 text-white">
+  <div class="max-w-2xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
+      See where your data is strong, weak, and risky
+    </h2>
+    <p class="text-slate-300 text-lg leading-relaxed mb-10">
+      Book a data terrain audit to understand coverage gaps, anomalies, drift, weak regions, and performance failure zones before they cost you in deployment.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="/contact"
+         class="px-8 py-3.5 bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded-xl shadow-lg transition-all hover:shadow-blue-500/30 hover:scale-105">
+        Book a Data Terrain Audit
+      </a>
+      <a href="/report/sample"
+         class="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all">
+        See a Sample Report
+      </a>
+    </div>
+  </div>
 </section>
 
 {% endblock %}
